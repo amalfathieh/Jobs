@@ -22,10 +22,10 @@ class registerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username'=>['required'],
-            'email'=>['required','email','unique:users'],
+            'username'=>'required|unique:users,username',
+            'email'=>['required','email','unique:users,email'],
             'password'=>['required','string','min:6'],
-            'role'=>['required'],
+            'role'=>'required|in:company,job_seeker',
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -22,7 +23,7 @@ class UserController extends Controller
         User::query()->create([
             'username'=>$request['username'],
             'email'=>$request['email'],
-            'password'=>$request['password'],
+            'password'=>Hash::make($request->password),
             'role'=>$request['role'],
         ]);
         Mail::to($request->email)->send(new VerificationCodeMail($codeData->code));
@@ -46,6 +47,7 @@ class UserController extends Controller
         $data =[];
         $data['user']= $user;
         $data['token']=$token;
+        $user->is_verified=true;
         return response()->json([
             'status'=>1,
             'data'=>$data,
