@@ -18,11 +18,10 @@ class VerificationCodeMail extends Mailable
      */
     public function __construct($code)
     {
-        $this->code=$code;
+        $this->code = $code;
     }
     public function build()
     {
         return $this->markdown('emails.verificaction');
     }
-
 }

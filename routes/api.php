@@ -14,9 +14,16 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('register',[UserController::class,'register']);
-Route::post('cheackCode',[UserController::class,'cheackCode']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('register', 'UserController@register');
+
+Route::post('checkCode', 'UserController@checkCode');
+
+Route::get('forgotPassword', 'UserController@sendCode');
+
+Route::post('resetPassword', 'UserController@checkCodeForResetPassword');
