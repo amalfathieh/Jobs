@@ -16,12 +16,8 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('password');
-<<<<<<< HEAD
-            $table->enum('role', ['company', 'job_seeker'])->default('job_seeker');
-=======
-            $table->enum('role',['company','job_seeker']);
+            $table->enum('role', ['company', 'job_seeker']);
             $table->boolean('is_verified')->default(false);
->>>>>>> bd87855d075935ca1bbc25d794b2acf764982de7
             $table->rememberToken();
             $table->timestamps();
         });

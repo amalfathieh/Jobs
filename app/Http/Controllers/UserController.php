@@ -37,7 +37,7 @@ class UserController extends Controller
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
 
-    public function cheackCode(Request $request)
+    public function checkCode(Request $request)
     {
         $request->validate([
             'code' => ['required', 'string', 'exists:verification_codes'],
@@ -118,7 +118,7 @@ class UserController extends Controller
         }
     }
 
-    public function checkCodeForResetPassword(Request $request)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'code' => 'required|string|exists:reset_code_passwords',
@@ -134,8 +134,10 @@ class UserController extends Controller
 
         $user = User::firstWhere('email', $passwordReset->email);
 
-        $user->update($request->only('password'));
-
+        $request['password'] = bcrypt($request['password']);
+        $user->update([
+            'password' => $request->password,
+        ]);
         $passwordReset->delete();
 
         return response()->json(['message' => 'password has been successfully reset'], 200);
