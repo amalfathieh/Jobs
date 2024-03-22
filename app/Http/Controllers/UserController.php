@@ -95,7 +95,7 @@ class UserController extends Controller
 
         if ($passwordReset->created_at > now()->addHour()) {
             $passwordReset->delete();
-            return response()->json(['message' => 'passwords.code_is_expire'], 422);
+            return response()->json(['message' => 'password code_is_expire'], 422);
         }
 
         $user = User::firstWhere('email', $passwordReset->email);
