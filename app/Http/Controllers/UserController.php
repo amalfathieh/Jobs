@@ -88,7 +88,7 @@ class UserController extends Controller
 
     public function logout()
     {
-        Auth::user()->currentAccessToken()->delete();
+        request()->user()->currentAccessToken()->delete();
         return $this->apiResponse([], 'user logged out successfully', 200);
     }
 
@@ -109,12 +109,9 @@ class UserController extends Controller
 
             Mail::to($request->email)->send(new ForgotPassword($codeData->code));
 
-            return response()->json(['message' => 'We sent code to your email. Check your email please'], 200);
+            return $this->apiResponse([], 'We sent code to your email. Check your email please', 200);
         } catch (\Exception $ex) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $ex->getMessage()
-            ], 500);
+            return $this->apiResponse([], $ex->getMessage(), 500);
         }
     }
 
@@ -129,7 +126,7 @@ class UserController extends Controller
 
         if ($passwordReset->created_at > now()->addHour()) {
             $passwordReset->delete();
-            return response()->json(['message' => 'password code_is_expire'], 422);
+            return $this->apiResponse([], 'password code_is_expire', 422);
         }
 
         $user = User::firstWhere('email', $passwordReset->email);
@@ -140,6 +137,6 @@ class UserController extends Controller
         ]);
         $passwordReset->delete();
 
-        return response()->json(['message' => 'password has been successfully reset'], 200);
+        return $this->apiResponse([], 'password has been successfully reset', 200);
     }
 }
