@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -117,10 +118,15 @@ class UserController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $request->validate([
+        $validate = Validator::make($request->all(), [
             'code' => 'required|string|exists:reset_code_passwords',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|confirmed',
+            'password_confirmation' => 'required|string|min:6|same:password'
         ]);
+
+        if ($validate->fails()) {
+            return $this->apiResponse([], $validate->errors(), 400);
+        }
 
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
 

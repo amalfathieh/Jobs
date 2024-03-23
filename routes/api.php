@@ -27,9 +27,9 @@ Route::controller(UserController::class)->group(function () {
 
     Route::get('logout', 'logout')->middleware('auth:sanctum');
 
-    Route::get('checkCode', 'checkCode');
+    Route::post('checkCode', 'checkCode');
 
-    Route::get('forgotPassword', 'sendCode');
+    Route::post('forgotPassword', 'sendCode');
 
     Route::post('resetPassword', 'resetPassword');
 });
