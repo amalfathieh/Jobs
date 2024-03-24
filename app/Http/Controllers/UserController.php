@@ -57,7 +57,6 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['token'] = $token;
         $user->update(['is_verified' => true]);
-        $user->is_verified = true;
         return $this->apiResponse($data, 'user create successfully', 200);
     }
     public function login(Request $request)
@@ -67,7 +66,7 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
         $login = $request->input('login');
-        $password = $request->input('password');
+        $password =  Hash::make($request->password);
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
@@ -127,10 +126,11 @@ class UserController extends Controller
         if ($validate->fails()) {
             return $this->apiResponse([], $validate->errors(), 400);
         }
-
+        if($request->password != $request->password_confirmation)
+            return $this->apiResponse([],'The password confirmation does not match.please re-enter it correctly.',400);
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
 
-        if ($passwordReset->created_at > now()->addHour()) {
+        if ($passwordReset->created_at->addHour() < now()) {
             $passwordReset->delete();
             return $this->apiResponse([], 'password code_is_expire', 422);
         }
