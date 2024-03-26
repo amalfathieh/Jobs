@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(UserController::class)->group(function () {
     Route::post('register', 'register');
 
+    Route::post('sendCode', 'sendCodeVerification');
+
     Route::post('login', 'login');
 
     Route::get('logout', 'logout')->middleware('auth:sanctum');
@@ -32,4 +35,8 @@ Route::controller(UserController::class)->group(function () {
     Route::post('forgotPassword', 'sendCode');
 
     Route::post('resetPassword', 'resetPassword');
+});
+
+Route::controller(CompanyController::class)->middleware(['can:isCompany', 'auth:sanctum'])->prefix('company')->group(function () {
+    Route::post('create', 'createCompany');
 });

@@ -11,17 +11,37 @@ use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
     use responseTrait;
 
     //REGISTER METHOD -POST
-    public function register(registerRequest $request)
+    public function register(Request $request)
     {
+
+        $validate = Validator::make($request->all(), [
+            'username' => 'required|unique:users,username',
+            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+            ],
+            'role' => 'required|in:company,job_seeker',
+        ]);
+
+        if ($validate->fails()) {
+            return $this->apiResponse(null, $validate->errors(), 400);
+        }
+
         // Delete all old code that user send before.
         VerificationCode::where('email', $request->email)->delete();
         //Generate new code
@@ -58,10 +78,12 @@ class UserController extends Controller
         $data['token'] = $token;
         $user->update(['is_verified' => true]);
         $user->is_verified = true;
+        VerificationCode::where('code', $ver_code->code)->delete();
         return $this->apiResponse($data, 'user create successfully', 200);
     }
     public function login(Request $request)
     {
+
         $request->validate([
             'login' => 'required|string',
             'password' => 'required|string',
@@ -91,6 +113,29 @@ class UserController extends Controller
     {
         request()->user()->currentAccessToken()->delete();
         return $this->apiResponse([], 'user logged out successfully', 200);
+    }
+
+    public function sendCodeVerification(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'email' => ['required', 'email:rfc,dns']
+            ]);
+
+            if ($validate->fails()) {
+                return $this->apiResponse(null, $validate->errors(), 400);
+            }
+
+            VerificationCode::where('email', $request->email)->delete();
+            //Generate new code
+            $data['email'] = $request->email;
+            $data['code'] = mt_rand(100000, 999999);
+            $codeData = VerificationCode::create($data);
+            Mail::to($request->email)->send(new VerificationCodeMail($codeData->code));
+            return $this->apiResponse([], 'Verification Code sent to your email', 200);
+        } catch (\Exception $ex) {
+            return $this->apiResponse(null, $ex->getMessage(), 500);
+        }
     }
 
     // Reset Password

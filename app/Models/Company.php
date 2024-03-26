@@ -9,6 +9,26 @@ class Company extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'company_name',
+        'logo',
+        'location',
+        'about',
+        'contact_info'
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+        // Validate uniqueness of user_id when creating a new company
+        static::creating(function ($company) {
+            if (self::where('user_id', $company->user_id)->exists()) {
+                throw new \Exception('User already has a company.');
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
