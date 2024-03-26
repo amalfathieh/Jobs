@@ -28,9 +28,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function company()
+    public function seeker()
     {
-        return $this->hasOne(Company::class);
+        return $this->hasOne(Seeker::class);
+
     }
 }
