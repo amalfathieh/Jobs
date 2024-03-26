@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class CompanyController extends Controller
 {
@@ -16,6 +17,7 @@ class CompanyController extends Controller
     public function createCompany(Request $request)
     {
         try {
+            $this->authorize('isCompany');
             $validate = Validator::make($request->all(), [
                 // 'user_id' => 'unique:companies,user_id',
                 'company_name' => 'required|string',
@@ -31,7 +33,7 @@ class CompanyController extends Controller
 
             $user = User::where('id', Auth::user()->id)->first();
             $logo = Str::random(3) . 'Profile.' . $request->logo->getClientOriginalExtension();
-            Storage::disk('public')->put($logo, file_get_contents($request->logo));
+            Storage::disk('public')->put("company/" . $logo, file_get_contents($request->logo));
 
             Company::create([
                 'user_id' => $user->id,
@@ -42,6 +44,8 @@ class CompanyController extends Controller
                 'contact_info' => $request->contact_info
             ]);
             return $this->apiResponse(null, 'success',  201);
+        } catch (AuthorizationException $authExp) {
+            return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }

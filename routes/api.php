@@ -38,9 +38,10 @@ Route::controller(UserController::class)->group(function () {
     Route::post('resetPassword', 'resetPassword');
 });
 
-Route::controller(CompanyController::class)->middleware(['can:isCompany', 'auth:sanctum'])->prefix('company')->group(function () {
+Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
     Route::post('create', 'createCompany');
 });
-Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->group(function () {
-    Route::post('seeker/profile', 'profile');
+
+Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
+    Route::post('profile', 'profile');
 });
