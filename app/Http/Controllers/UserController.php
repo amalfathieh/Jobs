@@ -22,25 +22,8 @@ class UserController extends Controller
     use responseTrait;
 
     //REGISTER METHOD -POST
-    public function register(Request $request)
+    public function register(registerRequest $request)
     {
-
-        $validate = Validator::make($request->all(), [
-            'username' => 'required|unique:users,username',
-            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-            ],
-            'role' => 'required|in:company,job_seeker',
-        ]);
-
-        if ($validate->fails()) {
-            return $this->apiResponse(null, $validate->errors(), 400);
-        }
 
         // Delete all old code that user send before.
         VerificationCode::where('email', $request->email)->delete();

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeekerRequest;
+use App\Models\Seeker;
 use App\services\SeekerService;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 
 class SeekerController extends Controller
 {
@@ -30,6 +32,17 @@ class SeekerController extends Controller
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
+            return $this->apiResponse(null, $ex->getMessage(), 500);
+        }
+    }
+
+    public function update(SeekerRequest $request){
+        try {
+            $id = Auth::user()->id;
+            $seeker = Seeker::where('user_id', $id)->first();
+            $seeker->update($request->all());
+            return $this->apiResponse(null, 'profile updated successfully', 201);
+        }catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
     }

@@ -4,12 +4,15 @@
 namespace App\services;
 
 
+use App\Http\Controllers\responseTrait;
 use App\Models\Seeker;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use function Laravel\Prompts\search;
 
 class SeekerService
 {
+    use responseTrait;
     public function createSeeker(
         $first_name,
         $last_name,
@@ -19,12 +22,14 @@ class SeekerService
         $skills,
         $certificates,
         $about){
-        $seeker_image = '';
+
+        $seeker_image = null;
         if ($image && $image->isValid()) {
             $filenameWithExt = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('seeker/images'), $filenameWithExt);
-            $seeker_image = 'seeker/images/' . $filenameWithExt;
+            $image->move(public_path('seeker/profile'), $filenameWithExt);
+            $seeker_image = 'seeker/profile/' . $filenameWithExt;
         }
+
         $job_seeker = Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
