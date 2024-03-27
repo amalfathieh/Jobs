@@ -43,6 +43,6 @@ Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefi
 });
 
 Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
-    Route::post('profile', 'profile');
+    Route::post('creat', 'creatProfile');
     Route::post('update','update');
 });
