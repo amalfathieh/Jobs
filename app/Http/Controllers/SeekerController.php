@@ -13,7 +13,7 @@ class SeekerController extends Controller
 {
     use responseTrait;
     // CREATE PROFILE FOR J0B_SEEKER
-    public function creatProfile(SeekerRequest $request, SeekerService $service)
+    public function creat(SeekerRequest $request, SeekerService $service)
     {
         try {
             $this->authorize('isJobSeeker');
