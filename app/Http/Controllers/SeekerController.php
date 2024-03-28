@@ -13,12 +13,12 @@ class SeekerController extends Controller
 {
     use responseTrait;
     // CREATE PROFILE FOR J0B_SEEKER
-    public function creat(SeekerRequest $request, SeekerService $service)
+    public function create(SeekerRequest $request, SeekerService $service)
     {
         try {
             $this->authorize('isJobSeeker');
             $image = $request->file('image');
-            $job_seeker = $service->createSeeker(
+             $service->createSeeker(
                 $request->first_name,
                 $request->last_name,
                 $request->birth_day,
@@ -28,7 +28,7 @@ class SeekerController extends Controller
                 $request->certificates,
                 $request->about
             );
-            return $this->apiResponse($job_seeker, 'job_seeker created successfully', 200);
+            return $this->apiResponse(null, 'job_seeker created successfully', 201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {

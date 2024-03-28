@@ -72,11 +72,10 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
         $login = $request->input('login');
-        $password =  Hash::make($request->password);
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
+        if (!Auth::attempt([$fieldType => $login, 'password' => $request['password']])) {
             $message = 'Email & password does not match with our record.';
             return $this->apiResponse([], $message, 401);
         }

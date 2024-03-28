@@ -30,7 +30,7 @@ class SeekerService
             $seeker_image = 'seeker/profile/' . $filenameWithExt;
         }
 
-        $job_seeker = Seeker::create([
+         Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
             'last_name' => $last_name,
@@ -42,6 +42,5 @@ class SeekerService
             'about' => $about
         ]);
 
-        return $job_seeker;
     }
 }
