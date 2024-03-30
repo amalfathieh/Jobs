@@ -22,7 +22,7 @@ class UserController extends Controller
     use responseTrait;
 
     //REGISTER METHOD -POST
-    public function register(Request $request)
+    public function register(registerRequest $request)
     {
 
         $validate = Validator::make($request->all(), [
@@ -93,7 +93,7 @@ class UserController extends Controller
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
-        if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
+        if (!Auth::attempt([$fieldType => $login, 'password' => $request['password']])) {
             $message = 'Email & password does not match with our record.';
             return $this->apiResponse([], $message, 401);
         }

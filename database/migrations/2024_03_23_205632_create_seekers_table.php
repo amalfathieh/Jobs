@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->date('birth_day');
             $table->string('location');
-            $table->string('image')->default('');
+            $table->string('image')->nullable();
             $table->text('skills');
             $table->text('certificates');
             $table->text('about');

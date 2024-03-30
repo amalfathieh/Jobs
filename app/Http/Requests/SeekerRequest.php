@@ -25,7 +25,7 @@ class SeekerRequest extends FormRequest
             'first_name'=>'required|string',
             'last_name'=>'required|string',
             'birth_day'=>'required',
-            'location'=>'string',
+            'location'=>'string|required',
             'image'=>'image|mimes:jpeg,png,bmp,jpg,gif,sav',
             'skills'=>'required',
             'certificates'=>'required',
