@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'username',
+        'user_name',
         'email',
         'password',
         'role',
@@ -31,6 +31,5 @@ class User extends Authenticatable
     public function seeker()
     {
         return $this->hasOne(Seeker::class);
-
     }
 }

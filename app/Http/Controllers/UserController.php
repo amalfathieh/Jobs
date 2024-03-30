@@ -26,7 +26,7 @@ class UserController extends Controller
     {
 
         $validate = Validator::make($request->all(), [
-            'username' => 'required|unique:users,username',
+            'user_name' => 'required|unique:users,user_name',
             'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
             'password' => [
                 'required',
@@ -49,7 +49,7 @@ class UserController extends Controller
         $data['code'] = mt_rand(100000, 999999);
         $codeData = VerificationCode::create($data);
         User::query()->create([
-            'username' => $request['username'],
+            'user_name' => $request['user_name'],
             'email' => $request['email'],
             'password' => Hash::make($request->password),
             'role' => $request['role'],
@@ -58,7 +58,7 @@ class UserController extends Controller
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
 
-    public function checkCode(Request $request)
+    public function verification(Request $request)
     {
         $request->validate([
             'code' => ['required', 'string', 'exists:verification_codes'],
@@ -89,9 +89,9 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
         $login = $request->input('login');
-        $password =  Hash::make($request->password);
+        $password =  $request->input('password');
 
-        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
         if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
             $message = 'Email & password does not match with our record.';
@@ -147,6 +147,11 @@ class UserController extends Controller
                 'email' => 'required|email|exists:users',
             ]);
 
+            $user = User::where('email', $request->email)->first();
+            if (!$user->is_verified) {
+                return $this->apiResponse(null, 'Your account is not verified', 400);
+            }
+
             ResetCodePassword::where('email', $request->email)->delete();
 
             $data['code'] = mt_rand(100000, 999999);
@@ -159,6 +164,23 @@ class UserController extends Controller
         } catch (\Exception $ex) {
             return $this->apiResponse([], $ex->getMessage(), 500);
         }
+    }
+
+    public function checkCode(Request $request) {
+        $validate = Validator::make($request->all(),[
+            'code' => ['required', 'string', 'exists:reset_code_passwords'],
+        ]);
+        if ($validate->fails()) {
+            return $this->apiResponse(null, $validate->errors(), 400);
+        }
+
+        $ver_code = ResetCodePassword::firstwhere('code', $request->code);
+        // check if it does not expired: the time is one hour
+        if ($ver_code->created_at->addHour() < now()) {
+            ResetCodePassword::where('code', $ver_code->code)->delete();
+            return $this->apiResponse(null, 'code has expired', 422);
+        }
+        return $this->apiResponse(null, 'code is correct', 200);
     }
 
     public function resetPassword(Request $request)
@@ -178,7 +200,7 @@ class UserController extends Controller
 
         if ($passwordReset->created_at->addHour() < now()) {
             $passwordReset->delete();
-            return $this->apiResponse([], 'password code_is_expire', 422);
+            return $this->apiResponse([], 'code has expired', 422);
         }
 
         $user = User::firstWhere('email', $passwordReset->email);
@@ -190,5 +212,17 @@ class UserController extends Controller
         $passwordReset->delete();
 
         return $this->apiResponse([], 'password has been successfully reset', 200);
+    }
+
+    // Delete Account
+    public function delete() {
+        // request()->user()->currentAccesToken()->delete();
+        $user = User::where('id', Auth::user()->id)->first();
+
+        if ($user->delete()) {
+            $user->tokens()->delete();
+            return $this->apiResponse(null, 'Account Deleted Successfully!', 200);
+        }
+        return $this->apiResponse(null, "Something went wrong", 500);
     }
 }

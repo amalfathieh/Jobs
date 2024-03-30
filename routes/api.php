@@ -25,12 +25,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(UserController::class)->group(function () {
     Route::post('register', 'register');
 
+    // If code is expired, class this route
     Route::post('sendCode', 'sendCodeVerification');
 
     Route::post('login', 'login');
 
     Route::get('logout', 'logout')->middleware('auth:sanctum');
 
+    Route::delete('delete', 'delete')->middleware('auth:sanctum');
+
+    // Verify
+    Route::post('verificationAccount', 'verification');
+
+    //       For Reset Password
     Route::post('checkCode', 'checkCode');
 
     Route::post('forgotPassword', 'sendCode');
@@ -40,6 +47,9 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
     Route::post('create', 'createCompany');
+
+    Route::post('addOpportunity', 'addOpportunity');
+
 });
 
 Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
