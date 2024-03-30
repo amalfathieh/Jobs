@@ -216,7 +216,6 @@ class UserController extends Controller
 
     // Delete Account
     public function delete() {
-        // request()->user()->currentAccesToken()->delete();
         $user = User::where('id', Auth::user()->id)->first();
 
         if ($user->delete()) {
