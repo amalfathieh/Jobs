@@ -35,7 +35,7 @@ Route::controller(UserController::class)->group(function () {
     Route::delete('delete', 'delete')->middleware('auth:sanctum');
 
     // Verify
-    Route::post('verificationAccount', 'verification');
+    Route::post('verifyAccount', 'verifyAccount');
 
     //       For Reset Password
     Route::post('checkCode', 'checkCode');

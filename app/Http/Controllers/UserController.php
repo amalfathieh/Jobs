@@ -58,7 +58,7 @@ class UserController extends Controller
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
 
-    public function verification(Request $request)
+    public function verifyAccount(Request $request)
     {
         $request->validate([
             'code' => ['required', 'string', 'exists:verification_codes'],
