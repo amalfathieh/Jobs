@@ -18,7 +18,7 @@ class SeekerController extends Controller
         try {
             $this->authorize('isJobSeeker');
             $image = $request->file('image');
-             $service->createSeeker(
+            $service->createSeeker(
                 $request->first_name,
                 $request->last_name,
                 $request->birth_day,

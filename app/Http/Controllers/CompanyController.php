@@ -19,7 +19,6 @@ class CompanyController extends Controller
         try {
             $this->authorize('isCompany');
             $validate = Validator::make($request->all(), [
-                // 'user_id' => 'unique:companies,user_id',
                 'company_name' => 'required|string',
                 'logo' => 'image',
                 'location' => 'required',
@@ -33,7 +32,6 @@ class CompanyController extends Controller
 
             $user = User::where('id', Auth::user()->id)->first();
             $logo = Str::random(3) . 'Profile.' . $request->logo->getClientOriginalExtension();
-            Storage::disk('public')->put("company/" . $logo, file_get_contents($request->logo));
 
             Company::create([
                 'user_id' => $user->id,
@@ -43,11 +41,31 @@ class CompanyController extends Controller
                 'about' => $request->about,
                 'contact_info' => $request->contact_info
             ]);
+            Storage::disk('public')->put("company/" . $logo, file_get_contents($request->logo));
             return $this->apiResponse(null, 'success',  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
-            return $this->apiResponse(null, $ex->getMessage(), 500);
+            return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
+        }
+    }
+
+    public function addOpportunity(Request $request) {
+        try {
+            $validate = Validator::make($request->all(), [
+                'title' => 'required',
+                'body' => 'required',
+                'file' => 'required|file',
+                'location' => 'required',
+                'job_type' => 'required|in:full-time, part-time, contract, temporary, volunteer',
+                'work-place_type' => 'required|in:on-site, hybrid, remote',
+                'job_hours' => 'required',
+                'qualifications' => 'required',
+                'skills_req' => 'required',
+                'salary' => 'required'
+            ]);
+        } catch (\Exception $ex) {
+            return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
         }
     }
 }

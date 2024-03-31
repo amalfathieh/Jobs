@@ -24,7 +24,7 @@ class Company extends Model
         // Validate uniqueness of user_id when creating a new company
         static::creating(function ($company) {
             if (self::where('user_id', $company->user_id)->exists()) {
-                throw new \Exception('User already has a company.');
+                throw new \Exception('User already has a company.', 400);
             }
         });
     }
@@ -32,5 +32,9 @@ class Company extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function opportunities() {
+        return $this->hasMany(Opportunity::class);
     }
 }

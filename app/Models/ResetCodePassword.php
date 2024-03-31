@@ -12,8 +12,5 @@ class ResetCodePassword extends Model
     protected $fillable = [
         'email',
         'code',
-        'created_at',
     ];
-
-    public $timestamps = false;
 }
