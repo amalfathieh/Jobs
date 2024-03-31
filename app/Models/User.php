@@ -31,6 +31,10 @@ class User extends Authenticatable
     public function seeker()
     {
         return $this->hasOne(Seeker::class);
-
     }
+    public function chats(){
+        return $this->hasMany(Chat::class);
+    }
+
+
 }
