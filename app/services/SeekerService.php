@@ -5,6 +5,7 @@ namespace App\services;
 
 
 use App\Http\Controllers\responseTrait;
+use App\Http\Controllers\UserController;
 use App\Models\Seeker;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -21,16 +22,12 @@ class SeekerService
         $image,
         $skills,
         $certificates,
-        $about){
+        $about) {
 
-        $seeker_image = null;
-        if ($image && $image->isValid()) {
-            $filenameWithExt = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('seeker/profile'), $filenameWithExt);
-            $seeker_image = 'seeker/profile/' . $filenameWithExt;
-        }
+            $user_controller = new UserController();
+            $seeker_image = $user_controller->storeImage($image);
 
-         Seeker::create([
+        Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
             'last_name' => $last_name,
