@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
+use App\Http\Requests\postRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,5 +57,7 @@ Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix
     Route::post('create', 'create');
     Route::post('update','update');
 });
-Route::post('mes/{chat_id}/{id}',[ChatController::class,'sendMessage'])->middleware('auth:sanctum');
-Route::get('chats',[ChatController::class,'chats'])->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->controller(postRequest::class)->group(function () {
+    Route::post('create', 'create');
+
+});
