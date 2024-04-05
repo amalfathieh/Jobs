@@ -32,5 +32,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Seeker::class);
     }
-
+    public function company()
+    {
+        return $this->hasOne(Company::class);
+    }
 }

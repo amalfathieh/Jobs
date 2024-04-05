@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class SeekerRequest extends FormRequest
+class OpportunityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,14 +26,16 @@ class SeekerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'=>'required|string',
-            'last_name'=>'required|string',
-            'birth_day'=>'required',
-            'location'=>'string|required',
-            'image'=>'image',
-            'skills'=>'required',
-            'certificates'=>'required',
-            'about'=>'required'
+            'title' => 'required',
+            'body' => 'required',
+            'file' => 'required|file',
+            'location' => 'required',
+            'job_type' => 'required|in:full-time, part-time, contract, temporary, volunteer',
+            'work-place_type' => 'required|in:on-site, hybrid, remote',
+            'job_hours' => 'required',
+            'qualifications' => 'required',
+            'skills_req' => 'required',
+            'salary' => 'required'
         ];
     }
 

@@ -16,7 +16,7 @@ class SeekerController extends Controller
     public function create(SeekerRequest $request, SeekerService $service)
     {
         try {
-            $this->authorize('isJobSeeker');
+            //$this->authorize('isJobSeeker');
             $image = $request->file('image');
             $service->createSeeker(
                 $request->first_name,
@@ -36,14 +36,16 @@ class SeekerController extends Controller
         }
     }
 
-    public function update(SeekerRequest $request){
+    public function update(Request $request ,SeekerService $seekerService){
         try {
-            $id = Auth::user()->id;
-            $seeker = Seeker::where('user_id', $id)->first();
-            $seeker->update($request->all());
+            $this->authorize('isJobSeeker');
+            $seekerService->update($request);
             return $this->apiResponse(null, 'profile updated successfully', 201);
+
+        }catch (AuthorizationException $authExp) {
+            return $this->apiResponse(null, $authExp->getMessage(), 401);
         }catch (\Exception $ex) {
-            return $this->apiResponse(null, $ex->getMessage(), 500);
-        }
+                return $this->apiResponse(null, $ex->getMessage(), 500);
+             }
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class SeekerRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,14 +26,9 @@ class SeekerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'=>'required|string',
-            'last_name'=>'required|string',
-            'birth_day'=>'required',
-            'location'=>'string|required',
-            'image'=>'image',
-            'skills'=>'required',
-            'certificates'=>'required',
-            'about'=>'required'
+            'code' => 'required|string|exists:reset_code_passwords',
+            'password' => 'required|string|min:6|confirmed',
+            'password_confirmation' => 'required|string|min:6|same:password'
         ];
     }
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\responseTrait;
-use App\Http\Requests\registerRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Mail\ForgotPassword;
 use App\Mail\VerificationCodeMail;
 use App\Models\ResetCodePassword;
@@ -11,36 +13,16 @@ use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
-
 class UserController extends Controller
 {
     use responseTrait;
 
     //REGISTER METHOD -POST
-    public function register(registerRequest $request)
+    public function register(RegisterRequest $request)
     {
-
-        $validate = Validator::make($request->all(), [
-            'user_name' => 'required|unique:users,user_name',
-            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-            ],
-            'role' => 'required|in:company,job_seeker',
-        ]);
-
-        if ($validate->fails()) {
-            return $this->apiResponse(null, $validate->errors(), 400);
-        }
 
         // Delete all old code that user send before.
         VerificationCode::where('email', $request->email)->delete();
@@ -81,13 +63,9 @@ class UserController extends Controller
         VerificationCode::where('code', $ver_code->code)->delete();
         return $this->apiResponse($data, 'user create successfully', 200);
     }
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
 
-        $request->validate([
-            'login' => 'required|string',
-            'password' => 'required|string',
-        ]);
         $login = $request->input('login');
         $password =  $request->input('password');
 
@@ -183,17 +161,8 @@ class UserController extends Controller
         return $this->apiResponse(null, 'code is correct', 200);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $validate = Validator::make($request->all(), [
-            'code' => 'required|string|exists:reset_code_passwords',
-            'password' => 'required|string|min:6|confirmed',
-            'password_confirmation' => 'required|string|min:6|same:password'
-        ]);
-
-        if ($validate->fails()) {
-            return $this->apiResponse([], $validate->errors(), 400);
-        }
         if ($request->password != $request->password_confirmation)
             return $this->apiResponse([], 'The password confirmation does not match.please re-enter it correctly.', 400);
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);

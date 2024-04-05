@@ -48,7 +48,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
     Route::post('create', 'createCompany');
-
+    Route::post('update','update');
     Route::post('addOpportunity', 'addOpportunity');
 
 });

@@ -2,37 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use App\Models\User;
+use App\services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Auth\Access\AuthorizationException;
 
 class CompanyController extends Controller
 {
     use responseTrait;
-    public function createCompany(Request $request)
+    public function createCompany(CompanyRequest $request, FileService $fileService)
     {
         try {
             $this->authorize('isCompany');
-            $validate = Validator::make($request->all(), [
-                'company_name' => 'required|string',
-                'logo' => 'image',
-                'location' => 'required',
-                'about' => 'required',
-                'contact_info' => 'required'
-            ]);
-
-            if ($validate->fails()) {
-                return $this->apiResponse(null, $validate->errors(), 400);
-            }
-
             $user = User::where('id', Auth::user()->id)->first();
-            $logo = Str::random(3) . 'Profile.' . $request->logo->getClientOriginalExtension();
 
+            $logo_file = $request->file('logo');
+            $logo = $fileService->store($logo_file,'company');
             Company::create([
                 'user_id' => $user->id,
                 'company_name' => $request->company_name,
@@ -41,7 +29,6 @@ class CompanyController extends Controller
                 'about' => $request->about,
                 'contact_info' => $request->contact_info
             ]);
-            Storage::disk('public')->put("company/" . $logo, file_get_contents($request->logo));
             return $this->apiResponse(null, 'success',  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
@@ -50,20 +37,27 @@ class CompanyController extends Controller
         }
     }
 
-    public function addOpportunity(Request $request) {
+    public function update(Request $request , FileService $fileService) {
         try {
-            $validate = Validator::make($request->all(), [
-                'title' => 'required',
-                'body' => 'required',
-                'file' => 'required|file',
-                'location' => 'required',
-                'job_type' => 'required|in:full-time, part-time, contract, temporary, volunteer',
-                'work-place_type' => 'required|in:on-site, hybrid, remote',
-                'job_hours' => 'required',
-                'qualifications' => 'required',
-                'skills_req' => 'required',
-                'salary' => 'required'
+            $this->authorize('isCompany');
+            $user = User::where('id', Auth::user()->id)->first();
+
+            $logo_file = $request->file('logo');
+            $company = $user->company;
+            $old_file = $company['logo'];
+            if ($request->hasFile('logo') && $logo_file != '') {
+                $logo = $fileService->update($logo_file, $old_file, 'company');
+            }
+            $company->update([
+                'company_name' => $request->company_name ?? $company['company_name'],
+                'logo' => $logo ?? $company['logo'],
+                'location' => $request->location ?? $company['location'],
+                'about' => $request->about ?? $company['about'],
+                'contact_info' => $request->contact_info ?? $company['contact_info']
             ]);
+            return $this->apiResponse(null, 'success',  201);
+        } catch (AuthorizationException $authExp) {
+            return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
         }
