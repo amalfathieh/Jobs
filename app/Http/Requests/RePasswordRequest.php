@@ -2,14 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Controllers\responseTrait;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
 
-class SeekerRequest extends FormRequest
+
+class RePasswordRequest extends FormRequest
 {
+    use responseTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -26,14 +30,15 @@ class SeekerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'=>'required|string',
-            'last_name'=>'required|string',
-            'birth_day'=>'required',
-            'location'=>'string|required',
-            'image'=>'image',
-            'skills'=>'required',
-            'certificates'=>'required',
-            'about'=>'required'
+            'code' => 'required|string|exists:reset_code_passwords',
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+            ],
+            'password_confirmation' => 'required|same:password'
         ];
     }
 

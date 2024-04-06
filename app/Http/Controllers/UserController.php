@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\responseTrait;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\RePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Jobs\ForgotPasswordJob;
 use App\Jobs\MailJob;
-use App\Mail\ForgotPassword;
-use App\Mail\VerificationCodeMail;
 use App\Models\ResetCodePassword;
 use App\Models\User;
 use App\Models\VerificationCode;
@@ -119,14 +118,28 @@ class UserController extends Controller
         }
     }
 
-    // Reset Password
+    public function resetPassword(ResetPasswordRequest $request) {
+
+        $user = User::where('id', Auth::user()->id)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return $this->apiResponse([], 'password has been successfully reset', 200);
+    }
+
+
+    // Reset Password When user forgot his password
 
     public function sendCode(Request $request)
     {
         try {
-            $data = $request->validate([
-                'email' => 'required|email|exists:users',
+            $validate = Validator::make($request->all(), [
+                'email' => 'required|email:rfc,dns|exists:users',
             ]);
+
+            if ($validate->fails()) {
+                return $this->apiResponse(null, $validate->errors(), 422);
+            }
 
             $user = User::where('email', $request->email)->first();
             if (!$user->is_verified) {
@@ -135,11 +148,12 @@ class UserController extends Controller
 
             ResetCodePassword::where('email', $request->email)->delete();
 
+            $data['email'] = $user->email;
             $data['code'] = mt_rand(100000, 999999);
 
             $codeData = ResetCodePassword::create($data);
 
-            ForgotPasswordJob::dispatch($request->email, $request->code);
+            ForgotPasswordJob::dispatch($data['email'], $data['code']);
 
             return $this->apiResponse([], 'We sent code to your email. Check your email please', 200);
         } catch (\Exception $ex) {
@@ -149,7 +163,7 @@ class UserController extends Controller
 
     public function checkCode(Request $request) {
         $validate = Validator::make($request->all(),[
-            'code' => ['required', 'string', 'exists:reset_code_passwords'],
+            'code' => ['required', 'integer', 'exists:reset_code_passwords'],
         ]);
         if ($validate->fails()) {
             return $this->apiResponse(null, $validate->errors(), 400);
@@ -164,10 +178,9 @@ class UserController extends Controller
         return $this->apiResponse(null, 'code is correct', 200);
     }
 
-    public function resetPassword(ResetPasswordRequest $request)
+    public function rePassword(RePasswordRequest $request)
     {
-        if ($request->password != $request->password_confirmation)
-            return $this->apiResponse([], 'The password confirmation does not match.please re-enter it correctly.', 400);
+
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
 
         if ($passwordReset->created_at->addHour() < now()) {

@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
+
 class RegisterRequest extends FormRequest
 {
     use responseTrait;

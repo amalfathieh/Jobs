@@ -2,14 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Controllers\responseTrait;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
 
 class ResetPasswordRequest extends FormRequest
 {
+    use responseTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -26,9 +29,14 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|exists:reset_code_passwords',
-            'password' => 'required|string|min:6|confirmed',
-            'password_confirmation' => 'required|string|min:6|same:password'
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+            ],
+            'password_confirmation' => 'required|same:password'
         ];
     }
 
@@ -37,7 +45,7 @@ class ResetPasswordRequest extends FormRequest
         $errors = (new ValidationException($validator))->errors();
 
         throw new HttpResponseException(
-            response()->json(['errors' => $errors, 'status' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            $this->apiResponse(null, $errors, JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
 }

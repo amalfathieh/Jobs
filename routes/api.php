@@ -31,19 +31,24 @@ Route::controller(UserController::class)->group(function () {
 
     Route::post('login', 'login');
 
-    Route::get('logout', 'logout')->middleware('auth:sanctum');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('logout', 'logout');
 
-    Route::delete('delete', 'delete')->middleware('auth:sanctum');
+        Route::post('resetPassword', 'resetPassword');
+
+        Route::delete('delete', 'delete');
+    });
+
 
     // Verify
     Route::post('verifyAccount', 'verifyAccount');
 
-    //       For Reset Password
+    //       For Reset Password If user forgot his password
     Route::post('checkCode', 'checkCode');
 
     Route::post('forgotPassword', 'sendCode');
 
-    Route::post('resetPassword', 'resetPassword');
+    Route::post('rePassword', 'rePassword');
 });
 
 Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
