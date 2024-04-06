@@ -196,27 +196,4 @@ class UserController extends Controller
         }
         return $this->apiResponse(null, "Something went wrong", 500);
     }
-
-    //               Store image and file
-    public function storeImage($image) {
-        $role = Auth::user()->role;
-        $imagePath = null;
-        if ($image && $image->isValid()) {
-            $filenameWithExt = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path(`images/`. $role), $filenameWithExt);
-            $imagePath = `images/`. $role . '/' . $filenameWithExt;
-        }
-        return $imagePath;
-    }
-
-    public function storeFile($file) {
-        $role = Auth::user()->role;
-        $filePath = null;
-        if ($file && $file->isValid()) {
-            $filenameWithExt = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path(`files/`. $role), $filenameWithExt);
-            $filePath = `files/`. $role . '/' . $filenameWithExt;
-        }
-        return $filePath;
-    }
 }

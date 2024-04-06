@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
+use App\Http\Requests\postRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,7 +48,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
     Route::post('create', 'createCompany');
-
+    Route::post('update','update');
     Route::post('addOpportunity', 'addOpportunity');
 
 });
@@ -55,4 +56,8 @@ Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefi
 Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
     Route::post('create', 'create');
     Route::post('update','update');
+});
+Route::middleware(['auth:sanctum'])->controller(postRequest::class)->group(function () {
+    Route::post('create', 'create');
+
 });

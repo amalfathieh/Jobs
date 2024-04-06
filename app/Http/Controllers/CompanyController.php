@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use App\Models\User;
+use App\services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -12,16 +13,14 @@ use Illuminate\Auth\Access\AuthorizationException;
 class CompanyController extends Controller
 {
     use responseTrait;
-    public function createCompany(CompanyRequest $request)
+    public function createCompany(CompanyRequest $request, FileService $fileService)
     {
         try {
             $this->authorize('isCompany');
             $user = User::where('id', Auth::user()->id)->first();
 
             $logo_file = $request->file('logo');
-            $user_controller = new UserController();
-            $logo = $user_controller->storeImage($logo_file);
-
+            $logo = $fileService->store($logo_file,'company');
             Company::create([
                 'user_id' => $user->id,
                 'company_name' => $request->company_name,
@@ -38,21 +37,23 @@ class CompanyController extends Controller
         }
     }
 
-    public function update(Request $request) {
+    public function update(Request $request , FileService $fileService) {
         try {
             $this->authorize('isCompany');
             $user = User::where('id', Auth::user()->id)->first();
 
             $logo_file = $request->file('logo');
-            $user_controller = new UserController();
-            $logo = $user_controller->storeImage($logo_file);
-
-            Company::where('user_id', $user->id)->update([
-                'company_name' => $request->company_name,
-                'logo' => $logo,
-                'location' => $request->location,
-                'about' => $request->about,
-                'contact_info' => $request->contact_info
+            $company = $user->company;
+            $old_file = $company['logo'];
+            if ($request->hasFile('logo') && $logo_file != '') {
+                $logo = $fileService->update($logo_file, $old_file, 'company');
+            }
+            $company->update([
+                'company_name' => $request->company_name ?? $company['company_name'],
+                'logo' => $logo ?? $company['logo'],
+                'location' => $request->location ?? $company['location'],
+                'about' => $request->about ?? $company['about'],
+                'contact_info' => $request->contact_info ?? $company['contact_info']
             ]);
             return $this->apiResponse(null, 'success',  201);
         } catch (AuthorizationException $authExp) {
