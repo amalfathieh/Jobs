@@ -6,6 +6,8 @@ use App\Http\Controllers\responseTrait;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Jobs\ForgotPasswordJob;
+use App\Jobs\MailJob;
 use App\Mail\ForgotPassword;
 use App\Mail\VerificationCodeMail;
 use App\Models\ResetCodePassword;
@@ -36,7 +38,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request['role'],
         ]);
-        Mail::to($request->email)->send(new VerificationCodeMail($codeData->code));
+        MailJob::dispatch($request->email, $request->code);
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
 
@@ -71,7 +73,7 @@ class UserController extends Controller
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
-        if (!Auth::attempt([$fieldType => $login, 'password' => $request['password']])) {
+        if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
             $message = 'Email & password does not match with our record.';
             return $this->apiResponse([], $message, 401);
         }
@@ -79,6 +81,7 @@ class UserController extends Controller
         $user = User::where($fieldType, $login)->first();
 
         if ($user->is_verified) {
+            $user->tokens()->delete();
             $token = $user->createToken("API TOKEN")->plainTextToken;
             $data['user'] = $user;
             $data['token'] = $token;
@@ -109,7 +112,7 @@ class UserController extends Controller
             $data['email'] = $request->email;
             $data['code'] = mt_rand(100000, 999999);
             $codeData = VerificationCode::create($data);
-            Mail::to($request->email)->send(new VerificationCodeMail($codeData->code));
+            MailJob::dispatch($request->email, $request->code);
             return $this->apiResponse([], 'Verification Code sent to your email', 200);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
@@ -136,7 +139,7 @@ class UserController extends Controller
 
             $codeData = ResetCodePassword::create($data);
 
-            Mail::to($request->email)->send(new ForgotPassword($codeData->code));
+            ForgotPasswordJob::dispatch($request->email, $request->code);
 
             return $this->apiResponse([], 'We sent code to your email. Check your email please', 200);
         } catch (\Exception $ex) {

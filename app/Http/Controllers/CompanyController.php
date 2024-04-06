@@ -25,11 +25,11 @@ class CompanyController extends Controller
             Company::create([
                 'user_id' => $user->id,
                 'company_name' => $request->company_name,
-                'logo' => $logo,
                 'location' => $request->location,
                 'about' => $request->about,
                 'contact_info' => $request->contact_info
             ]);
+            Company::where('user_id', $user->id)->update(['logo' => $logo]);
             return $this->apiResponse(null, 'success',  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
