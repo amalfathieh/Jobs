@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
@@ -32,7 +34,11 @@ Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::put('update', 'update');
+
         Route::get('logout', 'logout');
+
+        Route::post('checkPassword', 'checkPassword');
 
         Route::post('resetPassword', 'resetPassword');
 
@@ -65,4 +71,10 @@ Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix
 Route::middleware(['auth:sanctum'])->controller(postRequest::class)->group(function () {
     Route::post('create', 'create');
 
+});
+
+// Admin Routes
+Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix('admin')->group(function (){
+    Route::delete('removeUser', 'removeUser');
+    Route::delete('removePost', 'removePost');
 });

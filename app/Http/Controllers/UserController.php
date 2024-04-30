@@ -199,6 +199,23 @@ class UserController extends Controller
         return $this->apiResponse([], 'password has been successfully reset', 200);
     }
 
+    public function checkPassword(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        return password_verify($request->password, $user->password)?
+            $this->apiResponse(null, 'Password is correct', 200):
+
+            $this->apiResponse(null, 'Password is incorrect', 401);
+    }
+
+    public function update(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        if ($user->update($request->all())){
+
+            return $this->apiResponse($user, 'Updated Successfully', 200);
+        }
+        return $this->apiResponse(null, 'Something went wrong', 500);
+    }
+
     // Delete Account
     public function delete() {
         $user = User::where('id', Auth::user()->id)->first();
