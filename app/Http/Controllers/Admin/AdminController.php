@@ -35,4 +35,8 @@ class AdminController extends Controller
         }
         return $this->apiResponse(null, 'You are not allowed to remove post', 403);
     }
+
+    public function addEmployee(Request $request) {
+
+    }
 }

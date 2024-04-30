@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('user_name')->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['company', 'job_seeker', 'admin']);
-            $table->enum('gender', ['male', 'female', 'none']);
+            $table->enum('role', ['company', 'job_seeker', 'admin', 'employee']);
             $table->boolean('is_verified')->default(false);
             $table->rememberToken();
             $table->timestamps();

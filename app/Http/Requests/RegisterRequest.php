@@ -38,7 +38,7 @@ class RegisterRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
             ],
-            'role' => 'required|in:company,job_seeker,admin',
+            'role' => 'required|in:company, job_seeker, admin, employee',
         ];
     }
 

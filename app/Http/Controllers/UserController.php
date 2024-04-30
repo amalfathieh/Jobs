@@ -60,7 +60,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['token'] = $token;
         $user->update(['is_verified' => true]);
-        $user->is_verified = true;
+        // $user->is_verified = true;
         VerificationCode::where('code', $ver_code->code)->delete();
         return $this->apiResponse($data, 'user create successfully', 200);
     }

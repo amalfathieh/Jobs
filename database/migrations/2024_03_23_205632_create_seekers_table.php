@@ -19,6 +19,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
             $table->string('first_name');
             $table->string('last_name');
+            $table->enum('gender', ['male', 'female'])->default(null);
             $table->date('birth_day');
             $table->string('location');
             $table->string('image')->nullable();

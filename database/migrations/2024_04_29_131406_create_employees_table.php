@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('first_name');
+            $table->string('middle_name');
+            $table->string('last_name');
+            $table->enum('gender', ['male', 'female'])->default(null);
+            $table->string('phone');
+            $table->string('image')->nullable();
+            $table->date('starting_date');
+            $table->foreignId('job_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
