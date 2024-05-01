@@ -60,7 +60,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['token'] = $token;
         $user->update(['is_verified' => true]);
-        $user->is_verified = true;
+        // $user->is_verified = true;
         VerificationCode::where('code', $ver_code->code)->delete();
         return $this->apiResponse($data, 'user create successfully', 200);
     }
@@ -197,6 +197,23 @@ class UserController extends Controller
         $passwordReset->delete();
 
         return $this->apiResponse([], 'password has been successfully reset', 200);
+    }
+
+    public function checkPassword(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        return password_verify($request->password, $user->password)?
+            $this->apiResponse(null, 'Password is correct', 200):
+
+            $this->apiResponse(null, 'Password is incorrect', 401);
+    }
+
+    public function update(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        if ($user->update($request->all())){
+
+            return $this->apiResponse($user, 'Updated Successfully', 200);
+        }
+        return $this->apiResponse(null, 'Something went wrong', 500);
     }
 
     // Delete Account

@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seekers', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('first_name');
+            $table->string('middle_name');
             $table->string('last_name');
             $table->enum('gender', ['male', 'female'])->default(null);
-            $table->date('birth_day');
-            $table->string('location');
+            $table->string('phone');
             $table->string('image')->nullable();
-            $table->text('skills');
-            $table->text('certificates');
-            $table->text('about');
+            $table->date('starting_date');
+            $table->foreignId('job_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -35,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seekers');
+        Schema::dropIfExists('employees');
     }
 };

@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserDashboardController;
 use App\Http\Requests\postRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,7 +32,11 @@ Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::put('update', 'update');
+
         Route::get('logout', 'logout');
+
+        Route::post('checkPassword', 'checkPassword');
 
         Route::post('resetPassword', 'resetPassword');
 
@@ -73,4 +74,10 @@ Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(fu
     Route::post('create', 'sendMessage');
     Route::post('displaysChats', 'allChats');
     Route::get('displayMessages/{chat_id}','shawAllMessages');
+});
+
+// Admin Routes
+Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix('admin')->group(function (){
+    Route::delete('removeUser', 'removeUser');
+    Route::delete('removePost', 'removePost');
 });

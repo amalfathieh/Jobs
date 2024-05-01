@@ -33,5 +33,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('isVerified', function ($user) {
             return $user->is_verified === 1;
         });
+
+        Gate::define('isAdmin', function ($user) {
+            return $user->role === 'admin';
+        });
     }
 }

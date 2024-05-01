@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('job_titles', function (Blueprint $table) {
             $table->id();
-            $table->string('user_name')->unique();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['company', 'job_seeker', 'admin', 'employee']);
-            $table->boolean('is_verified')->default(false);
-            $table->rememberToken();
+            $table->string('title');
+            $table->foreignId('permission_id')->constrained('permissions')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('job_titles');
     }
 };
