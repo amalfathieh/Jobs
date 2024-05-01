@@ -19,6 +19,13 @@ class Chat extends Model
     public function messages(){
         return $this->hasMany(Message::class);
     }
+    public function lastMessage(){
+        return $this->hasOne(Message::class,'chat_id')->latest()->first()->message;
+    }
+
+    public function lastTimeMessage(){
+        return $this->hasOne(Message::class,'chat_id')->latest()->first()->created_at->toDateTimeString();
+    }
 
     public function users(){
         return $this->belongsToMany(User::class,'chat_user_pivot');

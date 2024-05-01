@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ChatEvent;
+use App\Http\Requests\MessageRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Chat;
 use App\Models\chat_user_pivot;
@@ -16,13 +17,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
+    use responseTrait;
     //
-    public function sendMessage($OtherUserId , $chat_id,Request $request){
-        if($chat_id == null ){
+    public function sendMessage( MessageRequest $request){
+        if($request['chat_id'] == null ){
             //create chat
             $chat = Chat::create([
                 'user1_id'=>Auth::user()->id,
-                'user2_id'=>$OtherUserId,
+                'user2_id'=>$request['otherUserId'],
             ]);
             chat_user_pivot::create([
                 'chat_id'=>$chat->id,
@@ -30,10 +32,11 @@ class ChatController extends Controller
             ]);
         }
         //send message
-        $data['chat_id'] = $chat_id == null ? $chat->id:$chat_id;
+        $data['chat_id'] = $request['chat_id'] != null ? $request['chat_id'] : $chat->id ;
         $data['sender_id'] = Auth::user()->id;
         $data['message'] =$request->message;
         Message::create($data);
+        return $this->apiResponse(null,'success',201);
     }
 
 
@@ -56,8 +59,8 @@ class ChatController extends Controller
                     'chat_id'=>$chat->id,
                     'other_user_name'=>null,
                     'image'=>null,
-                    'last_message' => $chat->Messages()->latest()->first()->message,//last message
-                    'last_message_time'=>$chat->Messages()->latest()->first()->created_at->toDateTimeString(),
+                    'last_message' => $chat->lastMessage(),
+                    'last_message_time'=>$chat->lastTimeMessage(),
                 ];
                 $user=User::find($otherUser) ;
                 if($user->role == 'company'){

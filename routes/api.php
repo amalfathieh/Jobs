@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserDashboardController;
 use App\Http\Requests\postRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -69,7 +70,7 @@ Route::middleware(['auth:sanctum'])->controller(PostController::class)->group(fu
 
 });
 Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(function () {
-    Route::post('create/{user_id}/{chat_id}', 'sendMessage');
+    Route::post('create', 'sendMessage');
     Route::post('displaysChats', 'allChats');
     Route::get('displayMessages/{chat_id}','shawAllMessages');
 });
