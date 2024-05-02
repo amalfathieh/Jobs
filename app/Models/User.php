@@ -37,14 +37,18 @@ class User extends Authenticatable
         return $this->hasOne(Company::class);
     }
 
-//    public function messages(){
-//        return $this->hasMany(Message::class,'sender_id');
-//    }
     public function chats(){
         return $this->belongsToMany(Chat::class,'chat_user_pivot','user_id','chat_id');
     }
     public function employee()
     {
         return $this->hasOne(Employee::class);
+    }
+
+    public function followers(){
+        return $this->belongsToMany(User::class,'followers' , 'follower_id','followee_id')->withTimestamps();
+    }
+    public function followings(){
+        return $this->belongsToMany(User::class,'followers' , 'followee_id' , 'follower_id')->withTimestamps();
     }
 }

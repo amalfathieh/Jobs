@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\postRequest;
@@ -80,4 +84,12 @@ Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(fu
 Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix('admin')->group(function (){
     Route::delete('removeUser', 'removeUser');
     Route::delete('removePost', 'removePost');
+});
+
+Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(function () {
+    Route::get('follow/{user_id}', 'followUser');
+    Route::get('unFollow/{user_id}', 'unFollowUser');
+    Route::get('followers/{user_id}','showFollowers');
+    Route::get('followings/{user_id}','showFollowings');
+
 });
