@@ -10,8 +10,7 @@ class JobTitle extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'permission_id'
+        'title'
     ];
 
     public function employees() {
@@ -19,6 +18,6 @@ class JobTitle extends Model
     }
 
     public function permissions(){
-        return $this->hasMany(Permission::class, 'id', 'permission_id');
+        return $this->belongsToMany(Permission::class);
     }
 }

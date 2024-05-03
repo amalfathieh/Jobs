@@ -12,8 +12,9 @@ class Permission extends Model
     protected $fillable = [
         'title',
     ];
+    public $timestamps = false;
 
     public function job_titles() {
-        return $this->belongsToMany(Permission::class);
+        return $this->belongsToMany(JobTitle::class);
     }
 }

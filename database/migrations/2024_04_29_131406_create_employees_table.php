@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('image')->nullable();
             $table->date('starting_date');
-            $table->foreignId('job_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('job_id')->constrained('jobs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

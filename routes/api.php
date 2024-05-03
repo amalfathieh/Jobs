@@ -77,4 +77,7 @@ Route::middleware(['auth:sanctum'])->controller(postRequest::class)->group(funct
 Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix('admin')->group(function (){
     Route::delete('removeUser', 'removeUser');
     Route::delete('removePost', 'removePost');
+
+    Route::post('addJob', 'addJob');
+    Route::post('addPermission', 'addPermission');
 });

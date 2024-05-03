@@ -6,13 +6,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "barryvdh/laravel-dompdf": "*",
+        "barryvdh/laravel-dompdf": "^2.1",
         "carlos-meneses/laravel-mpdf": "*",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
-        "mpdf/mpdf": "*"
+        "mpdf/mpdf": "*",
+        "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

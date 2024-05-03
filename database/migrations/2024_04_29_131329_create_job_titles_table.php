@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('job_titles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('permission_id')->constrained('permissions')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
