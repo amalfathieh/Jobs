@@ -118,6 +118,14 @@ class UserController extends Controller
         }
     }
 
+    public function checkPassword(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        return password_verify($request->password, $user->password)?
+            $this->apiResponse(null, 'Password is correct', 200):
+
+            $this->apiResponse(null, 'Password is incorrect', 401);
+    }
+
     public function resetPassword(ResetPasswordRequest $request) {
 
         $user = User::where('id', Auth::user()->id)->first();
@@ -199,13 +207,6 @@ class UserController extends Controller
         return $this->apiResponse([], 'password has been successfully reset', 200);
     }
 
-    public function checkPassword(Request $request) {
-        $user = User::where('id', Auth::user()->id)->first();
-        return password_verify($request->password, $user->password)?
-            $this->apiResponse(null, 'Password is correct', 200):
-
-            $this->apiResponse(null, 'Password is incorrect', 401);
-    }
 
     public function update(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();

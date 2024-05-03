@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\postRequest;
@@ -68,9 +70,14 @@ Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix
     Route::post('create', 'create');
     Route::post('update','update');
 });
-Route::middleware(['auth:sanctum'])->controller(postRequest::class)->group(function () {
+Route::middleware(['auth:sanctum'])->controller(PostController::class)->group(function () {
     Route::post('create', 'create');
 
+});
+Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(function () {
+    Route::post('create', 'sendMessage');
+    Route::post('displaysChats', 'allChats');
+    Route::get('displayMessages/{chat_id}','shawAllMessages');
 });
 
 // Admin Routes
@@ -80,4 +87,12 @@ Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix(
 
     Route::post('addJob', 'addJob');
     Route::post('addPermission', 'addPermission');
+});
+
+Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(function () {
+    Route::get('follow/{user_id}', 'followUser');
+    Route::get('unFollow/{user_id}', 'unFollowUser');
+    Route::get('followers/{user_id}','showFollowers');
+    Route::get('followings/{user_id}','showFollowings');
+
 });
