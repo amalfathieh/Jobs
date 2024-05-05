@@ -69,6 +69,8 @@ Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefi
 Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
     Route::post('create', 'create');
     Route::post('update','update');
+
+    Route::get('createCV', 'createCV');
 });
 Route::middleware(['auth:sanctum'])->controller(PostController::class)->group(function () {
     Route::post('create', 'create');
@@ -87,6 +89,12 @@ Route::controller(AdminController::class)->middleware(['auth:sanctum'])->prefix(
 
     Route::post('addJob', 'addJob');
     Route::post('addPermission', 'addPermission');
+
+    Route::get('getAllUsers', 'allUsers');
+
+    Route::get('getAllSeekers', 'allSeekers');
+    Route::get('getAllCompanies', 'allCompanies');
+    Route::get('getAllEmployees', 'allEmployees');
 });
 
 Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(function () {

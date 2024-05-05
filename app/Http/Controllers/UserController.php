@@ -13,6 +13,7 @@ use App\Models\ResetCodePassword;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -64,6 +65,7 @@ class UserController extends Controller
         VerificationCode::where('code', $ver_code->code)->delete();
         return $this->apiResponse($data, 'user create successfully', 200);
     }
+
     public function login(LoginRequest $request)
     {
 

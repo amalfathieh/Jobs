@@ -31,21 +31,17 @@ class SeekerService
         $certificates,
         $about) {
 
-//            $user_controller = new UserController();
-//            $seeker_image = $user_controller->storeImage($image);
-        $seeker_image = $this->fileService->store($image,'job_seeker');
         Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'birth_day' => $birth_day,
             'location' => $location,
-            'image' => $seeker_image,
+            'image' => $image,
             'skills' => $skills,
             'certificates' => $certificates,
             'about' => $about
         ]);
-
     }
     public function update( $request ){
         $seeker_image = null;
@@ -60,7 +56,7 @@ class SeekerService
             'last_name' =>$request['last_name'] ?? $seeker['last_name'],
             'birth_day' =>$request['birth_day'] ?? $seeker['birth_day'],
             'location' =>$request['location'] ?? $seeker['location'],
-             'image' =>$seeker_image ?? $seeker['image'],
+            'image' =>$seeker_image ?? $seeker['image'],
             'skills' =>$request['skills'] ?? $seeker['skills'],
             'certificates'=>$request['certificates'] ?? $seeker['certificates'],
             'about' =>$request['about'] ?? $seeker['about']

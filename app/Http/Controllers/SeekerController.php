@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SeekerRequest;
 use App\Models\Seeker;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\User;
 use App\services\SeekerService;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -46,6 +48,14 @@ class SeekerController extends Controller
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         }catch (\Exception $ex) {
                 return $this->apiResponse(null, $ex->getMessage(), 500);
-             }
+        }
+    }
+
+    public function createCV(Request $request) {
+        $user = User::where('id', Auth::user()->id)->first();
+        $info = Seeker::where('user_id', $user->id)->first();
+        $data = $request->all();
+        $pdf = Pdf::loadView('pdf.pdf', compact('data'));
+        return $pdf->download('cv.pdf');
     }
 }
