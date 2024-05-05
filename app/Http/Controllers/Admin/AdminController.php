@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\responseTrait;
+use App\Http\Resources\UserResource;
 use App\Models\JobTitle;
 use App\Models\Permission;
 use App\Models\Post;
 use App\Models\User;
-use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -82,4 +83,25 @@ class AdminController extends Controller
         }
         return $this->apiResponse(null, 'Added successfully', 200);
     }
+
+    public function allUsers() {
+        return $this->apiResponse(UserResource::collection(User::all()), 'Success', 200);
+    }
+
+    public function allSeekers() {
+        $seekers = User::where('role', 'job_seeker')->get();
+        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
+    }
+
+    public function allCompanies() {
+        $seekers = User::where('role', 'company')->get();
+        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
+    }
+
+    public function allEmployees() {
+        $seekers = User::where('role', 'employee')->get();
+        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
+    }
+
+
 }
