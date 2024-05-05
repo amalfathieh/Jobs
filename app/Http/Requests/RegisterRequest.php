@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Controllers\responseTrait;
+use App\Traits\responseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -30,7 +30,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'user_name' => 'required|unique:users,user_name',
-            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => [
                 'required',
                 Password::min(8)
@@ -38,7 +38,7 @@ class RegisterRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
             ],
-            'role' => 'required|in:company, job_seeker,admin,employee',
+            'role' => 'required|in:company,job_seeker,admin,employee',
         ];
     }
 

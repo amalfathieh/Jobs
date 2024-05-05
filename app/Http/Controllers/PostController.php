@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\postRequest;
 use App\Models\Post;
+use App\Traits\responseTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

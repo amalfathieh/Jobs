@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\responseTrait;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RePasswordRequest;
@@ -12,6 +11,8 @@ use App\Jobs\MailJob;
 use App\Models\ResetCodePassword;
 use App\Models\User;
 use App\Models\VerificationCode;
+use App\Traits\responseTrait;
+use App\Traits\NotificationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
-    use responseTrait;
+    use responseTrait,NotificationTrait;
 
     //REGISTER METHOD -POST
     public function register(RegisterRequest $request)
@@ -226,5 +227,20 @@ class UserController extends Controller
             return $this->apiResponse(null, 'Account Deleted Successfully!', 200);
         }
         return $this->apiResponse(null, "Something went wrong", 500);
+    }
+
+
+    public function updateToken(Request $request){
+        $user_id = $request['id'];
+        $fcm_token = $request['fcm_token'];
+        $user = User::findOrFail($user_id);
+        $user->fcm_token = $fcm_token;
+        $user->save();
+
+        return $this->apiResponse('','success',200);
+
+    }
+    public function noti(){
+        return $this->sendPushNotification('test notification','this is new notificatino','');
     }
 }

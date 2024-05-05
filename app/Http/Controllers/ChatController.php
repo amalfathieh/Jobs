@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ChatEvent;
 use App\Http\Requests\MessageRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Chat;
@@ -11,6 +10,7 @@ use App\Models\Company;
 use App\Models\Message;
 use App\Models\Seeker;
 use App\Models\User;
+use App\Traits\responseTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -45,6 +45,8 @@ Route::controller(UserController::class)->group(function () {
         Route::post('resetPassword', 'resetPassword');
 
         Route::delete('delete', 'delete');
+
+        Route::post('fcm-token', 'updateToken');
     });
 
 

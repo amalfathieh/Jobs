@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SeekerRequest;
 use App\Models\Seeker;
 use App\services\SeekerService;
+use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;

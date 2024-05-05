@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\responseTrait;
 use App\Models\JobTitle;
 use App\Models\Permission;
 use App\Models\Post;
 use App\Models\User;
+use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\FollowerResource;
 use App\Models\User;
+use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 
 class FollowController extends Controller
