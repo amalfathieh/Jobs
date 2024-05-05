@@ -47,6 +47,9 @@ Route::controller(UserController::class)->group(function () {
         Route::delete('delete', 'delete');
 
         Route::post('fcm-token', 'updateToken');
+
+        Route::get('test/{token}', 'noti');
+
     });
 
 

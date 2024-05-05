@@ -240,7 +240,7 @@ class UserController extends Controller
         return $this->apiResponse('','success',200);
 
     }
-    public function noti(){
-        return $this->sendPushNotification('test notification','this is new notificatino','');
+    public function noti($token){
+        return $this->sendPushNotification('test notification','this is new notificatino', $token);
     }
 }
