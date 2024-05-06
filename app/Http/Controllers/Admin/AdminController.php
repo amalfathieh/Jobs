@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\responseTrait;
+use App\Traits\responseTrait;
 use App\Http\Resources\UserResource;
 use App\Models\JobTitle;
 use App\Models\Permission;
