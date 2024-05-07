@@ -13,7 +13,7 @@ class PostController extends Controller
 {
     use responseTrait;
 
-    public function create(postRequest $request){
+    public function create(PostRequest $request){
         try {
             $this->authorize('isCompany');
             $id = Auth::user()->id;
