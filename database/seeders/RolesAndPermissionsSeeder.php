@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -19,26 +19,48 @@ class RolesAndPermissionsSeeder extends Seeder
        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
-          'setting create','setting view','setting edit','setting delete',
-          'permission create','permission view','permission edit','permission delete',
-          'role create','role view','role edit','role delete',
-          'employee create','employee view','employee edit','employee delete',
-          'user view','user edit','user delete',
-          'post view','post edit','post delete',
-          'opportunity view','opportunity edit','opportunity delete',
-          'request view','request edit','request delete',
-          'news create','news view','news edit','news delete',
-          'report create','report view','report edit','report delete',
+            'view settings', 'edit setting', 'delete setting',
+            'add role', 'view roles', 'edit role', 'delete role',
+            'add employee', 'view employees', 'edit employee', 'delete employee',
+            'view users', 'edit user', 'delete user', 'block user',
+            'add opportunity', 'view opportunities', 'edit opportunity', 'delete opportunity',
+            'add request', 'view requests', 'edit request', 'delete request',
+            'add news', 'view news', 'edit news', 'delete news',
+            'adminReport create', 'adminReport view', 'adminReport edit', 'adminReport delete',
+            'create userReport', 'view userReports', 'edit userReport', 'delete userReport',
+            'add post', 'edit post', 'view posts', 'delete post',
         ];
 
-        $per = collect($permissions)->map(function ($permission){
-            return [ 'name' => $permission, 'guard_name' => 'web'];
-        });
-        Permission::insert($per->toArray() );
+        foreach ($permissions as $permission) {
+            Permission::create(['name' => $permission]);
+        }
 
-        $adminRole = Role::create(['name'=>'super_admin'])->givePermissionTo($permissions);
-        $account_manager = Role::create(['name'=>'account_manager'])->givePermissionTo([ 'user view','user edit','user delete']);
-        $technical_support_manger = Role::create(['name'=>'technical_support_manger'])->givePermissionTo(['news create','news view','news edit','news delete',
-            'report create','report view','report edit','report delete']);
+        $owner = Role::create(['name' => 'owner'])->givePermissionTo($permissions);
+
+        $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
+            'adminReport create', 'adminReport view', 'adminReport edit', 'adminReport delete',
+            'view settings', 'edit setting', 'delete setting',
+            'add news', 'view news', 'edit news', 'delete news',
+            'view roles',
+            'block user',
+            'view posts', 'delete post',
+        ]);
+
+        $userRole = Role::create(['name' => 'user'])->givePermissionTo([
+            'create userReport'
+        ]);
+
+        $companyRole = Role::create(['name' => 'company'])->givePermissionTo([
+            'add opportunity',
+        ]);
+
+        $jobSeekerRole = Role::create(['name' => 'job_seeker'])->givePermissionTo([
+            'add post',
+            'add request'
+        ]);
+
+        $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
+            'view employees'
+        ]);
     }
 }

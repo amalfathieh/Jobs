@@ -18,9 +18,9 @@ class AdminSeeder extends Seeder
             'user_name'=> 'Admin',
             'email'=> 'admin@gmail.com',
             'password'=>Hash::make('Admin@123'),
-            'role'=> 'admin',
+            'roles_name'=> ['owner'],
             'is_verified'=>1,
         ]);
-        $admin->assignRole('super_admin');
+        $admin->assignRole('owner');
     }
 }

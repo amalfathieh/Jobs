@@ -23,19 +23,24 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('isCompany', function ($user) {
-            return $user->role === 'company';
+            foreach ($user->roles_name as $role) {
+                if ($role === 'company') {
+                    return true;
+                }
+            }
         });
 
         Gate::define('isJobSeeker', function ($user) {
-            return $user->role === 'job_seeker';
+            foreach ($user->roles_name as $role) {
+                if ($role === 'job_seeker') {
+                    return true;
+                }
+            }
         });
 
         Gate::define('isVerified', function ($user) {
             return $user->is_verified === 1;
         });
 
-        Gate::define('isAdmin', function ($user) {
-            return $user->role === 'admin';
-        });
     }
 }

@@ -36,4 +36,9 @@ class PostController extends Controller
         Post::find($id)->delete();
         return $this->apiResponse(null,'post deleted',200);
     }
+
+    public function allPosts(){
+        $posts =Post::all();
+        return $this->apiResponse($posts,'all posts',200);
+    }
 }

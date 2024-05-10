@@ -37,7 +37,7 @@ class UserController extends Controller
             'user_name' => $request['user_name'],
             'email' => $request['email'],
             'password' => Hash::make($request->password),
-            'role' => $request['role'],
+            'roles_name' => ['user', $request['roles_name']],
         ]);
         MailJob::dispatch($request->email, $request->code);
         return $this->apiResponse([], 'Verification Code sent to your email', 200);

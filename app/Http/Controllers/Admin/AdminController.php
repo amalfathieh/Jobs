@@ -45,45 +45,6 @@ class AdminController extends Controller
 
     }
 
-    public function addPermission(Request $request) {
-        $vaildate = Validator::make($request->all(), [
-            'title' => 'required|string'
-        ]);
-
-        if ($vaildate->fails()) {
-            return $this->apiResponse(null, $vaildate->errors(), 400);
-        }
-
-        Permission::create([
-            'title' => $request->title
-        ]);
-        return $this->apiResponse(null, 'Added successfully', 200);
-    }
-
-    public function addJob(Request $request) {
-        $vaildate = Validator::make($request->all(), [
-            'title' => 'required|string|unique:job_titles',
-            'permissions' => 'required|array'
-        ]);
-
-        if ($vaildate->fails()) {
-            return $this->apiResponse(null, $vaildate->errors(), 400);
-        }
-        $permissions = $request->permissions;
-
-        $job_title = JobTitle::create([
-            'title' => $request->title,
-        ]);
-
-        for ($i = 0; $i < sizeof($permissions); $i++) {
-            DB::table('permissions_jobs')->insert([
-                'job_id' => $job_title->id,
-                'permission_id' => $permissions[$i]
-            ]);
-        }
-        return $this->apiResponse(null, 'Added successfully', 200);
-    }
-
     public function allUsers() {
         return $this->apiResponse(UserResource::collection(User::all()), 'Success', 200);
     }

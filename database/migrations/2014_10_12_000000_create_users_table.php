@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('user_name')->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['company', 'job_seeker', 'admin', 'employee']);
+            $table->text('roles_name')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->text('fcm_token')->nullable();
             $table->rememberToken();

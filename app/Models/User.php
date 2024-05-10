@@ -17,7 +17,7 @@ class User extends Authenticatable
         'user_name',
         'email',
         'password',
-        'role',
+        'roles_name',
         'is_verified',
         'fcm_token'
     ];
@@ -29,6 +29,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'roles_name' => 'array'
     ];
     public function seeker()
     {
