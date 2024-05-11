@@ -46,7 +46,14 @@ class AdminController extends Controller
     }
 
     public function allUsers() {
-        return $this->apiResponse(UserResource::collection(User::all()), 'Success', 200);
+        $users = User::all();
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
+        return $this->apiResponse(UserResource::collection($users), 'Success', 200);
     }
 
     public function allSeekers() {
