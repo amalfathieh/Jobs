@@ -30,14 +30,14 @@ class SeekerService
         $skills,
         $certificates,
         $about) {
-
+        $seeker_image = $this->fileService->store($image,'job_seeker');
         Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'birth_day' => $birth_day,
             'location' => $location,
-            'image' => $image,
+            'image' => $seeker_image,
             'skills' => $skills,
             'certificates' => $certificates,
             'about' => $about
