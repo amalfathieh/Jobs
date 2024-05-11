@@ -99,11 +99,12 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
         Route::post('blockUser', 'blockUser')->middleware('can:block user');
 
         Route::middleware('can:view users')->group(function () {
-            Route::get('getAllUsers', 'allUsers');
 
-            Route::get('getAllSeekers', 'allSeekers');
-            Route::get('getAllCompanies', 'allCompanies');
-            Route::get('getAllEmployees', 'allEmployees');
+            Route::get('getUsers/{type}', 'getUsers')->middleware('can:view users');
+
+            Route::post('addEmployee','addEmployee')->middleware('can:add employee');
+
+            Route::get('search/{user}','searchByUsernameOrEmail')->middleware('can:view users');
         });
     });
 

@@ -2,11 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Traits\responseTrait;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use responseTrait;
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -41,8 +44,11 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (AccessDeniedHttpException $e, $request) {
+            return $this->apiResponse(null,
+                'You do not have the required authorization.',
+                403
+            );
         });
     }
 }

@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('middle_name');
             $table->string('last_name');
             $table->enum('gender', ['male', 'female'])->default(null);
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->string('image')->nullable();
-            $table->date('starting_date');
-            $table->foreignId('job_id')->constrained('jobs')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean('is_change_password')->default(false);
             $table->timestamps();
         });
     }

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmployeeRequest;
+use App\Jobs\InviteEmployeeJob;
+use App\Models\Employee;
 use App\Traits\responseTrait;
 use App\Http\Resources\UserResource;
 use App\Models\JobTitle;
@@ -13,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -41,28 +45,85 @@ class AdminController extends Controller
         return $this->apiResponse(null, 'You are not allowed to remove post', 403);
     }
 
-    public function addEmployee(Request $request) {
+    public function addEmployee(EmployeeRequest $request) {
+        $data =  $request->all();
+        $roles = ['employee'];
+
+        foreach ($data['roles_name'] as $role){
+            $roles[] = $role;
+        }
+
+        $password = Str::random(8);
+        $user = User::query()->create([
+            'user_name' => $request['first_name'],
+            'email' => $request['email'],
+            'password' => bcrypt($password),
+            'roles_name' => $roles,
+        ]);
+
+        Employee::create([
+            'user_id'=> $user->id,
+            'first_name'=> $request['first_name'],
+            'middle_name'=> $request['middle_name'],
+            'last_name'=> $request['last_name'],
+            'gender'=> $request['gender'],
+        ]);
+        $link='';
+        $user->assignRole($roles);
+        InviteEmployeeJob::dispatch($request->email, $password ,$link);
+        return $this->apiResponse($user,'Employee has been invite successfully',201);
+    }
+
+    public function getUsers($type) {
+
+        if($type == 'All Users' ) {
+            $users = User::all();
+            $users = $users->reject(function(User $user) {
+                $roles = $user->roles_name;
+                foreach ($roles as $value) {
+                    return $value === 'owner';
+                }
+            });
+                $result = UserResource::collection($users);
+        }
+
+        else if($type == 'Job Seekers' ) {
+            $seekers = User::role('job_seeker')->get();
+            $result = UserResource::collection($seekers);
+        }
+
+       else if($type == 'Companies' ) {
+            $seekers = User::role('company')->get();
+            $result = UserResource::collection($seekers);
+        }
+
+        else if($type == 'Employees' ){
+            $employees = User::role('employee')->get();
+            $result = UserResource::collection($employees);
+        }
+        else
+            return $this->apiResponse(null , 'Error User Type ',403);
+        return $this->apiResponse($result , 'success' , 200);
 
     }
 
-    public function allUsers() {
-        return $this->apiResponse(UserResource::collection(User::all()), 'Success', 200);
-    }
+    public function searchByUsernameOrEmail($username){
 
-    public function allSeekers() {
-        $seekers = User::where('role', 'job_seeker')->get();
-        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
-    }
+        $users = User::whereAny(['user_name' , 'email' ],'LIKE' , '%'.$username.'%')->get();
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
 
-    public function allCompanies() {
-        $seekers = User::where('role', 'company')->get();
-        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
-    }
+        if($users->isEmpty()){
+            return $this->apiResponse(null,'Not Found',404);
 
-    public function allEmployees() {
-        $seekers = User::where('role', 'employee')->get();
-        return $this->apiResponse(UserResource::collection($seekers), 'Success', 200);
+        } else{
+            $result = UserResource::collection($users);
+        }
+        return $result;
     }
-
 
 }

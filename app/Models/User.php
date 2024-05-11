@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Traits\HasRoles;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,4 +55,9 @@ class User extends Authenticatable
     public function followings(){
         return $this->belongsToMany(User::class,'followers' , 'followee_id' , 'follower_id')->withTimestamps();
     }
+
+//    public function roles(): BelongsToMany
+//    {
+//        return $this->belongsToMany(User::class,'roles' , 'roles_name','name' );
+//    }
 }

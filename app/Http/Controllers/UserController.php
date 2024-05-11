@@ -33,12 +33,13 @@ class UserController extends Controller
         $data['email'] = $request->email;
         $data['code'] = mt_rand(100000, 999999);
         $codeData = VerificationCode::create($data);
-        User::query()->create([
+        $user = User::query()->create([
             'user_name' => $request['user_name'],
             'email' => $request['email'],
             'password' => Hash::make($request->password),
             'roles_name' => ['user', $request['roles_name']],
         ]);
+        $user->assignRole($request['roles_name']);
         MailJob::dispatch($request->email, $request->code);
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
@@ -83,7 +84,6 @@ class UserController extends Controller
         $user = User::where($fieldType, $login)->first();
 
         if ($user->is_verified) {
-            $user->tokens()->delete();
             $token = $user->createToken("API TOKEN")->plainTextToken;
             $data['user'] = $user;
             $data['token'] = $token;
@@ -133,6 +133,11 @@ class UserController extends Controller
 
         $user = User::where('id', Auth::user()->id)->first();
         $user->password = Hash::make($request->password);
+        if($user->hasRole('employee')){
+            $employee = $user->employee;
+            $employee->is_change_password = true;
+            $employee->save();
+        }
         $user->save();
 
         return $this->apiResponse([], 'password has been successfully reset', 200);

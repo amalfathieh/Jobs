@@ -4,10 +4,10 @@
 namespace App\services;
 
 
-use App\Http\Controllers\responseTrait;
 use App\Http\Controllers\UserController;
 use App\Models\Seeker;
 use App\Models\User;
+use App\Traits\responseTrait;
 use http\Env\Request;
 use Illuminate\Support\Facades\Auth;
 use function Laravel\Prompts\search;
