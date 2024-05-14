@@ -6,6 +6,7 @@ use App\Http\Resources\FollowerResource;
 use App\Models\User;
 use App\Traits\responseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FollowController extends Controller
 {
@@ -31,9 +32,8 @@ class FollowController extends Controller
     public function showFollowers($userId)
     {
         $user = User::find($userId);
-        $followers  = $user->followers;
+        $followers = $user->followers;
         return response()->json(FollowerResource::collection($followers));
-
     }
 
     public function showFollowings($userId)

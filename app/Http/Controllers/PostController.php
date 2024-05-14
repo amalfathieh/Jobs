@@ -15,7 +15,7 @@ class PostController extends Controller
 
     public function create(PostRequest $request){
         try {
-            $this->authorize('isCompany');
+            $this->authorize('isJobSeeker');
             $id = Auth::user()->id;
             // here processing file
 

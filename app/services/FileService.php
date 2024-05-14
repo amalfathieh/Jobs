@@ -23,9 +23,9 @@ class FileService
             if(file_exists(public_path($old_file))) {
                 unlink(public_path($old_file));
                 return $this->store($new_file, $folder_name);
-
-            }    }
-            return   $this->store($new_file ,$folder_name);
+            }
+        }
+        return $this->store($new_file ,$folder_name);
     }
 
 }

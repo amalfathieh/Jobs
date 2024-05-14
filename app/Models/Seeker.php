@@ -10,6 +10,10 @@ class Seeker extends Model
     use HasFactory;
     protected $guarded=[];
 
+    protected $casts = [
+        'skills' => 'array',
+        'certificates' => 'array'
+    ];
     public static function boot()
     {
         parent::boot();

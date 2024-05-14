@@ -4,10 +4,10 @@
 namespace App\services;
 
 
-use App\Http\Controllers\responseTrait;
 use App\Http\Controllers\UserController;
 use App\Models\Seeker;
 use App\Models\User;
+use App\Traits\responseTrait;
 use http\Env\Request;
 use Illuminate\Support\Facades\Auth;
 use function Laravel\Prompts\search;
@@ -25,6 +25,7 @@ class SeekerService
         $first_name,
         $last_name,
         $birth_day,
+        $gender,
         $location,
         $image,
         $skills,
@@ -43,7 +44,7 @@ class SeekerService
             'about' => $about
         ]);
     }
-    public function update( $request ){
+    public function update($request){
         $seeker_image = null;
             $id = Auth::user()->id;
             $seeker = Seeker::where('user_id', $id)->first();
@@ -61,6 +62,5 @@ class SeekerService
             'certificates'=>$request['certificates'] ?? $seeker['certificates'],
             'about' =>$request['about'] ?? $seeker['about']
         ]);
-
     }
 }

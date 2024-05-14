@@ -3,13 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Traits\responseTrait;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
-class OpportunityRequest extends FormRequest
+class EmployeeRequest extends FormRequest
 {
     use responseTrait;
     /**
@@ -28,20 +29,15 @@ class OpportunityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
-            'body' => 'required',
-            'file' => 'file',
-            'location' => 'required',
-            'job_type' => 'required|in:full_time,part_time,contract,temporary,volunteer',
-            'work_place_type' => 'required|in:on_site,hybrid,remote',
-            'job_hours' => 'required',
-            'qualifications' => 'required',
-            'skills_req' => 'required',
-            'salary' => 'required',
-            'vacant' => 'required'
+            'email'=>'required|email',
+            'first_name'=>'required|min:3',
+            'middle_name'=>'required|min:3',
+            'last_name'=> 'required|min:3',
+            'gender'=> 'required|in:male,female',
+            'roles_name' => 'required|array',
+            'roles_name.*' => 'required|exists:roles,name'
         ];
     }
-
     public function failedValidation(Validator $validator)
     {
         $errors = (new ValidationException($validator))->errors();

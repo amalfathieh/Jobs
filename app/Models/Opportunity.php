@@ -16,11 +16,17 @@ class Opportunity extends Model
         'file',
         'location',
         'job_type',
-        'work-place_type',
+        'work_place_type',
         'job_hours',
         'qualifications',
         'skills_req',
-        'salary'
+        'salary',
+        'vacant'
+    ];
+
+    protected $casts = [
+        'qualifications' => 'array',
+        'skills_req' => 'array'
     ];
 
     public function company() {

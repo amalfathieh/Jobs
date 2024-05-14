@@ -13,10 +13,10 @@ class Employee extends Model
         'first_name',
         'middle_name',
         'last_name',
+        'gender',
         'phone',
         'image',
-        'starting_date',
-        'job_id'
+        'is_change_password',
     ];
 
     public function user(){

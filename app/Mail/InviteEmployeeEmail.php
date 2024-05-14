@@ -9,21 +9,18 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VerificationCodeMail extends Mailable
+class InviteEmployeeEmail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $password ,$link;
 
-    /**
-     * Create a new message instance.
-     */
-    public $code;
-    public function __construct($code)
+    public function __construct($password,$link)
     {
-        $this->code = $code;
+        $this->password = $password;
+        $this->link = $link;
     }
-
     public function build()
     {
-        return $this->markdown('emails.verification');
+        return $this->markdown('emails.InviteEmployee');
     }
 }
