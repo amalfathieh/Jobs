@@ -30,6 +30,7 @@ class SeekerRequest extends FormRequest
         return [
             'first_name'=>'required|string',
             'last_name'=>'required|string',
+            'gender'=>'required|in:male,female',
             'birth_day'=>'required',
             'location'=>'string|required',
             'image'=>'image',

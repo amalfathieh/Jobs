@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
+
 class UserController extends Controller
 {
     use responseTrait,NotificationTrait;
@@ -82,11 +84,17 @@ class UserController extends Controller
         }
 
         $user = User::where($fieldType, $login)->first();
-
         if ($user->is_verified) {
             $token = $user->createToken("API TOKEN")->plainTextToken;
             $data['user'] = $user;
             $data['token'] = $token;
+
+            $role = [];
+            foreach ($user->roles_name as $ro) {
+                $role[$ro] = Role::findByName($ro, 'web')->permissions->pluck('name');
+            }
+
+            $data['user']->roles_name = $role;
             return $this->apiResponse($data, 'user logged in successfully', 200);
         } else
             return $this->apiResponse(null, 'Your account is not verified. Please verify your account first. then login', 401);
