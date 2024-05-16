@@ -12,16 +12,18 @@ use Illuminate\Queue\SerializesModels;
 class VerificationCodeMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $code;
+
     /**
      * Create a new message instance.
      */
+    public $code;
     public function __construct($code)
     {
         $this->code = $code;
     }
+
     public function build()
     {
-        return $this->markdown('emails.verificaction');
+        return $this->markdown('emails.verification');
     }
 }

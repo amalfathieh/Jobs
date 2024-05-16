@@ -16,14 +16,15 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string("title");
             $table->text("body");
-            $table->string("file");
+            $table->string("file")->nullable();
             $table->string("location");
-            $table->enum('job_type', ['full-time', 'part-time', 'contract', 'temporary', 'volunteer']);
-            $table->enum('work-place_type', ['on-site', 'hybrid', 'remote']);
+            $table->enum('job_type', ['full_time', 'part_time', 'contract', 'temporary', 'volunteer']);
+            $table->enum('work_place_type', ['on_site', 'hybrid', 'remote']);
             $table->integer('job_hours');
             $table->text('qualifications');
             $table->text('skills_req');
             $table->float('salary');
+            $table->boolean('vacant');
             $table->timestamps();
         });
     }

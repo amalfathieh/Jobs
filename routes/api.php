@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\postRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,11 +68,16 @@ Route::controller(UserController::class)->group(function () {
     Route::post('rePassword', 'rePassword');
 });
 
-Route::controller(CompanyController::class)->middleware(['auth:sanctum'])->prefix('company')->group(function () {
-    Route::post('create', 'createCompany');
-    Route::post('update','update');
-    Route::post('addOpportunity', 'addOpportunity');
+Route::middleware('auth:sanctum')->prefix('company')->group(function () {
 
+    Route::controller(CompanyController::class)->group(function () {
+        Route::post('create', 'createCompany');
+        Route::post('update','update');
+    });
+    Route::controller(OpportunityController::class)->group(function () {
+        Route::post('addOpportunity', 'addOpportunity');
+        Route::put('updateOpportunity/{id}', 'updateOpportunity');
+    });
 });
 
 Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix('seeker')->group(function () {
@@ -89,25 +96,38 @@ Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(fu
     Route::get('displayMessages/{chat_id}','shawAllMessages');
 });
 
+Route::get('getInfo', function () {
+    $user = User::all();
+    return $user;
+});
+
 // Admin Routes
 
 Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
+
     Route::controller(AdminController::class)->group(function (){
         Route::delete('removeUser', 'removeUser')->middleware('can:delete user');
+
         Route::delete('removePost', 'removePost')->middleware('can:delete post');
 
         Route::post('blockUser', 'blockUser')->middleware('can:block user');
 
         Route::middleware('can:view users')->group(function () {
 
-            Route::get('getUsers/{type}', 'getUsers')->middleware('can:view users');
+            Route::get('getUsers/{type}', 'getUsers');
 
-            Route::post('addEmployee','addEmployee')->middleware('can:add employee');
-
-            Route::get('search/{user}','searchByUsernameOrEmail')->middleware('can:view users');
+            Route::get('search/{user}','searchByUsernameOrEmail');
         });
     });
-
+    // admin/employee/{}
+    Route::middleware(['auth:sanctum'])->controller(EmployeeController::class)->prefix('employee')->group(function () {
+        Route::middleware('can:employee control')->group(function () {
+            Route::post('addEmployee','addEmployee');
+            Route::post('editEmployee','editEmployee');
+            Route::post('deleteEmployee','addEmployee');
+        });
+        Route::post('viewEmployees','viewEmployees')->middleware('can:view employees');
+    });
 
     Route::controller(PostController::class)->group(function () {
         Route::get('allPosts', 'allPosts')->middleware('can:view posts');
@@ -130,11 +150,11 @@ Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(
 
 // Roles
 
-Route::middleware(['auth:sanctum'])->controller(RoleController::class)->prefix('role')->group(function () {
-    Route::get('allRoles', 'allRoles')->middleware('can:view roles');
-    Route::post('addRole', 'addRole')->middleware('can:add role');
-    Route::put('editRole', 'editRole')->middleware('can:edit role');
-    Route::post('deleteRole', 'deleteRole')->middleware('can:delete role');
+Route::middleware(['auth:sanctum', 'role control'])->controller(RoleController::class)->prefix('role')->group(function () {
+    Route::get('allRoles', 'allRoles');
+    Route::post('addRole', 'addRole');
+    Route::put('editRole', 'editRole');
+    Route::post('deleteRole', 'deleteRole');
 
-    Route::post('editUserRoles', 'editUserRoles')->middleware('can:add role');
+    Route::post('editUserRoles', 'editUserRoles');
 });

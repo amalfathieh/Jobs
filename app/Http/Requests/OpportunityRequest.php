@@ -30,14 +30,15 @@ class OpportunityRequest extends FormRequest
         return [
             'title' => 'required',
             'body' => 'required',
-            'file' => 'required|file',
+            'file' => 'file',
             'location' => 'required',
-            'job_type' => 'required|in:full-time, part-time, contract, temporary, volunteer',
-            'work-place_type' => 'required|in:on-site, hybrid, remote',
+            'job_type' => 'required|in:full_time,part_time,contract,temporary,volunteer',
+            'work_place_type' => 'required|in:on_site,hybrid,remote',
             'job_hours' => 'required',
             'qualifications' => 'required',
             'skills_req' => 'required',
-            'salary' => 'required'
+            'salary' => 'required',
+            'vacant' => 'required'
         ];
     }
 

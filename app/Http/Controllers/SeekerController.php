@@ -25,6 +25,7 @@ class SeekerController extends Controller
                 $request->first_name,
                 $request->last_name,
                 $request->birth_day,
+                $request->gender,
                 $request->location,
                 $image,
                 $request->skills,

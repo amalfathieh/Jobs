@@ -37,10 +37,10 @@ class UserController extends Controller
             'user_name' => $request['user_name'],
             'email' => $request['email'],
             'password' => Hash::make($request->password),
-            'roles_name' => ['user', $request['roles_name']],
+            'roles_name' => ['user' ,$request['roles_name']],
         ]);
         $user->assignRole($request['roles_name']);
-        MailJob::dispatch($request->email, $request->code);
+        MailJob::dispatch($request->email, $data['code']);
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
 
@@ -114,7 +114,7 @@ class UserController extends Controller
             $data['email'] = $request->email;
             $data['code'] = mt_rand(100000, 999999);
             $codeData = VerificationCode::create($data);
-            MailJob::dispatch($request->email, $request->code);
+            MailJob::dispatch($request->email, $data['code']);
             return $this->apiResponse([], 'Verification Code sent to your email', 200);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
