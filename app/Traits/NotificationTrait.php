@@ -43,7 +43,8 @@ trait NotificationTrait
             curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 
             $response = curl_exec($ch);
-            curl_close($ch);
+            //curl_close($ch);
+            dd($response);
 
             return response()->json(['success' => true, 'response' => $response]);
 

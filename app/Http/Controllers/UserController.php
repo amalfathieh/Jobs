@@ -247,7 +247,7 @@ class UserController extends Controller
         return $this->apiResponse('','success',200);
 
     }
-    public function noti($token){
-        return $this->sendPushNotification('test notification','this is new notificatino', $token);
+    public function noti(){
+        return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
     }
 }

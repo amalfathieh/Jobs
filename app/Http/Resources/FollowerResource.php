@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,16 +15,19 @@ class FollowerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = User::where('id' , $this->id)->first();
         $result = [
             'id' => $this->id,
             'role' => $this->role,
+            'name'=>'',
+            'image'=>'',
         ];
 
-        if ($this->role == 'company') {
+        if ($user->hasRole('company')) {
             $result['name'] = $this->company->company_name;
             $result['image'] = $this->company->logo;
-        } else {
-            $result['name'] = $this->seeker->first_name . ' ' . $this->seeker->last_name;
+        } else if ($user->hasRole('job_seeker')){
+            $result['name'] = $this->seeker->first_name. ' ' . $this->seeker->last_name;
             $result['image'] = $this->seeker->image;
         }
 

@@ -52,7 +52,7 @@ Route::controller(UserController::class)->group(function () {
 
         Route::post('fcm-token', 'updateToken');
 
-        Route::get('test/{token}', 'noti');
+//        Route::get('test/{token}', 'noti');
 
     });
 
@@ -140,8 +140,7 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
 });
 
 Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(function () {
-    Route::get('follow/{user_id}', 'followUser');
-    Route::get('unFollow/{user_id}', 'unFollowUser');
+    Route::get('follow/{user_id}', 'follow');
     Route::get('followers/{user_id}','showFollowers');
     Route::get('followings/{user_id}','showFollowings');
 
@@ -150,11 +149,11 @@ Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(
 
 // Roles
 
-Route::middleware(['auth:sanctum', 'role control'])->controller(RoleController::class)->prefix('role')->group(function () {
-    Route::get('allRoles', 'allRoles');
-    Route::post('addRole', 'addRole');
-    Route::put('editRole', 'editRole');
-    Route::post('deleteRole', 'deleteRole');
+Route::middleware(['auth:sanctum'])->controller(RoleController::class)->prefix('role')->group(function () {
+    Route::get('allRoles', 'allRoles')->can('role control');
+    Route::post('addRole', 'addRole')->can('role control');
+    Route::put('editRole', 'editRole')->can('role control');
+    Route::post('deleteRole', 'deleteRole')->can('role control');
 
-    Route::post('editUserRoles', 'editUserRoles');
+    Route::post('editUserRoles', 'editUserRoles')->can('role control');
 });

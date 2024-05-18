@@ -12,18 +12,29 @@ class FollowController extends Controller
 {
     use responseTrait;
 
-    public function followUser($user_id)
-    {
-        $user = User::find($user_id);
+    public function follow($user_id){
+        $user = User::query()->find($user_id);
+        if($user) {
+            $follower_id = Auth::user()->id;
 
+            if ($user->followers()->where('followee_id', $follower_id)->exists()) {
+                return $this->unFollowUser($user);
+            }
+            return $this->followUser($user);
+        }
+
+        return $this->apiResponse(null,'user not found',400);
+
+    }
+
+    public function followUser($user)
+    {
         $user->followers()->attach(auth()->user()->id);
         return $this->apiResponse(null, 'Successfully followed the user.',200);
     }
 
-    public function unFollowUser($user_id)
+    public function unFollowUser($user)
     {
-        $user = User::find($user_id);
-
         $user->followers()->detach(auth()->user()->id);
         return $this->apiResponse(null, 'Successfully unfollowed the user.',200);
     }
