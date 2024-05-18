@@ -13,8 +13,7 @@ trait NotificationTrait
 
     function sendPushNotification($title, $body,$token){
 
-        $SERVER_API_KEY = 'AAAAWwd3fqw:APA91bHJ5IDjouYCr3XwhwABLuuCH5PT4W_ZQju9HkOz3RGhVAbP07jS81Zp9W4_-J_wv2bBWtMeGGhUJUl0xBSuXdrIvqTg2ohjpiZWR-Cdj1EgbO89qwTcfOYvmPkxmzborR3kPiE5
-';
+        $SERVER_API_KEY = 'AAAAWwd3fqw:APA91bHJ5IDjouYCr3XwhwABLuuCH5PT4W_ZQju9HkOz3RGhVAbP07jS81Zp9W4_-J_wv2bBWtMeGGhUJUl0xBSuXdrIvqTg2ohjpiZWR-Cdj1EgbO89qwTcfOYvmPkxmzborR3kPiE5';
 
         $data = [
         "registration_ids" => [$token],
