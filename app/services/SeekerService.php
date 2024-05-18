@@ -36,7 +36,7 @@ class SeekerService
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
             'last_name' => $last_name,
-            'gender'=> $gender,
+            'gender' => $gender,
             'birth_day' => $birth_day,
             'location' => $location,
             'image' => $seeker_image,
@@ -56,7 +56,6 @@ class SeekerService
         $seeker->update([
             'first_name' =>$request['first_name'] ?? $seeker['first_name'],
             'last_name' =>$request['last_name'] ?? $seeker['last_name'],
-            'gender' =>$request['gender'] ?? $seeker['gender'],
             'birth_day' =>$request['birth_day'] ?? $seeker['birth_day'],
             'location' =>$request['location'] ?? $seeker['location'],
             'image' =>$seeker_image ?? $seeker['image'],
