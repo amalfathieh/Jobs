@@ -18,15 +18,14 @@ class FollowerResource extends JsonResource
         $user = User::where('id' , $this->id)->first();
         $result = [
             'id' => $this->id,
-            'role' => $this->role,
-            'name'=>'',
-            'image'=>'',
         ];
 
         if ($user->hasRole('company')) {
+            $result['roles_name'] = 'company';
             $result['name'] = $this->company->company_name;
             $result['image'] = $this->company->logo;
         } else if ($user->hasRole('job_seeker')){
+            $result['roles_name'] = 'job_seeker';
             $result['name'] = $this->seeker->first_name. ' ' . $this->seeker->last_name;
             $result['image'] = $this->seeker->image;
         }

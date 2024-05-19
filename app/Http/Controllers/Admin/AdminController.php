@@ -45,35 +45,6 @@ class AdminController extends Controller
         return $this->apiResponse(null, 'You are not allowed to remove post', 403);
     }
 
-    public function addEmployee(EmployeeRequest $request) {
-        $data =  $request->all();
-        $roles = ['employee'];
-
-        foreach ($data['roles_name'] as $role){
-            $roles[] = $role;
-        }
-
-        $password = Str::random(8);
-        $user = User::query()->create([
-            'user_name' => $request['first_name'],
-            'email' => $request['email'],
-            'password' => bcrypt($password),
-            'roles_name' => $roles,
-        ]);
-
-        Employee::create([
-            'user_id'=> $user->id,
-            'first_name'=> $request['first_name'],
-            'middle_name'=> $request['middle_name'],
-            'last_name'=> $request['last_name'],
-            'gender'=> $request['gender'],
-        ]);
-        $link='';
-        $user->assignRole($roles);
-        InviteEmployeeJob::dispatch($request->email, $password ,$link);
-        return $this->apiResponse($user,'Employee has been invite successfully',201);
-    }
-
     public function getUsers($type) {
 
         if($type == 'All Users' ) {

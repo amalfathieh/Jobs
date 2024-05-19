@@ -86,7 +86,7 @@ Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix
 
     Route::get('createCV', 'createCV');
 });
-Route::middleware(['auth:sanctum'])->controller(PostController::class)->group(function () {
+Route::middleware(['auth:sanctum'])->controller(PostController::class)->prefix('post')->group(function () {
     Route::post('create', 'create');
 
 });
