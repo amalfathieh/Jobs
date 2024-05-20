@@ -56,8 +56,4 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class,'followers' , 'followee_id' , 'follower_id')->withTimestamps();
     }
 
-//    public function roles(): BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class,'roles' , 'roles_name','name' );
-//    }
 }

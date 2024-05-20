@@ -22,12 +22,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = User::where('id' , $this->id)->first();
-        $data=[];
 
-        if($user->hasRole('owner')){
-            $x=0;
-        }
-        else{
             $data=[
                 'id' => $this->id,
                 'user_name' => $this->user_name,
@@ -54,7 +49,7 @@ class UserResource extends JsonResource
 
                 $data['more_info'] = new CompanyResource($company);
             }
-        }
+
 
         return $data;
     }

@@ -87,7 +87,10 @@ Route::middleware(['auth:sanctum'])->controller(SeekerController::class)->prefix
     Route::get('createCV', 'createCV');
 });
 Route::middleware(['auth:sanctum'])->controller(PostController::class)->prefix('post')->group(function () {
-    Route::post('create', 'create');
+    Route::post('create', 'create')->middleware('can:post control');
+    Route::delete('delete/{id}','delete')->middleware('can:post control');
+    Route::put('edit/{post_id}' , 'edit');
+    Route::get('view','allPosts');
 
 });
 Route::middleware(['auth:sanctum'])->controller(ChatController::class)->group(function () {
@@ -122,11 +125,11 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
     // admin/employee/{}
     Route::middleware(['auth:sanctum'])->controller(EmployeeController::class)->prefix('employee')->group(function () {
         Route::middleware('can:employee control')->group(function () {
-            Route::post('addEmployee','addEmployee');
-            Route::post('editEmployee','editEmployee');
-            Route::post('deleteEmployee','addEmployee');
+            Route::post('addEmployee','add');
         });
-        Route::post('viewEmployees','viewEmployees')->middleware('can:view employees');
+        Route::post('editEmployee','edit');
+
+        Route::get('employees','getEmployee')->middleware('can:view employees');
     });
 
     Route::controller(PostController::class)->group(function () {

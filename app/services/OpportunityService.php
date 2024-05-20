@@ -29,6 +29,7 @@ class OpportunityService
         $location, $job_type, $work_place_type, $job_hours,
         $qualifications, $skills_req, $salary, $vacant
     ){
+        $file = $this->fileService->store($file, 'opportunity');
         $opportunity = Opportunity::create([
             'company_id' => $company_id,
             'title' => $title,
@@ -43,9 +44,6 @@ class OpportunityService
             'salary' => $salary,
             'vacant' => $vacant
         ]);
-        if ($opportunity) {
-            $this->fileService->store($file, 'opportunity');
-        }
     }
 
     public function update($request, $opportunity_id){

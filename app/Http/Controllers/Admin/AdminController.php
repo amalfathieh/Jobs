@@ -22,15 +22,14 @@ class AdminController extends Controller
 {
     use responseTrait;
     public function removeUser(Request $request) {
-        if (Gate::allows('isAdmin')) {
+
             $user = User::where('id', $request->id)->first();
             if ($user) {
                 $user->delete();
-                return $this->apiResponse(null, 'User removed successfull', 200);
+                return $this->apiResponse(null, 'User removed successfully', 200);
             }
             return $this->apiResponse(null, 'User not found', 404);
-        }
-        return $this->apiResponse(null, 'You are not allowed to remove user', 403);
+
     }
 
     public function removePost(Request $request) {
@@ -48,7 +47,8 @@ class AdminController extends Controller
     public function getUsers($type) {
 
         if($type == 'All Users' ) {
-            $users = User::all();
+            $users = User::query();
+            $user = $users->latest()->get();
             $users = $users->reject(function(User $user) {
                 $roles = $user->roles_name;
                 foreach ($roles as $value) {
@@ -59,21 +59,18 @@ class AdminController extends Controller
         }
 
         else if($type == 'Job Seekers' ) {
-            $seekers = User::role('job_seeker')->get();
+            $seekers = User::role('job_seeker')->latest()->get();
             $result = UserResource::collection($seekers);
         }
 
        else if($type == 'Companies' ) {
-            $seekers = User::role('company')->get();
+            $seekers = User::role('company')->latest()->get();
             $result = UserResource::collection($seekers);
         }
 
-        else if($type == 'Employees' ){
-            $employees = User::role('employee')->get();
-            $result = UserResource::collection($employees);
+        else {
+            return $this->apiResponse(null, 'Error User Type ', 403);
         }
-        else
-            return $this->apiResponse(null , 'Error User Type ',403);
         return $this->apiResponse($result , 'success' , 200);
 
     }
