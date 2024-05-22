@@ -38,7 +38,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete opportunity',
             'block user',
             'delete post',
-            'view requests', 'delete request',
             'news control',
             'view reports user', 'delete report user',
             'admin report', 'view admin reports',

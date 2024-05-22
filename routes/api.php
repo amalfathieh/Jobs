@@ -122,6 +122,9 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
     // admin/employee/{}
     Route::middleware(['auth:sanctum'])->controller(EmployeeController::class)->prefix('employee')->group(function () {
         Route::middleware('can:employee control')->group(function () {
+            Route::get('test', function () {
+                return "Welcome";
+            });
             Route::post('addEmployee','addEmployee');
             Route::post('editEmployee','editEmployee');
             Route::post('deleteEmployee','addEmployee');
@@ -139,6 +142,8 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
 
 });
 
+
+
 Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(function () {
     Route::get('follow/{user_id}', 'followUser');
     Route::get('unFollow/{user_id}', 'unFollowUser');
@@ -147,10 +152,9 @@ Route::middleware(['auth:sanctum'])->controller(FollowController::class)->group(
 
 });
 
-
 // Roles
 
-Route::middleware(['auth:sanctum', 'role control'])->controller(RoleController::class)->prefix('role')->group(function () {
+Route::middleware(['auth:sanctum', 'can:role control'])->controller(RoleController::class)->prefix('role')->group(function () {
     Route::get('allRoles', 'allRoles');
     Route::post('addRole', 'addRole');
     Route::put('editRole', 'editRole');

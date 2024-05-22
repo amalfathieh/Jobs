@@ -109,7 +109,7 @@ class AdminController extends Controller
 
     public function searchByUsernameOrEmail($username){
 
-        $users = User::whereAny(['user_name' , 'email' ],'LIKE' , '%'.$username.'%')->get();
+        $users = User::whereAny(['user_name' , 'email'],'LIKE' , '%'.$username.'%')->get();
         $users = $users->reject(function(User $user) {
             $roles = $user->roles_name;
             foreach ($roles as $value) {
@@ -125,5 +125,4 @@ class AdminController extends Controller
         }
         return $result;
     }
-
 }

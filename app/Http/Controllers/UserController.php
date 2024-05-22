@@ -6,9 +6,11 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Resources\UserResource;
 use App\Jobs\ForgotPasswordJob;
 use App\Jobs\MailJob;
 use App\Models\ResetCodePassword;
+use App\Models\Seeker;
 use App\Models\User;
 use App\Models\VerificationCode;
 use App\Traits\responseTrait;
@@ -257,5 +259,27 @@ class UserController extends Controller
     }
     public function noti($token){
         return $this->sendPushNotification('test notification','this is new notificatino', $token);
+    }
+
+    public function searchByUsernameOrEmail($search){
+
+        $users = User::whereAny(['user_name' , 'email'],'LIKE' , '%'.$search.'%')->get();
+
+        
+
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
+
+        if($users->isEmpty()){
+            return $this->apiResponse(null,'Not Found',404);
+
+        } else{
+            $result = UserResource::collection($users);
+        }
+        return $result;
     }
 }

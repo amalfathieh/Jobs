@@ -19,12 +19,13 @@ class OpportunityController extends Controller
             $this->authorize('isCompany');
             $file = $request->file('file');
             $company_id = Auth::user()->company->id;
-
+            $qualifications = json_decode($request->qualifications);
+            $skills_req = json_decode($request->skills_req);
             $service->createOpportunity(
                 $company_id, $request->title, $request->body,
                 $file, $request->location, $request->job_type,
-$request->work_place_type, $request->job_hours, $request->qualifications,
-    $request->skills_req, $request->salary, $request->vacant
+$request->work_place_type, $request->job_hours, $qualifications,
+    $skills_req, $request->salary, $request->vacant
             );
             return $this->apiResponse(null, 'Opportunity added successfully', 201);
         }catch (AuthenticationException $authExp){

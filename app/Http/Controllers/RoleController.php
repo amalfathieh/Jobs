@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RolesAndPermissionsResource;
 use App\Models\User;
 use App\Traits\responseTrait;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ class RoleController extends Controller
     use responseTrait;
 
     public function addRole(Request $request) {
+
         $validate = Validator::make($request->all(), [
             'title' => 'required|string',
             'permissions' => 'required|array'
@@ -92,7 +94,7 @@ class RoleController extends Controller
         foreach ($roles as $role) {
             $data[$role->name] = $role->permissions->pluck('name');
         }
-        return $this->apiResponse($data, 'All Roles', 200);
+        return RolesAndPermissionsResource::collection($roles);
     }
 
     public function editUserRoles(Request $request){
