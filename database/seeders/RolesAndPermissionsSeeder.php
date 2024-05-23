@@ -31,13 +31,14 @@ class RolesAndPermissionsSeeder extends Seeder
             // common
             'view employees',
             'view opportunities',
+            'view companies',
             'view users',
             'view posts',
+            'delete post',
 
             // employee
             'delete opportunity',
             'block user',
-            'delete post',
             'news control',
             'view reports user', 'delete report user',
             'admin report', 'view admin reports',
@@ -58,7 +59,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $owner = Role::create(['name' => 'owner'])->givePermissionTo($permissions);
 
         $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
-
+            'delete post',
+            'delete opportunity'
         ]);
 
         $userRole = Role::create(['name' => 'user'])->givePermissionTo([
@@ -66,12 +68,14 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $companyRole = Role::create(['name' => 'company'])->givePermissionTo([
-            'opportunity control', 'edit request'
+            'opportunity control', 'edit request',
+            'delete opportunity'
         ]);
 
         $jobSeekerRole = Role::create(['name' => 'job_seeker'])->givePermissionTo([
             'post control',
-            'request control'
+            'request control',
+            'delete post'
         ]);
 
         $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
@@ -79,6 +83,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view opportunities',
             'view users',
             'view posts',
+            'view companies',
         ]);
     }
 }

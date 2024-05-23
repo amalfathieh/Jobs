@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityRequest;
+use App\Models\Company;
 use App\Models\Opportunity;
+use App\Models\User;
 use App\Traits\responseTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use App\services\OpportunityService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class OpportunityController extends Controller
 {
@@ -49,6 +52,25 @@ $request->work_place_type, $request->job_hours, $qualifications,
         }
     }
 
+    public function delete($id){
+        $opportunity = Opportunity::find($id);
+        $user = User::where('id', Auth::user()->id)->first();
+        if (!is_null($opportunity)) {
+            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || ($user->hasRole('employee') && $user->can('delete opportunity'))) {
+                $opportunity->delete();
+                return $this->apiResponse(null, 'Opportunity deleted successfully', 200);
+            }
+            return $this->apiResponse(null,'You do not have permission',403);
+        }
+        return $this->apiResponse(null, 'Opportunity not found.', 404);
+    }
+
+    public function getOpportunity() {
+        $user = User::where('id', Auth::user()->id)->first();
+        $company = Company::where('id', $user->company->id)->first();
+        $opportunities = $company->opportunities;
+        return $this->apiResponse($opportunities, null, 200);
+    }
     public function allOpportunities() {
         $opportunities = Opportunity::all();
         return $this->apiResponse($opportunities, null, 200);

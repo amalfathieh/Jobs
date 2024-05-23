@@ -28,9 +28,12 @@
         "bold_italic": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_bold_italic_3c4c982d93d98be963531fd17b72c633",
         "900_italic": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_900_italic_88fdfb383ea3335a2ea849c31af79315",
         "300": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_300_21960201651f2ea862182ff34dfd5ead",
-        "normal": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_normal_9fa47a070a8b30b595086d70bb7ac78c",
+        "normal": "C:\\Users\\Aloshe\\Desktop\\Project1\\Jobs\\storage\\fonts\/roboto_normal_7bc701b343c10631f60048716b96e4f7",
         "500": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_500_d0dcda9e813eb9b854a1cc044831f6fe",
-        "bold": "D:\\project laravel\\Jobs\\storage\\fonts\/roboto_bold_3d0ad20d45ace845335f9e6c390a09d9",
-        "900": "roboto_900_509a5e5b153550862359e315131088d5"
+        "bold": "roboto_bold_8db5cb5d0586c1e891426d13097b1d04",
+        "900": "C:\\Users\\Aloshe\\Desktop\\Project1\\Jobs\\storage\\fonts\/roboto_900_509a5e5b153550862359e315131088d5"
+    },
+    "glyphicons halflings": {
+        "normal": "glyphicons_halflings_normal_df31caafbfa62a5bbe5552e25e16b818"
     }
 }

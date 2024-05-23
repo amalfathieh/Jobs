@@ -56,8 +56,11 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class,'followers' , 'followee_id' , 'follower_id')->withTimestamps();
     }
 
-//    public function roles(): BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class,'roles' , 'roles_name','name' );
-//    }
+    public function setUserNameAttribute($value) {
+        return $this->attributes['user_name'] = strtolower($value);
+    }
+
+    public function setPasswordAttribute($value) {
+        return $this->attributes['password'] = bcrypt($value);
+    }
 }

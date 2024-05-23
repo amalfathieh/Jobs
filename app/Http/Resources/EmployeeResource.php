@@ -22,7 +22,7 @@ class EmployeeResource extends JsonResource
         'phone' => $this->phone,
         'image' => $this->image,
         'is_change_password' => $this->is_change_password,
-        'starting_date' => $this->created_at->toDateTimeString(),
+        'starting_date' => $this->starting_date,
     ];
     }
 }

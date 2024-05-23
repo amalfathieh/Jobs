@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
             $table->boolean('is_change_password')->default(false);
-            $table->timestamps();
+            $table->timestamp('starting_date');
         });
     }
 

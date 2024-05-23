@@ -21,7 +21,7 @@ class CompanyController extends Controller
             $user = User::where('id', Auth::user()->id)->first();
 
             $logo_file = $request->file('logo');
-            $logo = $fileService->store($logo_file,'company');
+            $logo = $fileService->store($logo_file,'images/company/logo');
             Company::create([
                 'user_id' => $user->id,
                 'company_name' => $request->company_name,
@@ -61,6 +61,14 @@ class CompanyController extends Controller
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
+        }
+    }
+
+    public function delete() {
+        $user = User::where('id', Auth::user()->id)->first();
+        $myCompany = Company::where('id', $user->company->id)->first();
+        if ($myCompany->delete()) {
+            return $this->apiResponse(null, 'Deleted successfully', 200);
         }
     }
 }

@@ -41,6 +41,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('isVerified', function ($user) {
             return $user->is_verified === 1;
         });
-
     }
 }

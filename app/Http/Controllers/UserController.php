@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\UserResource;
+use App\Jobs\ChangeEmailJob;
 use App\Jobs\ForgotPasswordJob;
 use App\Jobs\MailJob;
 use App\Models\ResetCodePassword;
@@ -40,10 +41,10 @@ class UserController extends Controller
         $user = User::query()->create([
             'user_name' => $request['user_name'],
             'email' => $request['email'],
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'roles_name' => ['user' ,$request['roles_name']],
         ]);
-        $user->assignRole($request['roles_name']);
+        $user->syncRoles($user->roles_name);
         MailJob::dispatch($request->email, $data['code']);
         return $this->apiResponse([], 'Verification Code sent to your email', 200);
     }
@@ -228,9 +229,14 @@ class UserController extends Controller
 
     public function update(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();
+        // if ($request->email) {
+        //     $data['code'] = mt_rand(100000, 999999);
+        //     $data['pre_email'] = $user->email;
+        //     $data['new_email'] = $request->email;
+        //     ChangeEmailJob::dispatch($data);
+        // }
         if ($user->update($request->all())){
-
-            return $this->apiResponse($user, 'Updated Successfully', 200);
+            return $this->apiResponse($user, 'Updated successfully', 200);
         }
         return $this->apiResponse(null, 'Something went wrong', 500);
     }
@@ -257,15 +263,21 @@ class UserController extends Controller
         return $this->apiResponse('','success',200);
 
     }
-    public function noti($token){
-        return $this->sendPushNotification('test notification','this is new notificatino', $token);
+    public function noti(){
+        return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
     }
 
-    public function searchByUsernameOrEmail($search){
+    public function search($search){
+        $users = User::where(function ($query) use ($search){
+            $query->where('user_name', 'LIKE', '%' . $search . '%');
 
-        $users = User::whereAny(['user_name' , 'email'],'LIKE' , '%'.$search.'%')->get();
+        })->orWhereHas('seeker', function ($query) use ($search) {
+            $query->where('first_name', 'LIKE', '%' . $search . '%')
+            ->orWhere('last_name', 'LIKE', '%' . $search . '%');
 
-        
+        })->orWhereHas('company', function ($query) use ($search) {
+            $query->where('company_name', 'LIKE', '%' . $search . '%');
+        })->get();
 
         $users = $users->reject(function(User $user) {
             $roles = $user->roles_name;

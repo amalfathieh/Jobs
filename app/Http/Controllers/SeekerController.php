@@ -40,24 +40,18 @@ class SeekerController extends Controller
         }
     }
 
-    public function update(Request $request ,SeekerService $seekerService){
-        try {
-            $this->authorize('isJobSeeker');
-            $seekerService->update($request);
-            return $this->apiResponse(null, 'profile updated successfully', 201);
-
-        }catch (AuthorizationException $authExp) {
-            return $this->apiResponse(null, $authExp->getMessage(), 401);
-        }catch (\Exception $ex) {
-                return $this->apiResponse(null, $ex->getMessage(), 500);
-        }
+    public function update(Request $request, SeekerService $seekerService){
+        $seekerService->update($request);
+        return $this->apiResponse(null, 'profile updated successfully', 201);
     }
 
     public function createCV(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();
         $info = Seeker::where('user_id', $user->id)->first();
         $data = $request->all();
-        $pdf = Pdf::loadView('pdf.pdf', compact('data'));
-        return $pdf->download('cv.pdf');
+        // $pdf = Pdf::loadView('pdf.pdf', compact('data'));
+        // // return $pdf->download("cv.pdf");
+        // return $pdf->stream('gg.pdf');
+        return view('pdf.pdf', compact('data'));
     }
 }

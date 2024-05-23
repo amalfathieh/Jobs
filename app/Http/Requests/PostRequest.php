@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\responseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
@@ -10,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class PostRequest extends FormRequest
 {
+    use responseTrait;
     /**
      * Determine if the user is authorized to make this request.
      */

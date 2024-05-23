@@ -31,7 +31,7 @@ class SeekerService
         $skills,
         $certificates,
         $about) {
-
+        $seeker_image = $this->fileService->store($image,'images/job_seeker/profilePhoto');
         Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,
@@ -39,7 +39,7 @@ class SeekerService
             'gender' => $gender,
             'birth_day' => $birth_day,
             'location' => $location,
-            'image' => $image,
+            'image' => $seeker_image,
             'skills' => $skills,
             'certificates' => $certificates,
             'about' => $about
@@ -51,18 +51,18 @@ class SeekerService
             $seeker = Seeker::where('user_id', $id)->first();
         $old_file = $seeker['image'];
         if ($request->hasFile('image') && $request->image != '') {
-            $seeker_image = $this->fileService->update($request->image, $old_file ,'job_seeker');
+            $seeker_image = $this->fileService->update($request->image, $old_file ,'images/job_seeker/profilePhoto');
         }
         $seeker->update([
             'first_name' =>$request['first_name'] ?? $seeker['first_name'],
             'last_name' =>$request['last_name'] ?? $seeker['last_name'],
-            'gender' =>$request['gender'] ?? $seeker['gender'],
             'birth_day' =>$request['birth_day'] ?? $seeker['birth_day'],
             'location' =>$request['location'] ?? $seeker['location'],
             'image' =>$seeker_image ?? $seeker['image'],
             'skills' =>$request['skills'] ?? $seeker['skills'],
             'certificates'=>$request['certificates'] ?? $seeker['certificates'],
-            'about' =>$request['about'] ?? $seeker['about']
+            'about' =>$request['about'] ?? $seeker['about'],
+            'gender' =>$request['gender'] ?? $seeker['gender']
         ]);
     }
 }
