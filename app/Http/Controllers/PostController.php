@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\postRequest;
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\User;
 use App\services\FileService;
@@ -36,10 +36,10 @@ class PostController extends Controller
         $post = Post::find($post_id);
         $user = User::where('id', Auth::user()->id)->first();
         if (!is_null($post)) {
-            if( $post['seeker_id'] == Auth::user() ) {
-                $this->postService->edit($request, $post);
+            if( $post['seeker_id'] == $user->seeker->id ) {
+                $post = $this->postService->edit($request, $post);
 
-                return $this->apiResponse(null,'post edit successfully',200);
+                return $this->apiResponse($post,'post edit successfully',200);
             }
             return $this->apiResponse(null,'You can not edit this post.',403);
         }

@@ -44,29 +44,35 @@ class OpportunityService
             'salary' => $salary,
             'vacant' => $vacant
         ]);
+        return $opportunity ;
     }
 
     public function update($request, $opportunity_id){
         $opportunity_file = null;
-            $id = Auth::user()->company->id;
-            $opportunity = Opportunity::where('company_id', $id)->where('id', $opportunity_id)->first();
+        $id = Auth::user()->company->id;
+        $opportunity = Opportunity::where('company_id', $id)->where('id', $opportunity_id)->first();
+        if($opportunity){
         $old_file = $opportunity['file'];
-        if ($request->hasFile('file') && $request->image != '') {
-            $opportunity_file = $this->fileService->update($request->image, $old_file ,'opportunity');
-        }
+        if ($request->hasFile('file') && $request->file != '') {
+                $opportunity_file = $this->fileService->update($request->file, $old_file ,'opportunity');
+            }
 
-        $opportunity->update([
-            'title' => $request['title'] ?? $opportunity['title'],
-            'body' => $request['body'] ?? $opportunity['body'],
-            'file' => $opportunity_file ?? $opportunity['file'],
-            'location' => $request['location'] ?? $opportunity['location'],
-            'job_type' => $request['job_type'] ?? $opportunity['job_type'],
-            'work_place_type' => $request['work_place_type'] ?? $opportunity['work_place_type'],
-            'job_hours' => $request['job_hours'] ?? $opportunity['job_hours'],
-            'qualifications' => $request['qualifications'] ?? $opportunity['qualifications'],
-            'skills_req' => $request['skills_req'] ?? $opportunity['skills_req'],
-            'salary' => $request['salary'] ?? $opportunity['salary'],
-            'vacant' =>$request['vacant'] ?? $opportunity['vacant']
-        ]);
+            $opportunity->update([
+                'title' => $request['title'] ?? $opportunity['title'],
+                'body' => $request['body'] ?? $opportunity['body'],
+                'file' => $opportunity_file ?? $opportunity['file'],
+                'location' => $request['location'] ?? $opportunity['location'],
+                'job_type' => $request['job_type'] ?? $opportunity['job_type'],
+                'work_place_type' => $request['work_place_type'] ?? $opportunity['work_place_type'],
+                'job_hours' => $request['job_hours'] ?? $opportunity['job_hours'],
+                'qualifications' => $request['qualifications'] ?? $opportunity['qualifications'],
+                'skills_req' => $request['skills_req'] ?? $opportunity['skills_req'],
+                'salary' => $request['salary'] ?? $opportunity['salary'],
+                'vacant' =>$request['vacant'] ?? $opportunity['vacant']
+            ]);
+            return $this->apiResponse($opportunity, 'Opportunity updated successfully', 201);
+        }
+        return $this->apiResponse(null , 'opportunity not found' ,404);
     }
+
 }

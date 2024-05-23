@@ -12,6 +12,7 @@ use App\services\FileService;
 use App\services\UserService;
 use App\Traits\responseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -43,11 +44,12 @@ class EmployeeController extends Controller
         $employee = $this->userService->storeEmployee($request , $user->id );
 
         $link='';
-//        $data = [
+        $user->assignRole($roles);
+
+//        return$data = [
 //            'emp'=>User::find($user->id),
 //            'password'=>$password
 //        ];
-        $user->assignRole($roles);
         InviteEmployeeJob::dispatch($request->email, $password ,$link);
         return $this->apiResponse($user,'Employee has been invite successfully',201);
     }
@@ -56,19 +58,26 @@ class EmployeeController extends Controller
     public function edit(EditEmployeeRequest $request , FileService $fileService){
         $employee_image = null;
         $user = Auth::user();
-        $user = $this->userService->updateUser($request , $user);
+        if($user->hasRole('employee')){
+            $user = $this->userService->updateUser($request , $user);
 
-        $employee = Employee::where('user_id', $user->id)->first();
-        $old_file = $employee->image;
-        if ($request->hasFile('image') && $request->image != '') {
-            $employee_image = $fileService->update($request->image, $old_file ,'employees');
+            $employee = Employee::where('user_id', $user->id)->first();
+            $old_file = $employee->image;
+            if ($request->hasFile('image') && $request->image != '') {
+                $employee_image = $fileService->update($request->image, $old_file ,'employees');
+            }
+
+            $employee->update([
+                'phone' =>$request['phone'] ?? $employee['phone'],
+                'image' =>$request['image'] ?? $employee_image,
+            ]);
+            $user = new UserResource($user);
+            return $this->apiResponse($user , 'success' , 201);
         }
-
-        $employee->update([
-            'phone' =>$request['phone'] ?? $employee['phone'],
-            'image' =>$employee_image ?? $employee['image'],
-        ]);
-        return $this->apiResponse($user->employee , 'success' , 201);
+        return $this->apiResponse(null,
+            'You do not have the required authorization.',
+            403
+        );
     }
 
 

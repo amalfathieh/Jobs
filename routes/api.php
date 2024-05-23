@@ -5,6 +5,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
@@ -52,8 +53,7 @@ Route::controller(UserController::class)->group(function () {
 
         Route::post('fcm-token', 'updateToken');
 
-//        Route::get('test/{token}', 'noti');
-
+//        Route::get('test', 'noti');
     });
 
 
@@ -126,9 +126,9 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function ()  {
     Route::middleware(['auth:sanctum'])->controller(EmployeeController::class)->prefix('employee')->group(function () {
         Route::middleware('can:employee control')->group(function () {
             Route::post('addEmployee','add');
-        });
-        Route::post('editEmployee','edit');
 
+            Route::put('editEmployee','edit');
+        });
         Route::get('employees','getEmployee')->middleware('can:view employees');
     });
 
@@ -159,4 +159,11 @@ Route::middleware(['auth:sanctum'])->controller(RoleController::class)->prefix('
     Route::post('deleteRole', 'deleteRole')->can('role control');
 
     Route::post('editUserRoles', 'editUserRoles')->can('role control');
+});
+
+Route::middleware(['auth:sanctum'])->controller(NotificationController::class)->prefix('notification')->group(function () {
+    Route::get('testStore','testStore');
+    Route::get('display','displayNotification');
+    Route::get('getContent/{obj_id}/{title}','getNotificationContent');
+    Route::get('delete','delete');
 });

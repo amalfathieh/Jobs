@@ -11,6 +11,7 @@ use App\Jobs\MailJob;
 use App\Models\ResetCodePassword;
 use App\Models\User;
 use App\Models\VerificationCode;
+use App\Notifications\RealTimeNotification;
 use App\Traits\responseTrait;
 use App\Traits\NotificationTrait;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
@@ -257,5 +259,17 @@ class UserController extends Controller
     }
     public function noti(){
         return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
+    }
+
+    public function testStore(){
+        $users=User::where('id','!=',auth()->user()->id)->get();
+        $user2 = User::find(1);
+        $data =[
+            'obj_id'=>1,
+            'title'=>'Login',
+            'body'=>'to22 notification',
+        ];
+        Notification::send($user2,new RealTimeNotification($data));
+//        return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
     }
 }

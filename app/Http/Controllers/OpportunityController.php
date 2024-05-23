@@ -19,12 +19,13 @@ class OpportunityController extends Controller
             $this->authorize('isCompany');
             $file = $request->file('file');
             $company_id = Auth::user()->company->id;
-
+            $qualifications = json_decode($request->qualifications);
+            $skills_req = json_decode($request->skills_req);
             $service->createOpportunity(
                 $company_id, $request->title, $request->body,
                 $file, $request->location, $request->job_type,
-$request->work_place_type, $request->job_hours, $request->qualifications,
-    $request->skills_req, $request->salary, $request->vacant
+                $request->work_place_type, $request->job_hours, $qualifications,
+                $skills_req, $request->salary, $request->vacant
             );
             return $this->apiResponse(null, 'Opportunity added successfully', 201);
         }catch (AuthenticationException $authExp){
@@ -35,11 +36,11 @@ $request->work_place_type, $request->job_hours, $request->qualifications,
         }
     }
 
-    public function updateOpportunity(Request $request, OpportunityService $opportunityService, $id){
+    public function updateOpportunity(Request $request,OpportunityService $opportunityService, $id){
         try {
             $this->authorize('isCompany');
-            $opportunityService->update($request, $id);
-            return $this->apiResponse(null, 'Opportunity updated successfully', 201);
+            return $opp = $opportunityService->update($request, $id);
+//            return $this->apiResponse($opp, 'Opportunity updated successfully', 201);
 
         }catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);

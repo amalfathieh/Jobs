@@ -14,17 +14,21 @@ class FollowController extends Controller
 
     public function follow($user_id){
         $user = User::query()->find($user_id);
+        if($user_id == Auth::user()->id){
+            return $this->apiResponse(null,'you can not follow yourself',400);
+        }
+
         if($user) {
             $follower_id = Auth::user()->id;
 
             if ($user->followers()->where('followee_id', $follower_id)->exists()) {
                 return $this->unFollowUser($user);
             }
+
             return $this->followUser($user);
         }
 
         return $this->apiResponse(null,'user not found',400);
-
     }
 
     public function followUser($user)
