@@ -39,11 +39,11 @@ $request->work_place_type, $request->job_hours, $qualifications,
         }
     }
 
-    public function updateOpportunity(Request $request, OpportunityService $opportunityService, $id){
+    public function updateOpportunity(Request $request,OpportunityService $opportunityService, $id){
         try {
             $this->authorize('isCompany');
-            $opportunityService->update($request, $id);
-            return $this->apiResponse(null, 'Opportunity updated successfully', 201);
+            return $opp = $opportunityService->update($request, $id);
+//            return $this->apiResponse($opp, 'Opportunity updated successfully', 201);
 
         }catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);

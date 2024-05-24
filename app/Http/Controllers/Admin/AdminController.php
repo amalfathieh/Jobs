@@ -80,4 +80,53 @@ class AdminController extends Controller
         }
         return $result;
     }
+
+    public function banUser(Request $request, $id){
+        $user = User::find($id);
+        if ($user->isNotBanned()) {
+            $user->roles()->detach();
+            $ban = $user->ban([
+                'comment' => $request->comment,
+                'expired_at' => $request->expired_at
+            ]);
+            return $this->apiResponse($ban, "Banned successfully", 200);
+        } else {
+            return $this->apiResponse(null, "User is already banned", 403);
+        }
+    }
+
+    public function unBanUser($id) {
+        $user = User::find($id);
+        if ($user->isBanned()) {
+            $user->syncRoles($user->roles_name);
+            $user->unBan();
+
+            return $this->apiResponse(null, "Unbanned successfully", 200);
+        } else {
+            return $this->apiResponse(null, "User is already not banned", 403);
+        }
+    }
+
+    public function getBans() {
+        $users = User::onlyBanned()->get();
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
+        return $this->apiResponse($users, "These are all users banned", 200);
+    }
+
+    public function deleteExpiredBanned() {
+        $users = User::onlyBanned()->get();
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
+        
+        return $this->apiResponse($users, "These are all users banned", 200);
+    }
 }

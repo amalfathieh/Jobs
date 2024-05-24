@@ -46,10 +46,12 @@ class RolesAndPermissionsSeeder extends Seeder
             // Company
             'opportunity control',
             'edit request',
+            'company profile control',
 
             // Seeker
             'post control',
             'request control',
+            'seeker profile control'
         ];
 
         foreach ($permissions as $permission) {
@@ -69,16 +71,19 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $companyRole = Role::create(['name' => 'company'])->givePermissionTo([
             'opportunity control', 'edit request',
-            'delete opportunity'
+            'delete opportunity',
+            'company profile control'
         ]);
 
         $jobSeekerRole = Role::create(['name' => 'job_seeker'])->givePermissionTo([
             'post control',
             'request control',
-            'delete post'
+            'delete post',
+            'seeker profile control'
         ]);
 
         $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
+            'employee control',
             'view employees',
             'view opportunities',
             'view users',

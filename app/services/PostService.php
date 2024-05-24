@@ -35,10 +35,10 @@ class PostService
             $file = $this->fileService->update($request->file, $old_file, 'post');
         }
 
-        $post->update([
-            'title' => $request->title,
-            'body' => $request->body,
-            'file' => $file
+        return $post->update([
+            'title' => $request['title'] ?? $post['title'],
+            'body' => $request['body'] ?? $post['body'],
+            'file' => $file ?? $post['file']
         ]);
     }
 }

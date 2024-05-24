@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeekerRequest;
+use App\Models\Opportunity;
 use App\Models\Seeker;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
@@ -53,5 +54,13 @@ class SeekerController extends Controller
         // // return $pdf->download("cv.pdf");
         // return $pdf->stream('gg.pdf');
         return view('pdf.pdf', compact('data'));
+    }
+
+    public function apply($opp_id) {
+        $user = User::where('id', Auth::user()->id)->first();
+        $info = Seeker::where('user_id', $user->id)->first();
+        $opp = Opportunity::where('id', $opp_id)->first();
+        
+        return $this->apiResponse($info, 'applied successfully', 201);
     }
 }

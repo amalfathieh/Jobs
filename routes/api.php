@@ -5,6 +5,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
@@ -60,10 +61,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('followers/{user_id}','showFollowers');
             Route::get('followings/{user_id}','showFollowings');
         });
+
+        // Notifications
+        Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+            Route::get('display','displayNotification');
+            Route::get('getContent/{obj_id}/{title}','getNotificationContent');
+            Route::get('delete','delete');
+        });
+        Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
+
     // Routes common are over //
 
     // Company routes //
-    Route::prefix('company')->group(function () {
+    Route::middleware('can:company profile control')->prefix('company')->group(function () {
         Route::controller(CompanyController::class)->group(function () {
             Route::post('create', 'createCompany');
             Route::post('update','update');
@@ -83,11 +93,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Company routes are over //
 
     // Seeker routes //
-    Route::controller(SeekerController::class)->prefix('seeker')->group(function () {
+    Route::middleware('can:seeker profile control')->controller(SeekerController::class)->prefix('seeker')->group(function () {
         Route::post('create', 'create');
         Route::post('update','update');
 
         Route::post('createCV', 'createCV');
+        Route::post('apply/{id}', 'apply');
     });
 
     // Post
@@ -109,7 +120,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::delete('removePost', 'removePost')->middleware('can:delete post');
 
-            Route::post('blockUser', 'blockUser')->middleware('can:block user');
+            Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
+            Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');
+            Route::get('getBans', 'getBans')->middleware('can:block user');
+            Route::get('deleteExpiredBanned', 'deleteExpiredBanned')->middleware('can:block user');
+
 
             Route::middleware('can:view users')->group(function () {
 
