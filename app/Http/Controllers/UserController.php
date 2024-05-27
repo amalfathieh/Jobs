@@ -298,14 +298,18 @@ class UserController extends Controller
     }
 
     public function testStore(){
-        $users=User::where('id','!=',auth()->user()->id)->get();
-        $user2 = User::find(1);
-        $data =[
-            'obj_id'=>1,
-            'title'=>'Login',
-            'body'=>'to22 notification',
-        ];
-        Notification::send($user2,new RealTimeNotification($data));
-//        return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
+        try {
+            $users=User::where('id','!=',auth()->user()->id)->get();
+            $user2 = User::find(1);
+            $data =[
+                'obj_id'=>1,
+                'title'=>'Login',
+                'body'=>'to22 notification',
+            ];
+            $ss = Notification::send($user2,new RealTimeNotification($data));
+        } catch (\Exception $ex) {
+            return $this->apiResponse(null, $ex->getMessage(), 500);
+        }
+        return $this->apiResponse(null, "sent successfully", 200);
     }
 }

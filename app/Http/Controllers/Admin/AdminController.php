@@ -13,6 +13,7 @@ use App\Models\Permission;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -21,9 +22,9 @@ use Illuminate\Support\Str;
 class AdminController extends Controller
 {
     use responseTrait;
-    public function removeUser(Request $request) {
+    public function removeUser($id) {
 
-            $user = User::where('id', $request->id)->first();
+            $user = User::where('id', $id)->first();
             if ($user) {
                 $user->delete();
                 return $this->apiResponse(null, 'User removed successfully', 200);
@@ -107,6 +108,11 @@ class AdminController extends Controller
         }
     }
 
+    public function isBan() {
+        $user = User::where('id', Auth::user()->id)->first();
+        return $user->isBanned();
+    }
+
     public function getBans() {
         $users = User::onlyBanned()->get();
         $users = $users->reject(function(User $user) {
@@ -126,7 +132,7 @@ class AdminController extends Controller
                 return $value === 'owner';
             }
         });
-        
+
         return $this->apiResponse($users, "These are all users banned", 200);
     }
 }

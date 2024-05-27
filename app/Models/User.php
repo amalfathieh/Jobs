@@ -65,4 +65,8 @@ class User extends Authenticatable implements BannableInterface
     public function setPasswordAttribute($value) {
         return $this->attributes['password'] = bcrypt($value);
     }
+
+    public function opportunites() {
+        return $this->belongsToMany(Opportunity::class, 'saves');
+}
 }
