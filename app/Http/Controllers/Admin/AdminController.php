@@ -21,9 +21,9 @@ use Illuminate\Support\Str;
 class AdminController extends Controller
 {
     use responseTrait;
-    public function removeUser(Request $request) {
+    public function removeUser($id) {
 
-            $user = User::where('id', $request->id)->first();
+            $user = User::where('id', $id)->first();
             if ($user) {
                 $user->delete();
                 return $this->apiResponse(null, 'User removed successfully', 200);
@@ -126,7 +126,7 @@ class AdminController extends Controller
                 return $value === 'owner';
             }
         });
-        
+
         return $this->apiResponse($users, "These are all users banned", 200);
     }
 }

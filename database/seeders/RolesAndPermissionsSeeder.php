@@ -19,76 +19,65 @@ class RolesAndPermissionsSeeder extends Seeder
        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
-            // for owner
+            //Admin employee
             'role control',
-            'employee control',
-            'delete user',
+            'admin report create', 'admin report view', 'admin report edit', 'admin report delete',
 
-            // user
-            'report user',
-            'view news',
+            'employee control', 'employee view',
 
-            // common
-            'view employees',
-            'view opportunities',
-            'view companies',
-            'view users',
-            'view posts',
-            'delete post',
-
-            // employee
-            'delete opportunity',
             'block user',
-            'news control',
-            'view reports user', 'delete report user',
-            'admin report', 'view admin reports',
 
-            // Company
-            'opportunity control',
-            'edit request',
-            'company profile control',
+            'news create', 'news view', 'news delete',
 
-            // Seeker
-            'post control',
-            'request control',
-            'seeker profile control'
-        ];
+            'user view','user edit', 'user delete',
 
+            //profile seeker
+            'seeker create',
+            //profile company
+            'company create',
+           //
+            'user report create', 'user report view', 'user report delete',
+
+            'opportunity create', 'opportunities view', 'opportunity delete',
+
+            'post create', 'posts view', 'post delete',
+
+            'request create', 'request view', 'request edit', 'status edit', 'request delete',
+            ];
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
 
         $owner = Role::create(['name' => 'owner'])->givePermissionTo($permissions);
 
-        $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
-            'delete post',
-            'delete opportunity'
-        ]);
-
         $userRole = Role::create(['name' => 'user'])->givePermissionTo([
-            'report user', 'view news'
+            'user report create', 'news view','posts view', 'opportunities view','user view','user delete','user edit',
         ]);
 
         $companyRole = Role::create(['name' => 'company'])->givePermissionTo([
-            'opportunity control', 'edit request',
-            'delete opportunity',
-            'company profile control'
+            'company create',
+            'opportunity create', 'opportunity delete',
+            'request view', 'status edit', 'request delete',
         ]);
 
         $jobSeekerRole = Role::create(['name' => 'job_seeker'])->givePermissionTo([
-            'post control',
-            'request control',
-            'delete post',
-            'seeker profile control'
+            'seeker create',
+            'post create', 'post delete',
+            'request create', 'request view', 'request edit', 'request delete',
         ]);
 
         $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
-            'employee control',
-            'view employees',
-            'view opportunities',
-            'view users',
-            'view posts',
-            'view companies',
+            'user report create', 'news view','posts view', 'opportunities view','user view','user delete',
+        ]);
+
+        $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
+            'post delete',
+            'delete opportunity',
+            'block user',
+            'user report view', 'user report edit', 'user report delete',
         ]);
     }
 }
+
+
+//' create', ' view', ' edit', ' delete',

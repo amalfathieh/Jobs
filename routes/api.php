@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Routes common with all //
     Route::controller(UserController::class)->group(function () {
-        Route::put('update', 'update');
+        Route::put('update', 'update')->middleware('can:edit user');
 
         Route::get('logout', 'logout');
 
@@ -40,7 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('resetPassword', 'resetPassword');
 
-        Route::delete('delete', 'delete');
+        Route::delete('delete', 'delete')->middleware('user delete');
 
         Route::post('fcm-token', 'updateToken');
 
@@ -73,42 +73,43 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Routes common are over //
 
     // Company routes //
-    Route::middleware('can:company profile control')->prefix('company')->group(function () {
+    Route::middleware('can:company create')->prefix('company')->group(function () {
         Route::controller(CompanyController::class)->group(function () {
             Route::post('create', 'createCompany');
             Route::post('update','update');
             Route::delete('delete', 'delete');
         });
+    });
 
-        Route::controller(OpportunityController::class)->group(function () {
-            Route::delete('delete/{id}', 'delete')->middleware('can:delete opportunity');
+    Route::controller(OpportunityController::class)->group(function () {
+        Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
 
-            Route::middleware('can:opportunity control')->group(function () {
-                Route::post('addOpportunity', 'addOpportunity');
-                Route::put('updateOpportunity/{id}', 'updateOpportunity');
-                Route::get('getOpportunity', 'getOpportunity');
-            });
+        Route::middleware('can:opportunity create')->group(function () {
+            Route::post('addOpportunity', 'addOpportunity');
+            Route::put('updateOpportunity/{id}', 'updateOpportunity');
         });
+        Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
     });
     // Company routes are over //
 
     // Seeker routes //
-    Route::middleware('can:seeker profile control')->controller(SeekerController::class)->prefix('seeker')->group(function () {
-        Route::post('create', 'create');
-        Route::post('update','update');
-
+    Route::controller(SeekerController::class)->prefix('seeker')->group(function () {
+        Route::middleware('can:seeker create')->group(function () {
+            Route::post('create', 'create');
+            Route::post('update', 'update');
+        });
         Route::post('createCV', 'createCV');
         Route::post('apply/{id}', 'apply');
     });
 
     // Post
     Route::controller(PostController::class)->prefix('post')->group(function () {
-        Route::middleware('can:post control')->group(function () {
+        Route::middleware('can:post create')->group(function () {
             Route::post('create', 'create');
             Route::put('edit/{post_id}' , 'edit');
-            Route::get('view','allPosts');
         });
-        Route::delete('delete/{id}','delete')->middleware('can:delete post');
+            Route::get('view','allPosts')->middleware('can:posts view');
+        Route::delete('delete/{id}','delete')->middleware('can:post delete');
     });
     // Seeker routes are over //
 
@@ -116,9 +117,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin Routes // Don't forget: api/admin/{}
     Route::prefix('admin')->group(function ()  {
         Route::controller(AdminController::class)->group(function (){
-            Route::delete('removeUser', 'removeUser')->middleware('can:delete user');
-
-            Route::delete('removePost', 'removePost')->middleware('can:delete post');
+            Route::delete('removeUser', 'removeUser')->middleware('can:user delete');
 
             Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
             Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');
@@ -126,7 +125,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('deleteExpiredBanned', 'deleteExpiredBanned')->middleware('can:block user');
 
 
-            Route::middleware('can:view users')->group(function () {
+            Route::middleware('can:user view')->group(function () {
 
                 Route::get('getUsers/{type}', 'getUsers');
 
@@ -148,7 +147,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::post('addEmployee','add');
                 Route::post('editEmployee','edit');
             });
-            Route::get('employees','getEmployee')->middleware('can:view employees');
+            Route::get('employees','getEmployee')->middleware('can:employee view');
         });
     });
 

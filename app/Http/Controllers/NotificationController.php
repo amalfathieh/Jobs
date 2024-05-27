@@ -19,16 +19,16 @@ class NotificationController extends Controller
     //
     public function displayNotification()
     {
-        $data=[];
         $notifications = DB::table('notifications')
-            ->where('notifiable_id',1)->get();
+            ->where('notifiable_id',Auth::user()->id)->get();
         foreach ($notifications as $notification){
             $notificationData = json_decode($notification->data);
-            $data[] = [
+            $data = [
                 'obj_id'=>$notificationData->obj_id,
                 'title'=>$notificationData->title,
                 'body'=>$notificationData->body,
                 'read_at'=>$notification->read_at,
+                'created_at' => $notification->created_at,
             ];
         }
         return $data;
