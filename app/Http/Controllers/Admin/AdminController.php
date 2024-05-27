@@ -13,6 +13,7 @@ use App\Models\Permission;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -105,6 +106,11 @@ class AdminController extends Controller
         } else {
             return $this->apiResponse(null, "User is already not banned", 403);
         }
+    }
+
+    public function isBan() {
+        $user = User::where('id', Auth::user()->id)->first();
+        return $user->isBanned();
     }
 
     public function getBans() {

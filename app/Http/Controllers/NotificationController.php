@@ -41,7 +41,6 @@ class NotificationController extends Controller
             if($post){
                 $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id', $id)->where('data->obj_id',$id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
-
                 return $post;
             }
 

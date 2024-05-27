@@ -14,7 +14,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Requests\postRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+use function Clue\StreamFilter\fun;
 
 /*
 |--------------------------------------------------------------------------
@@ -185,3 +188,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('rePassword', 'rePassword');
 });
 // Routes don't need auth are over //
+
+
+Route::get('test', function() {
+    $user = Auth::user();
+    return $user->roles;
+})->middleware('auth:sanctum');
