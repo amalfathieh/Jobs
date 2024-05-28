@@ -107,8 +107,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Post
     Route::controller(PostController::class)->prefix('post')->group(function () {
+        Route::post('create', 'create');
         Route::middleware('can:post create')->group(function () {
-            Route::post('create', 'create');
             Route::put('edit/{post_id}' , 'edit');
         });
             Route::get('view','allPosts')->middleware('can:posts view');

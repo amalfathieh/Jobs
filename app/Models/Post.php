@@ -10,7 +10,6 @@ class Post extends Model
     use HasFactory;
     protected $fillable = [
         'seeker_id',
-        'title',
         'body',
         'file'
     ];

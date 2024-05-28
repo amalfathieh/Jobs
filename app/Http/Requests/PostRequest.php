@@ -28,8 +28,8 @@ class PostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body'=>'required_without:file',
-            'file'=>'required_without:body'
+            'body'=>'required',
+            'file'=>'file'
         ];
     }
 

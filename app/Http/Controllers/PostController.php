@@ -22,13 +22,10 @@ class PostController extends Controller
     }
 
     public function create(PostRequest $request ,FileService $fileService){
-
         $seeker = Auth::user()->seeker;
-
         $this->postService->store(
-            $seeker->id, $request->title, $request->body, $request->file('file')
+            $seeker->id, $request->body, $request->file('file')
         );
-
         return $this->apiResponse(null, 'post create successfully', 201);
     }
 

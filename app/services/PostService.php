@@ -17,11 +17,10 @@ class PostService
         $this->fileService = $fileService;
     }
 
-    public function store($seeker_id , $title , $body ,$file){
+    public function store($seeker_id, $body ,$file){
         $file = $this->fileService->store($file,'images/job_seeker/posts');
         Post::create([
             'seeker_id' => $seeker_id,
-            'title' => $title,
             'body' => $body,
             'file' => $file
         ]);

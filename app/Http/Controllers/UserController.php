@@ -310,6 +310,6 @@ class UserController extends Controller
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
-        return $this->apiResponse(null, "sent successfully", 200);
+        return $this->apiResponse($data, "sent successfully", 200);
     }
 }
