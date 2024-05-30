@@ -25,7 +25,7 @@ class EmployeeController extends Controller
     }
 
     //ADD EMPLOYEE BY ADMIN FROM DASHBOURD
-    public function add(Request $request) {
+    public function add(EmployeeRequest $request) {
         $data = $request->all();
         $roles = ['employee'];
 
@@ -45,6 +45,7 @@ class EmployeeController extends Controller
 
         $link='';
         $user->assignRole($roles);
+//        return $password;
         InviteEmployeeJob::dispatch($request->email, $password ,$link);
         return $this->apiResponse($user,'Employee has been invite successfully',201);
     }

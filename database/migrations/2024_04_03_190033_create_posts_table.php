@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('seeker_id')->constrained('seekers')
                 ->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('title');
-            $table->text('body');
-            $table->string('file');
+            $table->text('body')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

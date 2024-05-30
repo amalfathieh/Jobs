@@ -22,7 +22,6 @@ class User extends Authenticatable implements BannableInterface
         'password',
         'roles_name',
         'is_verified',
-        'fcm_token'
     ];
 
     protected $hidden = [
@@ -68,5 +67,14 @@ class User extends Authenticatable implements BannableInterface
 
     public function opportunites() {
         return $this->belongsToMany(Opportunity::class, 'saves');
-}
+    }
+
+    public function deviceTokens(){
+        return $this->hasMany(DeviceToken::class);
+    }
+
+    public function routeNotificationForFcm($notification = null)
+    {
+        return $this->deviceTokens->pluck('token')->toArray();
+    }
 }

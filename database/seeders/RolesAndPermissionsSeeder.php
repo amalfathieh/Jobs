@@ -72,9 +72,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
             'post delete',
-            'delete opportunity',
             'block user',
-            'user report view', 'user report edit', 'user report delete',
+            'user report view', 'user report delete',
         ]);
     }
 }

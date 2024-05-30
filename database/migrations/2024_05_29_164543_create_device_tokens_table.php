@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('device_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('user_name')->unique();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->text('roles_name')->nullable();
-            $table->boolean('is_verified')->default(false);
-            $table->rememberToken();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+            $table->string('token');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('device_tokens');
     }
 };

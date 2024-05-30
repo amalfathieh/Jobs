@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Opportunity;
 use App\Models\Post;
 use App\Models\User;
-use App\Notifications\RealTimeNotification;
+use App\Notifications\SendNotification;
 use App\Traits\responseTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ class NotificationController extends Controller
             ->where('notifiable_id',Auth::user()->id)->get();
         foreach ($notifications as $notification){
             $notificationData = json_decode($notification->data);
-            $data = [
+               $data []= [
                 'obj_id'=>$notificationData->obj_id,
                 'title'=>$notificationData->title,
                 'body'=>$notificationData->body,
@@ -35,7 +35,7 @@ class NotificationController extends Controller
     }
 
     public function getNotificationContent($id,$title){
-        if($title == 'Post'){
+        if($title == 'New Post'){
             $post = Post::find($id);
 
             if($post){
@@ -45,6 +45,7 @@ class NotificationController extends Controller
             }
 
         }
+        //فوصة عمل
         else if($title == 'Job Opportunity'){
             $opportunity = Opportunity::find($id);
 
@@ -54,7 +55,7 @@ class NotificationController extends Controller
                 return $opportunity;
             }
         }
-
+        //طلب توظيف
         else if($title == 'Job Application'){
             $job_application = Job_Application::find($id);
             if($job_application) {
@@ -63,8 +64,8 @@ class NotificationController extends Controller
                 return $job_application;
             }
         }
-
-        else if($title == 'Login'){
+        //تنبيه الدخول الى الداشبورد
+        else if($title == 'Login Alert'){
             $user = User::find($id);
             if($user) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $id)->where('data->obj_id', $id)->pluck('id');
