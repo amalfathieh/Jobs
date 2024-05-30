@@ -19,6 +19,17 @@ class NotificationController extends Controller
     //
     public function displayNotification()
     {
+        try {
+            $users=User::where('id','!=',auth()->user()->id)->get();
+            $user2 = User::find(1);
+            $noti =[
+                'obj_id'=>Auth::user()->id,
+                'title'=>'Login',
+                'body'=>'to22 notification',
+            ];
+
+            $ss = Notification::send($users,new RealTimeNotification($noti));
+
         $notifications = DB::table('notifications')
             ->where('notifiable_id',Auth::user()->id)->get();
         foreach ($notifications as $notification){
@@ -29,9 +40,15 @@ class NotificationController extends Controller
                 'body'=>$notificationData->body,
                 'read_at'=>$notification->read_at,
                 'created_at' => $notification->created_at,
-            ];
+               ];
+
+            $notifications = DB::table('notifications')
+            ->where('notifiable_id',Auth::user()->id)->get();
+
+        } catch (\Exception $ex) {
+            return $this->apiResponse(null, $ex->getMessage(), 500);
         }
-        return $data;
+        return $this->apiResponse($data, "successfully", 200);
     }
 
     public function getNotificationContent($id,$title){

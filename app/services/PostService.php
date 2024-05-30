@@ -17,7 +17,8 @@ class PostService
         $this->fileService = $fileService;
     }
 
-    public function store($seeker_id  , $body ,$file){
+
+    public function store($seeker_id, $body ,$file){
         $file = $this->fileService->store($file,'images/job_seeker/posts');
         return Post::create([
             'seeker_id' => $seeker_id,
