@@ -5,27 +5,47 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\User;
+use App\Notifications\SendNotification;
 use App\services\FileService;
 use App\services\PostService;
+use App\services\UserService;
+use App\Traits\NotificationTrait;
 use App\Traits\responseTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class PostController extends Controller
 {
-    use responseTrait;
+    use responseTrait,NotificationTrait;
     protected $postService;
     public function __construct(PostService $postService)
     {
         $this->postService = $postService;
     }
 
-    public function create(PostRequest $request ,FileService $fileService){
-        $seeker = Auth::user()->seeker;
-        $this->postService->store(
+    public function create(PostRequest $request){
+        $user = User::find(Auth::user()->id);
+        $seeker = $user->seeker;
+
+        $post = $this->postService->store(
             $seeker->id, $request->body, $request->file('file')
         );
+
+        $followers = $user->followers;
+        $tokens = [];
+        foreach($followers as $follower){
+            $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+        }
+        $data =[
+            'obj_id'=>$post->id,
+            'title'=>'New Post',
+            'body'=>'New post has been published by: '.$seeker->first_name.'.',
+        ];
+
+        Notification::send($followers,new SendNotification($data));
+        $this->sendPushNotification($data['title'],$data['body'],$tokens);
         return $this->apiResponse(null, 'post create successfully', 201);
     }
 

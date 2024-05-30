@@ -12,11 +12,11 @@ trait NotificationTrait
 //$fcmTokens = User::whereNotNull('fcm_token')->pluck('fcm_token')->toArray();
 
     function sendPushNotification($title, $body,$token){
-
+        try {
         $SERVER_API_KEY = 'AAAAWwd3fqw:APA91bHJ5IDjouYCr3XwhwABLuuCH5PT4W_ZQju9HkOz3RGhVAbP07jS81Zp9W4_-J_wv2bBWtMeGGhUJUl0xBSuXdrIvqTg2ohjpiZWR-Cdj1EgbO89qwTcfOYvmPkxmzborR3kPiE5';
 
         $data = [
-        "registration_ids" => [$token],
+        "registration_ids" => $token,
 
         "notification" => [
             "title" => $title,
@@ -31,7 +31,6 @@ trait NotificationTrait
         'Authorization: key=' . $SERVER_API_KEY,
         'Content-Type: application/json',
         ];
-        try {
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');

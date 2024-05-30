@@ -70,12 +70,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'user report create', 'news view','posts view', 'opportunities view','user view','user delete',
         ]);
 
-        // $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
-        //     'post delete',
-        //     'opportunity delete',
-        //     'block user',
-        //     'user report view', 'user report edit', 'user report delete',
-        // ]);
+        $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
+            'post delete',
+            'block user',
+            'user report view', 'user report delete',
+        ]);
     }
 }
 

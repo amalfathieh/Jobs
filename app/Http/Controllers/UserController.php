@@ -14,7 +14,7 @@ use App\Models\ResetCodePassword;
 use App\Models\Seeker;
 use App\Models\User;
 use App\Models\VerificationCode;
-use App\Notifications\RealTimeNotification;
+use App\Notifications\SendNotification;
 use App\Traits\responseTrait;
 use App\Traits\NotificationTrait;
 use Illuminate\Http\Request;
@@ -101,6 +101,20 @@ class UserController extends Controller
             }
 
             $data['user']->roles_name = $role;
+
+            //send notification to admin when employee login to dashboard
+            if($user->hasRole('employee')){
+                $admin = User::role('owner')->first();
+                $tokens = $admin->routeNotificationForFcm();
+                $data =[
+                    'obj_id'=>$user->id,
+                    'title'=>'Login Alert',
+                    'body'=>'New login to the dashboard has been detected. User: '.$user->employee->first_name.' '.$user->employee->last_name,
+                ];
+                Notification::send($admin,new SendNotification($data));
+                $this->sendPushNotification($data['title'],$data['body'],$tokens);
+            }
+
             return $this->apiResponse($data, 'user logged in successfully', 200);
         } else
             return $this->apiResponse(null, 'Your account is not verified. Please verify your account first. then login', 401);
@@ -256,16 +270,17 @@ class UserController extends Controller
     }
 
 
-    public function updateToken(Request $request){
-        $user_id = $request['id'];
-        $fcm_token = $request['fcm_token'];
-        $user = User::findOrFail($user_id);
-        $user->fcm_token = $fcm_token;
-        $user->save();
-
-        return $this->apiResponse('','success',200);
-
+    public function storeToken(Request $request){
+        $user = Auth::user();
+        $exists = $user->deviceTokens()->where('token',$request->token)->exists();
+        if(!$exists) {
+            $user->deviceTokens()->create([
+                'token' => $request->token,
+            ]);
+            return $this->apiResponse(null, 'success', 200);
+        }
     }
+
     public function noti(){
         return $this->sendPushNotification('test notification','this is new notificatino', 'fNtgp5QlTPGtB4xuCw7K-U:APA91bF0pi2GMfD3xIXHjMYSmhwPeFBdHGcsQ4_lYNmWafRYq_WCOmz_knTYbVxnhjoy8IMyJJUdYq08dCBi3df-ENhHcqV5j6tRB5u0qxHNRF9l7khkQAgkt6j8ULMd4lXAJS3IBFa3');
     }
@@ -307,7 +322,7 @@ class UserController extends Controller
                 'title'=>'Login',
                 'body'=>'to22 notification',
             ];
-            $ss = Notification::send($user2,new RealTimeNotification($data));
+            Notification::send($user2,new SendNotification($data));
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
@@ -324,7 +339,7 @@ class UserController extends Controller
             $user = User::where('google_id', $google_user->getId())->first();
 
             if (!$user) {
-                
+
             }
         } catch (\Throwable $th) {
             //throw $th;

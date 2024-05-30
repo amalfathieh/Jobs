@@ -75,4 +75,13 @@ class User extends Authenticatable implements BannableInterface
     public function applies() {
         return $this->hasMany(Apply::class);
     }
+
+    public function deviceTokens(){
+        return $this->hasMany(DeviceToken::class);
+    }
+
+    public function routeNotificationForFcm($notification = null)
+    {
+        return $this->deviceTokens->pluck('token')->toArray();
+    }
 }

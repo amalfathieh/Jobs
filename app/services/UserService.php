@@ -6,6 +6,7 @@ namespace App\services;
 
 use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
@@ -28,4 +29,14 @@ class UserService
        return $user;
     }
 
+//    public function getTokensForFollowers(){
+//        $user = User::find(Auth::user()->id);
+//        $tokens = [];
+//        $followers = $user->followers;
+//
+//        foreach($followers as $follower){
+//            $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+//        }
+//        return $tokens;
+//    }
 }
