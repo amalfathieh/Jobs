@@ -45,7 +45,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::delete('delete', 'delete')->middleware('user delete');
 
-        Route::post('fcm-token', 'updateToken');
 
 //        Route::get('test/{token}', 'noti');
 
@@ -71,8 +70,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Notifications
         Route::controller(NotificationController::class)->prefix('notification')->group(function () {
             Route::get('display','displayNotification');
-            Route::get('getContent/{obj_id}/{title}','getNotificationContent');
+            Route::post('getContent','getNotificationContent');
             Route::get('delete','delete');
+
+            Route::post('testStore', 'testStore');
         });
         Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
 
@@ -85,7 +86,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('update','update');
             Route::delete('delete', 'delete');
         });
-    });
 
     Route::controller(OpportunityController::class)->group(function () {
         Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
@@ -95,6 +95,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::put('updateOpportunity/{id}', 'updateOpportunity');
         });
         Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
+    });
     });
     // Company routes are over //
 
