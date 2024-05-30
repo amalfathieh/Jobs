@@ -47,7 +47,7 @@ class PostController extends Controller
         $post = Post::find($id);
         $user = User::where('id', Auth::user()->id)->first();
         if (!is_null($post)) {
-            if (($user->hasRole('job_seeker') && $post['seeker_id'] == $user->seeker->id) || ($user->hasRole('employee') && $user->can('delete post'))) {
+            if (($user->hasRole('job_seeker') && $post['seeker_id'] == $user->seeker->id) || ($user->hasRole('employee') && $user->can('post delete'))) {
                 $post->delete();
                 return $this->apiResponse(null, 'Post deleted successfully', 200);
             }

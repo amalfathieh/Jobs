@@ -22,7 +22,9 @@ class User extends Authenticatable implements BannableInterface
         'password',
         'roles_name',
         'is_verified',
-        'fcm_token'
+        'fcm_token',
+        'google_id',
+        'google_token',
     ];
 
     protected $hidden = [
@@ -68,5 +70,9 @@ class User extends Authenticatable implements BannableInterface
 
     public function opportunites() {
         return $this->belongsToMany(Opportunity::class, 'saves');
-}
+    }
+
+    public function applies() {
+        return $this->hasMany(Apply::class);
+    }
 }

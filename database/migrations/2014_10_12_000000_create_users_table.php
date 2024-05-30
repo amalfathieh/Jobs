@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('user_name')->unique();
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->text('roles_name')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->text('fcm_token')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('google_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

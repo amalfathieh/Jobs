@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -311,5 +312,22 @@ class UserController extends Controller
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
         return $this->apiResponse($data, "sent successfully", 200);
+    }
+
+    public function redirect() {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function callbackGoogle() {
+        try {
+            $google_user = Socialite::driver('google')->user();
+            $user = User::where('google_id', $google_user->getId())->first();
+
+            if (!$user) {
+                
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

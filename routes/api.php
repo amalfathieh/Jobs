@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
@@ -11,9 +13,6 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
-use App\Http\Requests\postRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +29,13 @@ use function Clue\StreamFilter\fun;
 |
 */
 
+Route::middleware('web')->group(function () {
+    Route::get('login-google', [SocialAuthController::class, 'redirectToProvider']);
+    Route::get('auth/google/callback', [SocialAuthController::class, 'handleCallback']);
+});
+
 // Routes need auth //
 Route::middleware(['auth:sanctum'])->group(function () {
-
     // Routes common with all //
     Route::controller(UserController::class)->group(function () {
         Route::put('update', 'update')->middleware('can:edit user');
@@ -50,6 +53,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 //        Route::get('test/{token}', 'noti');
 
         Route::get('search/{search}', 'search');
+    });
+
+    Route::controller(PostController::class)->group(function () {
+        Route::get('allPosts', 'allPosts')->middleware('can:posts view');
+    });
+
+    Route::controller(OpportunityController::class)->group(function () {
+        Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
     });
         // Chat
         Route::controller(ChatController::class)->group(function () {
@@ -84,7 +95,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
     });
 
-    Route::controller(OpportunityController::class)->group(function () {
+    Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
         Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
 
         Route::middleware('can:opportunity create')->group(function () {
@@ -102,7 +113,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('update', 'update');
         });
         Route::post('createCV', 'createCV');
-        Route::post('apply/{id}', 'apply');
+    });
+
+    // Apply,       To call this: api/apply/
+    Route::controller(ApplyController::class)->prefix('apply')->group(function () {
+        Route::post('{id}', 'apply')->middleware('can:request create');
+        Route::post('update/{id}', 'update')->middleware('can:request edit');
+        Route::get('getMyApplies', 'getMyApplies')->middleware('can:request view');
+
+        Route::post('updateStatus/{id}', 'updateStatus')->middleware('can:status edit');
+        Route::get('getApplies', 'getApplies')->middleware('can:request view');
+        Route::delete('delete/{id}', 'delete')->middleware('can:request delete');
     });
 
     // Post
@@ -127,21 +148,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('getBans', 'getBans')->middleware('can:block user');
             Route::get('deleteExpiredBanned', 'deleteExpiredBanned')->middleware('can:block user');
 
-
             Route::middleware('can:user view')->group(function () {
 
                 Route::get('getUsers/{type}', 'getUsers');
 
                 Route::get('search/{user}','searchByUsernameOrEmail');
             });
-        });
-
-        Route::controller(PostController::class)->group(function () {
-            Route::get('allPosts', 'allPosts')->middleware('can:view posts');
-        });
-
-        Route::controller(OpportunityController::class)->group(function () {
-            Route::get('allOpportunities', 'allOpportunities')->middleware('can:view opportunities');
         });
 
         // api/admin/employee/{}

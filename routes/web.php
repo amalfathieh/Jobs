@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+use function Clue\StreamFilter\fun;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +24,8 @@ Route::get('/', function () {
 Route::get('testNotification',[UserController::class,'noti']);
 
 Route::get('createCV', 'SeekerController@createCV');
+
+Route::middleware('web')->group(function () {
+});
+Route::get('login-google', [SocialAuthController::class, 'redirectToProvider']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleCallback']);

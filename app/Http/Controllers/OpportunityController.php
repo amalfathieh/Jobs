@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityRequest;
+use App\Http\Resources\OpportunityResource;
 use App\Models\Company;
 use App\Models\Opportunity;
 use App\Models\User;
@@ -56,7 +57,7 @@ $request->work_place_type, $request->job_hours, $qualifications,
         $opportunity = Opportunity::find($id);
         $user = User::where('id', Auth::user()->id)->first();
         if (!is_null($opportunity)) {
-            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || ($user->hasRole('employee') && $user->can('delete opportunity'))) {
+            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || ($user->hasRole('employee') && $user->can('opportunity delete'))) {
                 $opportunity->delete();
                 return $this->apiResponse(null, 'Opportunity deleted successfully', 200);
             }
@@ -72,7 +73,7 @@ $request->work_place_type, $request->job_hours, $qualifications,
         return $this->apiResponse($opportunities, null, 200);
     }
     public function allOpportunities() {
-        $opportunities = Opportunity::all();
-        return $this->apiResponse($opportunities, null, 200);
+        $opportunities = OpportunityResource::collection(Opportunity::all());
+        return $this->apiResponse($opportunities, 'successfully', 200);
     }
 }

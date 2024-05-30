@@ -28,4 +28,9 @@ class FileService
         return $this->store($new_file ,$folder_name);
     }
 
+    public function delete($file) {
+        if(file_exists(public_path($file))) {
+            unlink(public_path($file));
+        }
+    }
 }
