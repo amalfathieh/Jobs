@@ -234,7 +234,7 @@ class UserController extends Controller
 
         $user = User::firstWhere('email', $passwordReset->email);
 
-        $request['password'] = bcrypt($request['password']);
+        $request['password'] = $request['password'];
         $user->update([
             'password' => $request->password,
         ]);
