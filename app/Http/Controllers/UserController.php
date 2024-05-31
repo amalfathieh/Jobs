@@ -160,7 +160,7 @@ class UserController extends Controller
     public function resetPassword(ResetPasswordRequest $request) {
 
         $user = User::where('id', Auth::user()->id)->first();
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         if($user->hasRole('employee')){
             $employee = $user->employee;
             $employee->is_change_password = true;

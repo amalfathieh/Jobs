@@ -21,23 +21,21 @@ class NotificationController extends Controller
     public function displayNotification()
     {
         try {
-
-        $notifications = DB::table('notifications')
-            ->where('notifiable_id',Auth::user()->id)->get();
-        foreach ($notifications as $notification) {
-            $notificationData = json_decode($notification->data);
-            $data [] = [
-                'obj_id' => $notificationData->obj_id,
-                'title' => $notificationData->title,
-                'body' => $notificationData->body,
-                'read_at' => $notification->read_at,
-                'created_at' => $notification->created_at,
-            ];
-        }
-
+            $data = [];
+            $notifications = DB::table('notifications')
+                ->where('notifiable_id',1)->get();
+            foreach ($notifications as $notification) {
+                $notificationData = json_decode($notification->data);
+                $data [] = [
+                    'obj_id' => $notificationData->obj_id,
+                    'title' => $notificationData->title,
+                    'body' => $notificationData->body,
+                    'read_at' => $notification->read_at,
+                    'created_at' => $notification->created_at,
+                ];
+            }
             $notifications = DB::table('notifications')
             ->where('notifiable_id',Auth::user()->id)->get();
-
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }

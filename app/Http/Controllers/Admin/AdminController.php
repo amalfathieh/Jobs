@@ -3,21 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EmployeeRequest;
-use App\Jobs\InviteEmployeeJob;
-use App\Models\Employee;
 use App\Traits\responseTrait;
 use App\Http\Resources\UserResource;
-use App\Models\JobTitle;
-use App\Models\Permission;
-use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {

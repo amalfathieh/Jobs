@@ -7,6 +7,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
@@ -47,7 +48,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('resetPassword', 'resetPassword');
 
         Route::delete('delete', 'delete')->middleware('user delete');
-
 
 //        Route::get('test/{token}', 'noti');
 
@@ -157,6 +157,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('getUsers/{type}', 'getUsers');
 
                 Route::get('search/{user}','searchByUsernameOrEmail');
+            });
+
+            Route::controller(NewsController::class)->prefix('news')->group(function () {
+
+                Route::middleware('can:news create')->group(function () {
+                    Route::post('create', 'create');
+                    Route::post('update/{id}', 'update');
+                });
+                Route::delete('delete/{id}', 'delete')->middleware('can:news delete');
+
+                Route::get('getNews', 'getNews')->middleware('can:news view');
             });
         });
 

@@ -88,7 +88,7 @@ class ApplyController extends Controller
                     $new_cv = $request->file('cv');
                     $cv_path = $fileService->update($new_cv,$apply->cv, 'job_seeker/applies');
                     $apply->update([
-                        'cv' => $cv_path ?? $apply['cv'],
+                        'cv' => $cv_path,
                         'full_name' => null,
                         'birth_day' => null,
                         'location' => null,
