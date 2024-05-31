@@ -41,7 +41,7 @@ class EmployeeController extends Controller
             'roles_name' => $roles,
             'is_verified'=>true,
         ]);
-        $employee = $this->userService->storeEmployee($request , $user->id );
+        $employee = $this->userService->storeEmployee($request, $user->id );
 
         $link='';
         $user->assignRole($roles);

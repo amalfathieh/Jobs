@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\SendNotification;
@@ -33,23 +34,23 @@ class PostController extends Controller
             $seeker->id, $request->body, $request->file('file')
         );
 
-        $followers = $user->followers;
-        $tokens = [];
-        foreach($followers as $follower){
-            $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
-        }
-        $data =[
-            'obj_id'=>$post->id,
-            'title'=>'New Post',
-            'body'=>'New post has been published by: '.$seeker->first_name.'.',
-        ];
+        // $followers = $user->followers;
+        // $tokens = [];
+        // foreach($followers as $follower){
+        //     $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+        // }
+        // $data =[
+        //     'obj_id'=>$post->id,
+        //     'title'=>'New Post',
+        //     'body'=>'New post has been published by: '.$seeker->first_name.'.',
+        // ];
 
-        Notification::send($followers,new SendNotification($data));
-        $this->sendPushNotification($data['title'],$data['body'],$tokens);
+        // Notification::send($followers,new SendNotification($data));
+        // $this->sendPushNotification($data['title'],$data['body'],$tokens);
         return $this->apiResponse(null, 'post create successfully', 201);
     }
 
-    public function edit(Request $request , $post_id){
+    public function edit(Request $request, $post_id){
         $post = Post::find($post_id);
         $user = User::where('id', Auth::user()->id)->first();
         if (!is_null($post)) {
@@ -79,6 +80,6 @@ class PostController extends Controller
     public function allPosts(){
         $posts =Post::query();
         $posts = $posts->latest()->get();
-        return $this->apiResponse($posts,'all posts',200);
+        return $this->apiResponse(PostResource::collection($posts),'all posts',200);
     }
 }
