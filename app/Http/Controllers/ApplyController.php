@@ -6,10 +6,12 @@ use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
 use App\Models\User;
+use App\Notifications\SendNotification;
 use App\services\FileService;
 use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class ApplyController extends Controller
@@ -18,7 +20,8 @@ class ApplyController extends Controller
     public function apply(Request $request, $id, FileService $fileService) {
         try {
             $apply = null;
-            $company_id = Opportunity::where('id', $id)->first()->company_id;
+            $opportunity = Opportunity::where('id', $id)->first();
+            $company_id= $opportunity->company_id;
             if (!$request->file('cv')) {
                 $apply = Apply::create([
                     'opportunity_id' => $id,
@@ -48,6 +51,17 @@ class ApplyController extends Controller
             }
 
             if ($apply) {
+                $user = Company::where('id',$company_id)->first()->user;
+                $tokens = $user->routeNotificationForFcm();
+                //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
+                $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
+                $data =[
+                    'obj_id'=>$apply->id,
+                    'title'=>'Job Application',
+                    'body'=> $body,
+                ];
+                Notification::send($user,new SendNotification($data));
+                $this->sendPushNotification($data['title'],$data['body'],$tokens);
                 return $this->apiResponse($apply, 'The request has been sent successfully', 201);
             }
             return $this->apiResponse(null, 'There is an error', 400);
@@ -138,10 +152,30 @@ class ApplyController extends Controller
         }
         $apply = Apply::where('id', $id)->first();
         $user = User::where('id', Auth::user()->id)->first();
+
+        //send notification to job_seeker
         if ($apply->company_id === $user->company->id) {
             $apply->update([
                 'status' => $request->status
             ]);
+            if($request->status == 'accepted'){
+                $body = 'Congratulations! Your application for '.$apply->opportunity->title.' at '.$user->company->company_name;
+            }
+            else if($request->status == 'rejected'){
+//                $body = 'نأسف لإبلاغكم بأن طلبكم لوظيفة '.$apply->opportunity->title.' قد تم رفضه. في '.$user->company->company_name;
+                $body = 'We regret to inform you that your application for the '.$apply->opportunity->title.' position has been rejected, at '.$user->company->company_name;
+            }
+            $user = User::find($apply->user_id);
+            $tokens = $user->routeNotificationForFcm();
+            $data =[
+                'obj_id'=>$apply->id,
+                'title'=>'Job Application',
+                'body'=> $body,                                                                                    dy,
+            ];
+            Notification::send($user,new SendNotification($data));
+            $this->sendPushNotification($data['title'],$data['body'],$tokens);
+
+
             $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
             return $this->apiResponse($data, 'Updated successfully', 200);
         }

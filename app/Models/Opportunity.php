@@ -33,7 +33,10 @@ class Opportunity extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function users() {
+    public function savedByUsers() {
         return $this->belongsToMany(User::class, 'saves');
+    }
+    public function applies(){
+        return $this->hasMany(Apply::class);
     }
 }
