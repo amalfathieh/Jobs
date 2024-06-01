@@ -12,9 +12,12 @@ use Laravel\Sanctum\HasApiTokens;
 use Cog\Contracts\Ban\Bannable as BannableInterface;
 use Cog\Laravel\Ban\Traits\Bannable;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 class User extends Authenticatable implements BannableInterface
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable, LogsActivity;
 
     protected $fillable = [
         'user_name',
@@ -36,6 +39,13 @@ class User extends Authenticatable implements BannableInterface
         'email_verified_at' => 'datetime',
         'roles_name' => 'array'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['*']);
+    }
+
     public function seeker()
     {
         return $this->hasOne(Seeker::class);

@@ -58,9 +58,9 @@ class OpportunityService
             }
 
             $opportunity->update([
-                'title' => $request['title'] ?? $opportunity['title'],
+                'title' => $request->title ?? $opportunity['title'],
                 'body' => $request['body'] ?? $opportunity['body'],
-                'file' => $opportunity_file ?? $opportunity['file'],
+                'file' => $opportunity_file,
                 'location' => $request['location'] ?? $opportunity['location'],
                 'job_type' => $request['job_type'] ?? $opportunity['job_type'],
                 'work_place_type' => $request['work_place_type'] ?? $opportunity['work_place_type'],

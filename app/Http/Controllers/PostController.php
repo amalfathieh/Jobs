@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
+use function PHPUnit\Framework\isEmpty;
+
 class PostController extends Controller
 {
     use responseTrait,NotificationTrait;
@@ -34,19 +36,21 @@ class PostController extends Controller
             $seeker->id, $request->body, $request->file('file')
         );
 
-        // $followers = $user->followers;
-        // $tokens = [];
-        // foreach($followers as $follower){
-        //     $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
-        // }
-        // $data =[
-        //     'obj_id'=>$post->id,
-        //     'title'=>'New Post',
-        //     'body'=>'New post has been published by: '.$seeker->first_name.'.',
-        // ];
+        $followers = $user->followers;
+        if (!isEmpty($followers)) {
+            $tokens = [];
+            foreach($followers as $follower){
+                $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+            }
+            $data =[
+                'obj_id'=>$post->id,
+                'title'=>'New Post',
+                'body'=>'New post has been published by: '.$seeker->first_name.'.',
+            ];
 
-        // Notification::send($followers,new SendNotification($data));
-        // $this->sendPushNotification($data['title'],$data['body'],$tokens);
+            Notification::send($followers,new SendNotification($data));
+            $this->sendPushNotification($data['title'],$data['body'],$tokens);
+        }
         return $this->apiResponse(null, 'post create successfully', 201);
     }
 

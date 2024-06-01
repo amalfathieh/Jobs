@@ -98,15 +98,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::delete('delete', 'delete');
         });
 
-    Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
-        Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
+        Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
+            Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
 
-        Route::middleware('can:opportunity create')->group(function () {
-            Route::post('addOpportunity', 'addOpportunity');
-            Route::put('updateOpportunity/{id}', 'updateOpportunity');
+            Route::middleware('can:opportunity create')->group(function () {
+                Route::post('addOpportunity', 'addOpportunity');
+                Route::put('updateOpportunity/{id}', 'updateOpportunity');
+            });
+            Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
         });
-        Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
-    });
     });
     // Company routes are over //
 
@@ -159,11 +159,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('search/{user}','searchByUsernameOrEmail');
             });
 
+            Route::middleware('can:logs view')->group(function () {
+                Route::get('logs', 'logs');
+
+                Route::get('countUsers', 'countUsers');
+                Route::get('count', 'countPOA');
+                Route::get('lineChart', 'lineChart');
+            });
+
+            // api/admin/news/
             Route::controller(NewsController::class)->prefix('news')->group(function () {
 
                 Route::middleware('can:news create')->group(function () {
                     Route::post('create', 'create');
-                    Route::post('update/{id}', 'update');
+                    Route::put('update/{id}', 'update');
                 });
                 Route::delete('delete/{id}', 'delete')->middleware('can:news delete');
 
@@ -179,17 +188,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
             });
             Route::get('employees','getEmployee')->middleware('can:employee view');
         });
-    });
 
         // Roles
+        // api/admin/role/
         Route::middleware('can:role control')->controller(RoleController::class)->prefix('role')->group(function () {
             Route::get('allRoles', 'allRoles');
+            Route::get('getRoles', 'getRoles');
             Route::post('addRole', 'addRole');
             Route::put('editRole', 'editRole');
             Route::post('deleteRole', 'deleteRole');
 
             Route::post('editUserRoles', 'editUserRoles');
         });
+    });
+
     // Admin routes are over //
 });
 // Routes need auth are over //

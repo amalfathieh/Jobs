@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('verification_codes', function (Blueprint $table) {
-            $table->string('email')->index();
+            $table->id();
+            $table->string('email');
             $table->string('code');
             $table->timestamps();
         });
