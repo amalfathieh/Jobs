@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('display','displayNotification');
             Route::post('getContent','getNotificationContent');
             Route::get('delete','delete');
-
+            Route::get('makeRead','makeAsRead');
             Route::post('testStore', 'testStore');
         });
         Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
@@ -182,6 +182,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('editUserRoles', 'editUserRoles');
         });
     // Admin routes are over //
+    Route::controller(SaveController::class)->group(function () {
+        Route::get('save/{opportunity_id}','saveOpportunity');
+        Route::get('getSave','getSavedItems');
+
+    });
 });
 // Routes need auth are over //
 
