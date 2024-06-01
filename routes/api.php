@@ -84,7 +84,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(NotificationController::class)->prefix('notification')->group(function () {
             Route::get('display','displayNotification');
             Route::post('getContent','getNotificationContent');
-            Route::get('delete','delete');
+            Route::delete('delete','delete');
             Route::get('makeRead','makeAsRead');
             Route::post('testStore', 'testStore');
         });
