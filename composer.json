@@ -17,6 +17,7 @@
         "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.8",
         "mpdf/mpdf": "*",
+        "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {

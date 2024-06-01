@@ -8,6 +8,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
@@ -84,7 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('display','displayNotification');
             Route::post('getContent','getNotificationContent');
             Route::get('delete','delete');
-            Route::get('makeRead','makeAsRead');
+
             Route::post('testStore', 'testStore');
         });
         Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
@@ -102,7 +103,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
         Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
 
-        Route::middleware('can:opportunity` create')->group(function () {
+        Route::middleware('can:opportunity create')->group(function () {
             Route::post('addOpportunity', 'addOpportunity');
             Route::put('updateOpportunity/{id}', 'updateOpportunity');
         });
@@ -181,11 +182,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('editUserRoles', 'editUserRoles');
         });
     // Admin routes are over //
-    Route::controller(SaveController::class)->group(function () {
-        Route::get('save/{opportunity_id}','saveOpportunity');
-        Route::get('getSave','getSavedItems');
-
-    });
 });
 // Routes need auth are over //
 

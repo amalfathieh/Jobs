@@ -78,7 +78,6 @@ class UserController extends Controller
 
     public function login(LoginRequest $request)
     {
-
         $login = $request->input('login');
         $password =  $request->input('password');
 
@@ -160,7 +159,7 @@ class UserController extends Controller
     public function resetPassword(ResetPasswordRequest $request) {
 
         $user = User::where('id', Auth::user()->id)->first();
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         if($user->hasRole('employee')){
             $employee = $user->employee;
             $employee->is_change_password = true;
@@ -178,7 +177,7 @@ class UserController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'email' => 'required|email:rfc,dns|exists:users',
+                'email' => 'required|email|exists:users',
             ]);
 
             if ($validate->fails()) {
@@ -190,12 +189,12 @@ class UserController extends Controller
                 return $this->apiResponse(null, 'Your account is not verified', 400);
             }
 
-            ResetCodePassword::where('email', $request->email)->delete();
+            VerificationCode::where('email', $request->email)->delete();
 
             $data['email'] = $user->email;
             $data['code'] = mt_rand(100000, 999999);
 
-            $codeData = ResetCodePassword::create($data);
+            $codeData = VerificationCode::create($data);
 
             ForgotPasswordJob::dispatch($data['email'], $data['code']);
 
@@ -207,16 +206,16 @@ class UserController extends Controller
 
     public function checkCode(Request $request) {
         $validate = Validator::make($request->all(),[
-            'code' => ['required', 'integer', 'exists:reset_code_passwords'],
+            'code' => ['required', 'integer', 'exists:verification_codes'],
         ]);
         if ($validate->fails()) {
             return $this->apiResponse(null, $validate->errors(), 400);
         }
 
-        $ver_code = ResetCodePassword::firstwhere('code', $request->code);
+        $ver_code = VerificationCode::firstwhere('code', $request->code);
         // check if it does not expired: the time is one hour
         if ($ver_code->created_at->addHour() < now()) {
-            ResetCodePassword::where('code', $ver_code->code)->delete();
+            VerificationCode::where('code', $ver_code->code)->delete();
             return $this->apiResponse(null, 'code has expired', 422);
         }
         return $this->apiResponse(null, 'code is correct', 200);
@@ -224,8 +223,7 @@ class UserController extends Controller
 
     public function rePassword(RePasswordRequest $request)
     {
-
-        $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
+        $passwordReset = VerificationCode::firstWhere('code', $request->code);
 
         if ($passwordReset->created_at->addHour() < now()) {
             $passwordReset->delete();
@@ -234,7 +232,7 @@ class UserController extends Controller
 
         $user = User::firstWhere('email', $passwordReset->email);
 
-        $request['password'] = bcrypt($request['password']);
+        $request['password'] = $request['password'];
         $user->update([
             'password' => $request->password,
         ]);
@@ -242,7 +240,6 @@ class UserController extends Controller
 
         return $this->apiResponse([], 'password has been successfully reset', 200);
     }
-
 
     public function update(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();
@@ -310,7 +307,7 @@ class UserController extends Controller
         } else{
             $result = UserResource::collection($users);
         }
-        return $result;
+        return $this->apiResponse($result,'Found it',200);
     }
 
     public function testStore(){
@@ -327,22 +324,5 @@ class UserController extends Controller
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
         return $this->apiResponse($data, "sent successfully", 200);
-    }
-
-    public function redirect() {
-        return Socialite::driver('google')->redirect();
-    }
-
-    public function callbackGoogle() {
-        try {
-            $google_user = Socialite::driver('google')->user();
-            $user = User::where('google_id', $google_user->getId())->first();
-
-            if (!$user) {
-
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 }

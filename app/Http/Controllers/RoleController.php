@@ -97,6 +97,15 @@ class RoleController extends Controller
         return RolesAndPermissionsResource::collection($roles);
     }
 
+    public function getRoles() {
+        $roles = Role::all();
+        $data = [];
+        foreach ($roles as $role) {
+            $data[$role->name] = $role->permissions->pluck('name');
+        }
+        return $data;
+    }
+
     public function editUserRoles(Request $request){
         $validate = Validator::make($request->all(), [
             'id' => 'required|integer',

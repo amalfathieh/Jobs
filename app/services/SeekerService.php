@@ -32,6 +32,8 @@ class SeekerService
         $certificates,
         $about) {
         $seeker_image = $this->fileService->store($image,'images/job_seeker/profilePhoto');
+        $skills = json_decode($skills);
+        $certificates = json_decode($certificates);
         Seeker::create([
             'user_id' => Auth::user()->id,
             'first_name' => $first_name,

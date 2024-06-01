@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-class Post extends Model
+class Save extends Model
 {
     use HasFactory, LogsActivity;
     protected $fillable = [
-        'seeker_id',
-        'body',
-        'file'
+        'user_id',
+        'opportunity_id'
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -21,8 +20,7 @@ class Post extends Model
         ->logOnly(['*']);
     }
 
-    public function seeker(){
-        return $this->belongsTo(Seeker::class);
+    public function oppourtunities() {
+        return $this->belongsTo(Opportunity::class);
     }
-
 }

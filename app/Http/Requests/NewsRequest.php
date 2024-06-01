@@ -4,13 +4,13 @@ namespace App\Http\Requests;
 
 use App\Traits\responseTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Contracts\Validation\Validator;
 
-class RegisterRequest extends FormRequest
+
+class NewsRequest extends FormRequest
 {
     use responseTrait;
     /**
@@ -29,16 +29,8 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_name' => 'required|unique:users,user_name|regex:/^[a-z0-9_.]+$/',
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-            ],
-            'roles_name' => 'required|in:company,job_seeker,employee',
+            'title' => 'required',
+            'body' => 'required'
         ];
     }
 

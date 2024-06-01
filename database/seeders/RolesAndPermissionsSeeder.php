@@ -23,6 +23,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'role control',
             'admin report create', 'admin report view', 'admin report edit', 'admin report delete',
 
+            'logs view',
             'employee control', 'employee view',
 
             'block user',
@@ -67,13 +68,14 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
-            'user report create', 'news view','posts view', 'opportunities view','user view','user delete',
+            'user report create', 'news view', 'posts view', 'opportunities view', 'user view', 'user delete',
         ]);
 
         $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([
             'post delete',
             'block user',
             'user report view', 'user report delete',
+            'logs view'
         ]);
     }
 }
