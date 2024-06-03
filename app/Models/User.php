@@ -86,6 +86,10 @@ class User extends Authenticatable implements BannableInterface
         return $this->hasMany(Apply::class);
     }
 
+    public function reports() {
+        return $this->hasMany(Report::class);
+    }
+
     public function deviceTokens(){
         return $this->hasMany(DeviceToken::class);
     }

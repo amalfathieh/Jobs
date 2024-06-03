@@ -20,14 +20,12 @@ class AdminController extends Controller
 {
     use responseTrait;
     public function removeUser($id) {
-
-            $user = User::where('id', $id)->first();
-            if ($user) {
-                $user->delete();
-                return $this->apiResponse(null, 'User removed successfully', 200);
-            }
-            return $this->apiResponse(null, 'User not found', 404);
-
+        $user = User::where('id', $id)->first();
+        if ($user) {
+            $user->delete();
+            return $this->apiResponse(null, 'User removed successfully', 200);
+        }
+        return $this->apiResponse(null, 'User not found', 404);
     }
 
     public function getUsers($type) {

@@ -27,30 +27,31 @@ class OpportunityController extends Controller
             $file = $request->file('file');
             $user = User::find(Auth::user()->id);
             $company_id =$user->company->id;
+            $location = $user->company->location;
             $qualifications = json_decode($request->qualifications);
             $skills_req = json_decode($request->skills_req);
             $opportunity = $service->createOpportunity(
                 $company_id, $request->title, $request->body,
-                $file, $request->location, $request->job_type,
+                $file, $location, $request->job_type,
                 $request->work_place_type, $request->job_hours, $qualifications,
                 $skills_req, $request->salary, $request->vacant
             );
             // get followers tokens
-            $followers = $user->followers;
-            if (!isEmpty($followers)) {
-                $tokens = [];
-                foreach($followers as $follower){
-                    $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
-                }
-                $data =[
-                    'obj_id'=>$opportunity->id,
-                    'title'=>'Job Opportunity',
-                    'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.'Apply now!',
-                ];
+            // $followers = $user->followers;
+            // if ($followers) {
+            //     $tokens = [];
+            //     foreach($followers as $follower){
+            //         $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+            //     }
+            //     $data =[
+            //         'obj_id'=>$opportunity->id,
+            //         'title'=>'Job Opportunity',
+            //         'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.'Apply now!',
+            //     ];
 
-                Notification::send($followers,new SendNotification($data));
-                $this->sendPushNotification($data['title'],$data['body'],$tokens);
-            }
+            //     Notification::send($followers,new SendNotification($data));
+            //     $this->sendPushNotification($data['title'],$data['body'],$tokens);
+            // }
             return $this->apiResponse(null, 'Opportunity added successfully', 201);
         }catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
@@ -81,7 +82,7 @@ class OpportunityController extends Controller
     public function getOpportunity() {
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
-        $opportunities = $company->opportunities;
+        $opportunities = OpportunityResource::collection($company->opportunities);
         return $this->apiResponse($opportunities, null, 200);
     }
     public function allOpportunities() {

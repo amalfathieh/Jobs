@@ -18,6 +18,7 @@ class OpportunityResource extends JsonResource
             'id' => $this->id,
             'company_id' => $this->company_id,
             'company_name' => $this->company->company_name,
+            'company_logo' => $this->company->logo,
             'title' => $this->title,
             'body' => $this->body,
             'file' => $this->file,

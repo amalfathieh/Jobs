@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
@@ -55,6 +56,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('device_token', 'storeToken');
 
+    });
+
+    Route::controller(ReportController::class)->prefix('report')->group(function () {
+        Route::post('reportUser/{id}', 'reportUser')->middleware('can:user report create');
+        Route::post('getReports', 'getReports')->middleware('can:user report view');
     });
 
     Route::controller(PostController::class)->group(function () {
@@ -105,7 +111,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::post('addOpportunity', 'addOpportunity');
                 Route::put('updateOpportunity/{id}', 'updateOpportunity');
             });
-            Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
+            Route::get('getOpportunity', 'allOpportunities')->middleware('can:opportunities view');
         });
     });
     // Company routes are over //
@@ -145,7 +151,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin Routes // Don't forget: api/admin/{}
     Route::prefix('admin')->group(function ()  {
         Route::controller(AdminController::class)->group(function (){
-            Route::delete('removeUser', 'removeUser')->middleware('can:user delete');
+            Route::delete('removeUser/{id}', 'removeUser')->middleware('can:user delete');
 
             Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
             Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');
@@ -163,7 +169,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('logs', 'logs');
 
                 Route::get('countUsers', 'countUsers');
-                Route::get('count', 'countPOA');
+                Route::get('countPOA', 'countPOA');
                 Route::get('lineChart', 'lineChart');
             });
 
@@ -184,7 +190,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
             Route::middleware('can:employee control')->group(function () {
                 Route::post('addEmployee','add');
-                Route::post('editEmployee','edit');
+                Route::post('editEmployee/{id}','edit');
             });
             Route::get('employees','getEmployee')->middleware('can:employee view');
         });
@@ -194,11 +200,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware('can:role control')->controller(RoleController::class)->prefix('role')->group(function () {
             Route::get('allRoles', 'allRoles');
             Route::get('getRoles', 'getRoles');
+
             Route::post('addRole', 'addRole');
             Route::put('editRole', 'editRole');
-            Route::post('deleteRole', 'deleteRole');
+            Route::delete('deleteRole/{id}', 'deleteRole');
 
-            Route::post('editUserRoles', 'editUserRoles');
+            Route::put('editUserRoles/{id}', 'editUserRoles');
         });
     });
 

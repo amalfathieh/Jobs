@@ -23,10 +23,14 @@ return new class extends Migration
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
 
-            $table->foreignId('reason_id')
+            $table->foreignId('reason_id')->nullable()
             ->constrained('reasons')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
+
+            $table->string('another_reason')->nullable();
+            $table->string('notes')->nullable();
+
             $table->timestamps();
         });
     }

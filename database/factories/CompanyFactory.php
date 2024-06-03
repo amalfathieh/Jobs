@@ -17,7 +17,11 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => $this->sequence(fn ($sequence) => $sequence->index + 1),
+            "company_name" => fake()->streetName(),
+            "location" => fake()->address(),
+            "about" => fake()->sentence(),
+            "contact_info" => fake()->word()
         ];
     }
 }
