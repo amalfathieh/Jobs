@@ -30,23 +30,25 @@ class UserResource extends JsonResource
                 'is_verified' => $this->is_verified === 1,
                 'created_at'=>$this->created_at->toDateTimeString(),
                 'role' => $this->roles_name,
+                'type'=>null,
             ];
 
 
              if($user->hasRole('employee')){
                 $employee=$user->employee;
+                 $data['type']='employee';
                 $data['more_info'] = new EmployeeResource($employee);
             }
 
             else if ( $user->hasRole('job_seeker') ) {
                 $seeker = $user->seeker;
-
+                $data['type']='job_seeker';
                 $data['more_info'] = new SeekerResource($seeker);
             }
 
             else if($user->hasRole('company')) {
                 $company = $user->company;
-
+                $data['type']='company';
                 $data['more_info'] = new CompanyResource($company);
             }
 

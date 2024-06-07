@@ -16,6 +16,7 @@ class OpportunityResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user_id' =>$this->company->user_id,
             'company_id' => $this->company_id,
             'company_name' => $this->company->company_name,
             'title' => $this->title,

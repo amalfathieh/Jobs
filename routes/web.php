@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
 
 use function Clue\StreamFilter\fun;
 
@@ -29,3 +31,9 @@ Route::middleware('web')->group(function () {
 });
 Route::get('login-google', [SocialAuthController::class, 'redirectToProvider']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'handleCallback']);
+
+
+Route::get('test', function() {
+    Pdf::loadView('user/print');
+    return view('user/print');
+});

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\services\OpportunityService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
@@ -37,7 +38,7 @@ class OpportunityController extends Controller
             );
             // get followers tokens
             $followers = $user->followers;
-            if (!isEmpty($followers)) {
+            if ($followers) {
                 $tokens = [];
                 foreach($followers as $follower){
                     $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
@@ -49,7 +50,7 @@ class OpportunityController extends Controller
                 ];
 
                 Notification::send($followers,new SendNotification($data));
-                $this->sendPushNotification($data['title'],$data['body'],$tokens);
+//                $this->sendPushNotification($data['title'],$data['body'],$tokens);
             }
             return $this->apiResponse(null, 'Opportunity added successfully', 201);
         }catch (\Exception $ex) {
@@ -85,7 +86,13 @@ class OpportunityController extends Controller
         return $this->apiResponse($opportunities, null, 200);
     }
     public function allOpportunities() {
-        $opportunities = OpportunityResource::collection(Opportunity::all());
+        $userId = Auth::user()->id;
+        $opportunities = Opportunity::select('opportunities.*')->addSelect(DB::raw("EXISTS(SELECT 1 FROM followers WHERE followers.follower_id = opportunities.company_id AND followers.followee_id = $userId) AS is_followed"))
+            ->orderByDesc('is_followed')
+            ->latest()
+            ->get();
+
+        $opportunities = OpportunityResource:: collection($opportunities);
         return $this->apiResponse($opportunities, 'successfully', 200);
     }
 }

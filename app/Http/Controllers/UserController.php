@@ -89,6 +89,7 @@ class UserController extends Controller
         }
 
         $user = User::where($fieldType, $login)->first();
+        $user = new UserResource($user);
         if ($user->is_verified) {
             $token = $user->createToken("API TOKEN")->plainTextToken;
             $data['user'] = $user;
@@ -111,7 +112,7 @@ class UserController extends Controller
                     'body'=>'New login to the dashboard has been detected. User: '.$user->employee->first_name.' '.$user->employee->last_name,
                 ];
                 Notification::send($admin,new SendNotification($data));
-                $this->sendPushNotification($data['title'],$data['body'],$tokens);
+//                $this->sendPushNotification($data['title'],$data['body'],$tokens);
             }
 
             return $this->apiResponse($data, 'user logged in successfully', 200);
@@ -232,7 +233,7 @@ class UserController extends Controller
 
         $user = User::firstWhere('email', $passwordReset->email);
 
-        $request['password'] = $request['password'];
+        $user['password'] = $request['password'];
         $user->update([
             'password' => $request->password,
         ]);
