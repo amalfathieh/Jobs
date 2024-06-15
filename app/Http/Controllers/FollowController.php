@@ -48,14 +48,14 @@ class FollowController extends Controller
     {
         $user = User::find($userId);
         $followers = $user->followers;
-        return response()->json(FollowerResource::collection($followers));
+        return $this->apiResponse(FollowerResource::collection($followers),'success',200);
     }
 
     public function showFollowings($userId)
     {
         $user = User::find($userId);
         $followings  = $user->followings;
-        return response()->json(FollowerResource::collection($followings));
+        return $this->apiResponse(FollowerResource::collection($followings),'success',200);
     }
 
 }

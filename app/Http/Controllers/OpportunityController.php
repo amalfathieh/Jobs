@@ -37,22 +37,22 @@ class OpportunityController extends Controller
                 $skills_req, $request->salary, $request->vacant
             );
             // get followers tokens
-            // $followers = $user->followers;
-            // if ($followers) {
-            //     $tokens = [];
-            //     foreach($followers as $follower){
-            //         $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
-            //     }
-            //     $data =[
-            //         'obj_id'=>$opportunity->id,
-            //         'title'=>'Job Opportunity',
-            //         'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.'Apply now!',
-            //     ];
+            $followers = $user->followers;
+            if ($followers) {
+                $tokens = [];
+                foreach($followers as $follower){
+                    $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
+                }
+                $data =[
+                    'obj_id'=>$opportunity->id,
+                    'title'=>'Job Opportunity',
+                    'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.'Apply now!',
+                ];
 
-            //     Notification::send($followers,new SendNotification($data));
-            //     $this->sendPushNotification($data['title'],$data['body'],$tokens);
-            // }
-            return $this->apiResponse(null, 'Opportunity added successfully', 201);
+                Notification::send($followers,new SendNotification($data));
+                // $this->sendPushNotification($data['title'],$data['body'],$tokens);
+            }
+            return $this->apiResponse($opportunity, 'Opportunity added successfully', 201);
         }catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
         }

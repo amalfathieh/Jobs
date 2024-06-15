@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Apply;
 use App\Models\Opportunity;
 use App\Models\Post;
 use App\Models\User;
@@ -53,7 +54,7 @@ class NotificationController extends Controller
             if($post){
                 $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
-                return $post;
+                return $this->apiResponse($post , 'success' ,200);
             }
 
         }
@@ -64,16 +65,16 @@ class NotificationController extends Controller
             if($opportunity) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $opportunity;
+                return $this->apiResponse($opportunity , 'success' ,200);
             }
         }
         //طلب توظيف
         else if($request['title'] == 'Job Application'){
-            $job_application = Job_Application::find($request->id);
+            $job_application = Apply::find($request->id);
             if($job_application) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $job_application;
+                return $this->apiResponse($job_application , 'success' ,200);
             }
         }
         //تنبيه الدخول الى الداشبورد
@@ -82,7 +83,7 @@ class NotificationController extends Controller
             if($user) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $user;
+                return $this->apiResponse($user , 'success' ,200);
             }
         }
 
@@ -91,7 +92,7 @@ class NotificationController extends Controller
             if($report) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $report;
+                return $this->apiResponse($report , 'success' ,200);
             }
         }
 
@@ -109,8 +110,14 @@ class NotificationController extends Controller
         //$user->unreadNotifications || readNotifications;
         foreach($user->notifications as $notification){
             $notification->delete();
-            //جعل جميع الاشعارات مقروئة
-            //$notification->markAsRead();
+        }
+        return $this->apiResponse(null,'success',200);
+    }
+
+    public function makeAsRead(){
+        $userid=User::find(auth()->user()->id);
+        foreach($userid->unreadNotifications as $notification) {
+            $notification->markAsRead();
         }
         return $this->apiResponse(null,'success',200);
     }

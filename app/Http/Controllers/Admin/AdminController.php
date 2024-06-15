@@ -35,7 +35,7 @@ class AdminController extends Controller
             $users = $users->reject(function(User $user) {
                 $roles = $user->roles_name;
                 foreach ($roles as $value) {
-                    return $value === 'owner';
+                    return $value === 'owner' || $value === 'employee';
                 }
             });
             $result = UserResource::collection($users);
@@ -43,6 +43,7 @@ class AdminController extends Controller
 
         else if($type == 'JobSeekers' ) {
             $seekers = User::role('job_seeker')->latest()->get();
+
             $result = UserResource::collection($seekers);
         }
 
@@ -168,6 +169,7 @@ class AdminController extends Controller
     }
 
     public function logs() {
+        // $logs
         $logs = Activity::all();
         return $logs;
     }

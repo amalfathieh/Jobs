@@ -37,7 +37,7 @@ class PostController extends Controller
         );
 
         $followers = $user->followers;
-        if (!isEmpty($followers)) {
+        if ($followers) {
             $tokens = [];
             foreach($followers as $follower){
                 $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
@@ -49,7 +49,7 @@ class PostController extends Controller
             ];
 
             Notification::send($followers,new SendNotification($data));
-            $this->sendPushNotification($data['title'],$data['body'],$tokens);
+            // $this->sendPushNotification($data['title'],$data['body'],$tokens);
         }
         return $this->apiResponse(null, 'post create successfully', 201);
     }

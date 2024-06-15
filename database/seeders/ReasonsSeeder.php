@@ -19,7 +19,8 @@ class ReasonsSeeder extends Seeder
             'image or user_name are appropriate',
 
             'posting inappropriate things',
-            'misleading news'
+            'misleading news',
+            'another_reason'
         ];
 
         for ($i=0; $i < sizeof($reasons); $i++) {

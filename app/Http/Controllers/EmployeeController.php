@@ -27,7 +27,7 @@ class EmployeeController extends Controller
     //ADD EMPLOYEE BY ADMIN FROM DASHBOURD
     public function add(EmployeeRequest $request) {
         $data = $request->all();
-        $roles = [];
+        $roles = ['user', 'employee'];
 
         foreach ($data['roles_name'] as $role){
             $roles[] = $role;

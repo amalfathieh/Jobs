@@ -17,7 +17,14 @@ class SeekerFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 
+            "first_name" => fake()->firstName(),
+            "last_name" => fake()->lastName(),
+            "gender" => fake()->randomElement(['male', 'female']),
+            "birth_day" => fake()->date(),
+            "location" => fake()->address(),
+            "skills" => [fake()->title(), fake()->title(), fake()->title(), fake()->title()],
+            "certificates" => [fake()->title(), fake()->title(), fake()->title(), fake()->title()],
+            "about" => fake()->sentence(),
         ];
     }
 }

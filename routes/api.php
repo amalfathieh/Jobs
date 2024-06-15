@@ -13,6 +13,7 @@ use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaveController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -89,10 +90,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('display','displayNotification');
             Route::post('getContent','getNotificationContent');
             Route::get('delete','delete');
-
+            Route::get('makeRead','makeAsRead');
             Route::post('testStore', 'testStore');
         });
-        Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
 
     // Routes common are over //
 
@@ -142,8 +142,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware('can:post create')->group(function () {
             Route::put('edit/{post_id}' , 'edit');
         });
-            Route::get('view','allPosts')->middleware('can:posts view');
+        Route::get('view','allPosts')->middleware('can:posts view');
         Route::delete('delete/{id}','delete')->middleware('can:post delete');
+    });
+
+    Route::controller(SaveController::class)->group(function () {
+        Route::get('save/{opportunity_id}','saveOpportunity');
+        Route::get('getSave','getSavedItems');
+
     });
     // Seeker routes are over //
 

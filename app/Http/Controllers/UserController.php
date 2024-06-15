@@ -34,7 +34,6 @@ class UserController extends Controller
     //REGISTER METHOD -POST
     public function register(RegisterRequest $request)
     {
-
         // Delete all old code that user send before.
         VerificationCode::where('email', $request->email)->delete();
         //Generate new code
@@ -129,7 +128,7 @@ class UserController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'email' => ['required', 'email:rfc,dns']
+                'email' => ['required', 'email']
             ]);
 
             if ($validate->fails()) {
