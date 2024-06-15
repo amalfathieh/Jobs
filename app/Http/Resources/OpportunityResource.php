@@ -16,7 +16,7 @@ class OpportunityResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->company->user->id,
+            'user_id' =>$this->company->user_id,
             'company_id' => $this->company_id,
             'company_name' => $this->company->company_name,
             'company_logo' => $this->company->logo,
@@ -33,5 +33,5 @@ class OpportunityResource extends JsonResource
             'vacant' => $this->vacant,
             'created_at' => $this->created_at
         ];
-
+    }
 }

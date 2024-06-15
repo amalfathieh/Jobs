@@ -61,7 +61,7 @@ class ApplyController extends Controller
                     'body'=> $body,
                 ];
                 Notification::send($user,new SendNotification($data));
-                // $this->sendPushNotification($data['title'],$data['body'],$tokens);
+//                $this->sendPushNotification($data['title'],$data['body'],$tokens);
                 return $this->apiResponse($apply, 'The request has been sent successfully', 201);
             }
             return $this->apiResponse(null, 'There is an error', 400);
@@ -170,10 +170,11 @@ class ApplyController extends Controller
             $data =[
                 'obj_id'=>$apply->id,
                 'title'=>'Job Application',
-                'body'=> $body,                                                                                   dy,
+                'body'=> $body,
             ];
             Notification::send($user,new SendNotification($data));
-            // $this->sendPushNotification($data['title'],$data['body'],$tokens);
+//            $this->sendPushNotification($data['title'],$data['body'],$tokens);
+
 
             $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
             return $this->apiResponse($data, 'Updated successfully', 200);

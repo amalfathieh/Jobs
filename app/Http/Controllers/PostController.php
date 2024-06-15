@@ -15,6 +15,7 @@ use App\Traits\responseTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 use function PHPUnit\Framework\isEmpty;
@@ -49,7 +50,7 @@ class PostController extends Controller
             ];
 
             Notification::send($followers,new SendNotification($data));
-            // $this->sendPushNotification($data['title'],$data['body'],$tokens);
+//            $this->sendPushNotification($data['title'],$data['body'],$tokens);
         }
         return $this->apiResponse(null, 'post create successfully', 201);
     }
@@ -82,8 +83,12 @@ class PostController extends Controller
     }
 
     public function allPosts(){
-        $posts =Post::query();
-        $posts = $posts->latest()->get();
+        $userId = Auth::user()->id;
+        $posts = Post::select('posts.*')->addSelect(DB::raw("EXISTS(SELECT 1 FROM followers WHERE followers.follower_id = posts.seeker_id AND followers.followee_id = $userId) AS is_followed"))
+            ->orderByDesc('is_followed')
+            ->latest()
+            ->get();
+
         return $this->apiResponse(PostResource::collection($posts),'all posts',200);
     }
 }
