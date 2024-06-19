@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApplyRequest;
 use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
@@ -17,52 +18,58 @@ use Illuminate\Support\Facades\Validator;
 class ApplyController extends Controller
 {
     use responseTrait;
-    public function apply(Request $request, $id, FileService $fileService) {
+    public function apply(ApplyRequest $request, $id, FileService $fileService) {
         try {
             $apply = null;
             $opportunity = Opportunity::where('id', $id)->first();
             $company_id= $opportunity->company_id;
-            if (!$request->file('cv')) {
-                $apply = Apply::create([
-                    'opportunity_id' => $id,
-                    'user_id' => Auth::user()->id,
-                    'company_id' => $company_id,
-                    'full_name' => $request->full_name,
-                    'birth_day' => $request->birth_day,
-                    'location' => $request->location,
-                    'about' => $request->about,
-                    'skills' => $request->skills,
-                    'certificates' => $request->certificates,
-                    'languages' => $request->languages,
-                    'projects' => $request->projects,
-                    'experiences' => $request->experiences,
-                    'contacts' => $request->contacts,
-                ]);
+            $app = Apply::where('opportunity_id', $id)->where('user_id', Auth::user()->id)->where('company_id', $company_id)->first();
+            if ($app) {
+                return $this->apiResponse(null, 'You have applied for this opportunity', 400);
             }
             else {
-                $cv = $request->file('cv');
-                $cv_path = $fileService->store($cv, 'job_seeker/applies');
-                $apply = Apply::create([
-                    'opportunity_id' => $id,
-                    'user_id' => Auth::user()->id,
-                    'company_id' => $company_id,
-                    'cv' => $cv_path
-                ]);
-            }
+                if (!$request->file('cv')) {
+                    $apply = Apply::create([
+                        'opportunity_id' => $id,
+                        'user_id' => Auth::user()->id,
+                        'company_id' => $company_id,
+                        'full_name' => $request->full_name,
+                        'birth_day' => $request->birth_day,
+                        'location' => $request->location,
+                        'about' => $request->about,
+                        'skills' => $request->skills,
+                        'certificates' => $request->certificates,
+                        'languages' => $request->languages,
+                        'projects' => $request->projects,
+                        'experiences' => $request->experiences,
+                        'contacts' => $request->contacts,
+                    ]);
+                }
+                else {
+                    $cv = $request->file('cv');
+                    $cv_path = $fileService->store($cv, 'job_seeker/applies');
+                    $apply = Apply::create([
+                        'opportunity_id' => $id,
+                        'user_id' => Auth::user()->id,
+                        'company_id' => $company_id,
+                        'cv' => $cv_path
+                    ]);
+                }
 
-            if ($apply) {
-                $user = Company::where('id',$company_id)->first()->user;
-                $tokens = $user->routeNotificationForFcm();
-                //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
-                $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
-                $data =[
-                    'obj_id'=>$apply->id,
-                    'title'=>'Job Application',
-                    'body'=> $body,
-                ];
-                Notification::send($user,new SendNotification($data));
-//                $this->sendPushNotification($data['title'],$data['body'],$tokens);
-                return $this->apiResponse($apply, 'The request has been sent successfully', 201);
+                if ($apply) {
+                    $user = Company::where('id',$company_id)->first()->user;
+                    $tokens = $user->routeNotificationForFcm();
+                    //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
+                    $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
+                    $data =[
+                        'obj_id'=>$apply->id,
+                        'title'=>'Job Application',
+                        'body'=> $body,
+                    ];
+                    Notification::send($user,new SendNotification($data));
+            //      $this->sendPushNotification($data['title'],$data['body'],$tokens);
+                    return $this->apiResponse($apply, 'The request has been sent successfully', 201);
+                }
             }
             return $this->apiResponse(null, 'There is an error', 400);
         } catch (\Exception $th) {
@@ -174,7 +181,6 @@ class ApplyController extends Controller
             ];
             Notification::send($user,new SendNotification($data));
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
-
 
             $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
             return $this->apiResponse($data, 'Updated successfully', 200);

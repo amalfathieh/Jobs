@@ -61,6 +61,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(ReportController::class)->prefix('report')->group(function () {
         Route::post('reportUser/{id}', 'reportUser')->middleware('can:user report create');
+        Route::post('reportPost/{id}', 'reportPost')->middleware('can:user report create');
+        Route::post('reportOpportunity/{id}', 'reportOpportunity')->middleware('can:user report create');
+
         Route::post('getReports', 'getReports')->middleware('can:user report view');
     });
 
@@ -142,14 +145,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware('can:post create')->group(function () {
             Route::put('edit/{post_id}' , 'edit');
         });
-        Route::get('view','allPosts')->middleware('can:posts view');
+        Route::get('viewUserPosts/{id}','userPosts')->middleware('can:posts view');
         Route::delete('delete/{id}','delete')->middleware('can:post delete');
     });
 
     Route::controller(SaveController::class)->group(function () {
         Route::get('save/{opportunity_id}','saveOpportunity');
         Route::get('getSave','getSavedItems');
-
     });
     // Seeker routes are over //
 
