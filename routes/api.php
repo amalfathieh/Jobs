@@ -15,6 +15,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -56,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('search/{search}', 'search');
 
         Route::post('device_token', 'storeToken');
-
+        Route::get('user/{id}','getUser');
     });
 
     Route::controller(PostController::class)->group(function () {
@@ -217,3 +219,11 @@ Route::get('test', function() {
     $user = Auth::user();
     return $user->roles;
 })->middleware('auth:sanctum');
+//
+//use App\Traits\responseTrait;
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    $user= $request->user();
+//    $user = new UserResource($user);
+//    return $user;
+//
+//});

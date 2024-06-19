@@ -10,7 +10,7 @@ use Spatie\Activitylog\LogOptions;
 
 class Seeker extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
     protected $guarded=[];
 
     protected $casts = [

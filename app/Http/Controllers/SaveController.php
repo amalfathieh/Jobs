@@ -34,6 +34,6 @@ class SaveController extends Controller
         $user = Auth::user();
         $savedItems = $user->savedOpportunities;
         $data = OpportunityResource::collection($savedItems);
-        return $this->apiResponse($savedItems , 'success' , 200);
+        return $this->apiResponse($data , 'success' , 200);
     }
 }

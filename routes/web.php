@@ -37,3 +37,5 @@ Route::get('test', function() {
     Pdf::loadView('user/print');
     return view('user/print');
 });
+
+Route::get('/lang/{lang}',[\App\Http\Controllers\LangController::class,'setLang']);

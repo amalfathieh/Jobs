@@ -47,15 +47,31 @@ class FollowController extends Controller
     public function showFollowers($userId)
     {
         $user = User::find($userId);
+        if ($user->hasRole('company')) {
+            $data['type']='company';
+        }
+        if ($user->hasRole('job_seeker')) {
+            $data['type']='job_seeker';
+        }
         $followers = $user->followers;
-        return $this->apiResponse(FollowerResource::collection($followers),'success',200);
+        $data['count']=$followers->count();
+        $data['followers'] =FollowerResource::collection($followers);
+        return $this->apiResponse($data,'success',200);
     }
 
     public function showFollowings($userId)
     {
         $user = User::find($userId);
+        if ($user->hasRole('company')) {
+            $data['type']='company';
+        }
+        if ($user->hasRole('job_seeker')) {
+            $data['type']='job_seeker';
+        }
         $followings  = $user->followings;
-        return $this->apiResponse(FollowerResource::collection($followings),'success',200);
+        $data['count']=$followings->count();
+        $data['followings'] =FollowerResource::collection($followings);
+        return $this->apiResponse($data,'success',200);
     }
 
 }

@@ -284,6 +284,7 @@ class UserController extends Controller
     }
 
     public function search($search){
+        $userId = auth()->id();
         $users = User::where(function ($query) use ($search){
             $query->where('user_name', 'LIKE', '%' . $search . '%');
 
@@ -294,7 +295,9 @@ class UserController extends Controller
         })->orWhereHas('company', function ($query) use ($search) {
             $query->where('company_name', 'LIKE', '%' . $search . '%');
         })->get();
-
+        $users = $users->reject(function(User $user) use ($userId) {
+            return $user->id == $userId;
+        });
         $users = $users->reject(function(User $user) {
             $roles = $user->roles_name;
             foreach ($roles as $value) {
@@ -325,5 +328,10 @@ class UserController extends Controller
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
         return $this->apiResponse($data, "sent successfully", 200);
+    }
+    public function getUser($user_id){
+        $user =User::find($user_id);
+        $user = new UserResource($user);
+        return $user;
     }
 }

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OpportunityResource;
+use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\Apply;
 use App\Models\Opportunity;
 use App\Models\Post;
+use App\Models\Report;
 use App\Models\User;
 use App\Notifications\SendNotification;
 use App\Traits\responseTrait;
@@ -24,7 +28,7 @@ class NotificationController extends Controller
         try {
             $data = [];
             $notifications = DB::table('notifications')
-                ->where('notifiable_id',1)->get();
+                ->where('notifiable_id',Auth::user()->id)->latest()->get();
             foreach ($notifications as $notification) {
                 $notificationData = json_decode($notification->data);
                 $data [] = [
@@ -35,8 +39,6 @@ class NotificationController extends Controller
                     'created_at' => $notification->created_at,
                 ];
             }
-            $notifications = DB::table('notifications')
-            ->where('notifiable_id',Auth::user()->id)->get();
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
@@ -54,7 +56,7 @@ class NotificationController extends Controller
             if($post){
                 $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
-                return $this->apiResponse($post , 'success' ,200);
+                return $this->apiResponse(new PostResource($post) , 'success' ,200);
             }
 
         }
@@ -65,7 +67,7 @@ class NotificationController extends Controller
             if($opportunity) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse($opportunity , 'success' ,200);
+                return $this->apiResponse(new OpportunityResource($opportunity) , 'success' ,200);
             }
         }
         //طلب توظيف
@@ -83,7 +85,7 @@ class NotificationController extends Controller
             if($user) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse($user , 'success' ,200);
+                return $this->apiResponse(new UserResource($user) , 'success' ,200);
             }
         }
 
@@ -99,7 +101,7 @@ class NotificationController extends Controller
         $message ="Sorry, the content associated with this notification is no longer available.";
 //        $message ="عذراً، المحتوى المرتبط بهذا الاشعار لم يعد موجود";
 
-        return $this->apiResponse(null , $message ,404);
+        return $this->apiResponse(null , __('strings.not found notification') ,404);
 
     }
 
@@ -132,7 +134,7 @@ class NotificationController extends Controller
                 'body'=>'to22 notification',
             ];
 
-            $ss = Notification::send($users,new SendNotification($noti));
+            Notification::send($users,new SendNotification($noti));
 
             $notifications = DB::table('notifications')
                 ->where('notifiable_id',Auth::user()->id)->get();

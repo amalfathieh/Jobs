@@ -19,6 +19,7 @@ class OpportunityResource extends JsonResource
             'user_id' =>$this->company->user_id,
             'company_id' => $this->company_id,
             'company_name' => $this->company->company_name,
+            'company_logo' => $this->company->logo,
             'title' => $this->title,
             'body' => $this->body,
             'file' => $this->file,
@@ -30,7 +31,7 @@ class OpportunityResource extends JsonResource
             'skills_req' => $this->skills_req,
             'salary' => $this->salary,
             'vacant' => $this->vacant,
-            'craeted_at' => $this->created_at
+            'created_at' => $this->created_at
         ];
     }
 }

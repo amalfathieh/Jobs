@@ -17,7 +17,7 @@ use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable implements BannableInterface
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable;
 
     protected $fillable = [
         'user_name',
