@@ -52,13 +52,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::delete('delete', 'delete')->middleware('user delete');
 
-
 //        Route::get('test/{token}', 'noti');
 
         Route::get('search/{search}', 'search');
 
         Route::post('device_token', 'storeToken');
         Route::get('user/{id}','getUser');
+
+    });
+
+    Route::controller(ReportController::class)->prefix('report')->group(function () {
+        Route::post('reportUser/{id}', 'reportUser')->middleware('can:user report create');
+        Route::post('reportPost/{id}', 'reportPost')->middleware('can:user report create');
+        Route::post('reportOpportunity/{id}', 'reportOpportunity')->middleware('can:user report create');
+
+        Route::post('getReports', 'getReports')->middleware('can:user report view');
     });
 
     Route::controller(PostController::class)->group(function () {
@@ -90,7 +98,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('makeRead','makeAsRead');
             Route::post('testStore', 'testStore');
         });
-        Route::get('testStore',[UserController::class, 'testStore'])->middleware('auth:sanctum');
 
     // Routes common are over //
 
@@ -102,15 +109,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::delete('delete', 'delete');
         });
 
-    Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
-        Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
+        Route::controller(OpportunityController::class)->prefix('opportunity')->group(function () {
+            Route::delete('delete/{id}', 'delete')->middleware('can:opportunity delete');
 
-        Route::middleware('can:opportunity create')->group(function () {
-            Route::post('addOpportunity', 'addOpportunity');
-            Route::put('updateOpportunity/{id}', 'updateOpportunity');
+            Route::middleware('can:opportunity create')->group(function () {
+                Route::post('addOpportunity', 'addOpportunity');
+                Route::put('updateOpportunity/{id}', 'updateOpportunity');
+            });
+            Route::get('getOpportunity', 'allOpportunities')->middleware('can:opportunities view');
         });
-        Route::get('getOpportunity', 'getOpportunity')->middleware('can:opportunities view');
-    });
     });
     // Company routes are over //
 
@@ -140,8 +147,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware('can:post create')->group(function () {
             Route::put('edit/{post_id}' , 'edit');
         });
-            Route::get('view','allPosts')->middleware('can:posts view');
+        Route::get('viewUserPosts/{id}','userPosts')->middleware('can:posts view');
         Route::delete('delete/{id}','delete')->middleware('can:post delete');
+    });
+
+    Route::controller(SaveController::class)->group(function () {
+        Route::get('save/{opportunity_id}','saveOpportunity');
+        Route::get('getSave','getSavedItems');
     });
     // Seeker routes are over //
 
@@ -162,33 +174,52 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
                 Route::get('search/{user}','searchByUsernameOrEmail');
             });
+
+            Route::middleware('can:logs view')->group(function () {
+                Route::get('logs', 'logs');
+
+                Route::get('countUsers', 'countUsers');
+                Route::get('countPOA', 'countPOA');
+                Route::get('lineChart', 'lineChart');
+            });
+
+            // api/admin/news/
+            Route::controller(NewsController::class)->prefix('news')->group(function () {
+
+                Route::middleware('can:news create')->group(function () {
+                    Route::post('create', 'create');
+                    Route::put('update/{id}', 'update');
+                });
+                Route::delete('delete/{id}', 'delete')->middleware('can:news delete');
+
+                Route::get('getNews', 'getNews')->middleware('can:news view');
+            });
         });
 
         // api/admin/employee/{}
         Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
             Route::middleware('can:employee control')->group(function () {
                 Route::post('addEmployee','add');
-                Route::post('editEmployee','edit');
+                Route::post('editEmployee/{id}','edit');
             });
             Route::get('employees','getEmployee')->middleware('can:employee view');
         });
-    });
 
         // Roles
+        // api/admin/role/
         Route::middleware('can:role control')->controller(RoleController::class)->prefix('role')->group(function () {
             Route::get('allRoles', 'allRoles');
+            Route::get('getRoles', 'getRoles');
+
             Route::post('addRole', 'addRole');
             Route::put('editRole', 'editRole');
-            Route::post('deleteRole', 'deleteRole');
+            Route::delete('deleteRole/{id}', 'deleteRole');
 
-            Route::post('editUserRoles', 'editUserRoles');
+            Route::put('editUserRoles/{id}', 'editUserRoles');
         });
-    // Admin routes are over //
-    Route::controller(SaveController::class)->group(function () {
-        Route::get('save/{opportunity_id}','saveOpportunity');
-        Route::get('getSave','getSavedItems');
-
     });
+
+    // Admin routes are over //
 });
 // Routes need auth are over //
 
@@ -219,11 +250,3 @@ Route::get('test', function() {
     $user = Auth::user();
     return $user->roles;
 })->middleware('auth:sanctum');
-//
-//use App\Traits\responseTrait;
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    $user= $request->user();
-//    $user = new UserResource($user);
-//    return $user;
-//
-//});
