@@ -91,4 +91,10 @@ class PostController extends Controller
 
         return $this->apiResponse(PostResource::collection($posts),'all posts',200);
     }
+
+    public function userPosts($id) {
+        $seeker = User::find($id);
+        $posts = Post::where('seeker_id', $seeker->seeker->id)->get();
+        return $this->apiResponse(PostResource::collection($posts),'all posts for this user',200);
+    }
 }

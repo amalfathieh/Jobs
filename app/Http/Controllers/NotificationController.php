@@ -98,9 +98,6 @@ class NotificationController extends Controller
             }
         }
 
-        $message ="Sorry, the content associated with this notification is no longer available.";
-//        $message ="عذراً، المحتوى المرتبط بهذا الاشعار لم يعد موجود";
-
         return $this->apiResponse(null , __('strings.not found notification') ,404);
 
     }

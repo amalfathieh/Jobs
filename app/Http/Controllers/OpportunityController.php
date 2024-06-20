@@ -79,12 +79,6 @@ class OpportunityController extends Controller
         return $this->apiResponse(null, 'Opportunity not found.', 404);
     }
 
-    public function getOpportunity() {
-        $user = User::where('id', Auth::user()->id)->first();
-        $company = Company::where('id', $user->company->id)->first();
-        $opportunities = $company->opportunities;
-        return $this->apiResponse($opportunities, null, 200);
-    }
     public function allOpportunities() {
         $userId = Auth::user()->id;
         $opportunities = Opportunity::select('opportunities.*')->addSelect(DB::raw("EXISTS(SELECT 1 FROM followers WHERE followers.follower_id = opportunities.company_id AND followers.followee_id = $userId) AS is_followed"))
@@ -94,5 +88,11 @@ class OpportunityController extends Controller
 
         $opportunities = OpportunityResource:: collection($opportunities);
         return $this->apiResponse($opportunities, 'successfully', 200);
+    }
+
+    public function getCompanyOpportunities($id) {
+        $user = User::find($id);
+        $opportunities = OpportunityResource::collection(Opportunity::where('company_id', $user->company->id)->get());
+        return $this->apiResponse($opportunities, 'These are all opportunities for this company', 200);
     }
 }
