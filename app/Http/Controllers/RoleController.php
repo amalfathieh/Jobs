@@ -63,11 +63,26 @@ class RoleController extends Controller
         }
     }
 
-    public function deleteRole(Request $request, $id) {
+    public function deleteRole(Request $request) {
         try {
-            $role = Role::findById($id, 'web');
+            $validate = Validator::make($request->all(), [
+                'role' => 'required'
+            ]);
+
+            if ($validate->fails()) {
+                return $this->apiResponse(null, $validate->errors(), 400);
+            }
+
+            if (is_numeric($request->role)) {
+                $role = Role::findById($request->role, 'web');
+                $role->delete();
+                return $this->apiResponse(null, 'Deleted successfully', 200);
+            }
+
+            $role = Role::findByName($request->role, 'web');
             $role->delete();
             return $this->apiResponse(null, 'Deleted successfully', 200);
+
         } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 404);
         }
@@ -75,23 +90,33 @@ class RoleController extends Controller
 
     public function allRoles() {
         $roles = Role::all();
-        // $data = [];
-        // foreach ($roles as $role) {
-        //     $data[$role->name] = $role->permissions->pluck('name');
-        // }
+        $data = [];
+        foreach ($roles as $role) {
+            $data[$role->name] = $role->permissions->pluck('name');
+        }
         return RolesAndPermissionsResource::collection($roles);
     }
 
-    public function editUserRoles(Request $request, $id){
+    public function getRoles() {
+        $roles = Role::all();
+        $data = [];
+        foreach ($roles as $role) {
+            $data[$role->name] = $role->permissions->pluck('name');
+        }
+        return $data;
+    }
+
+    public function editUserRoles(Request $request){
         $validate = Validator::make($request->all(), [
-            'roles_name' => 'required|array'
+            'id' => 'required|integer',
+            'roles_name' => 'array'
         ]);
 
         if ($validate->fails()) {
             return $this->apiResponse(null, $validate->errors(), 400);
         }
 
-        $user = User::where('id', $id)->first();
+        $user = User::where('id', $request->id)->first();
         if ($user) {
             $user->syncRoles($request->roles_name);
             $user->roles_name = $request->roles_name;

@@ -47,7 +47,7 @@ class OpportunityController extends Controller
                 $data =[
                     'obj_id'=>$opportunity->id,
                     'title'=>'Job Opportunity',
-                    'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.'Apply now!',
+                    'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.' Apply now!',
                 ];
 
                 Notification::send($followers,new SendNotification($data));
@@ -100,7 +100,7 @@ class OpportunityController extends Controller
             ->latest()
             ->get();
 
-        $opportunities = OpportunityResource::collection($opportunities);
+        $opportunities = OpportunityResource:: collection($opportunities);
         return $this->apiResponse($opportunities, 'successfully', 200);
     }
 }

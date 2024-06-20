@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplyRequest;
-use App\Http\Resources\ApplyResource;
 use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
@@ -72,14 +71,14 @@ class ApplyController extends Controller
                     return $this->apiResponse($apply, 'The request has been sent successfully', 201);
                 }
             }
-            return $this->apiResponse(null, 'There is an error', 400);
+            return $this->apiResponse(null, __('strings.error_occurred'), 400);
         } catch (\Exception $th) {
             return $this->apiResponse(null, $th->getMessage(), 500);
         }
     }
 
     public function getMyApplies() {
-        $applies = ApplyResource::collection(Apply::where('user_id', Auth::user()->id)->orderBy('status')->get());
+        $applies = Apply::where('user_id', Auth::user()->id)->orderBy('status')->get();
         return $this->apiResponse($applies, "These are all applies", 200);
     }
 
@@ -125,11 +124,11 @@ class ApplyController extends Controller
                     $newData = Apply::where('id', $id)->select(['id', 'opportunity_id', 'user_id', 'company_id', 'cv'])->get();
                 }
             if ($apply) {
-                return $this->apiResponse($newData, 'The request has been updated successfully', 201);
+                return $this->apiResponse($newData, __('strings.updated_successfully'), 201);
             }
-            return $this->apiResponse(null, 'There is an error', 400);
+            return $this->apiResponse(null, __('strings.error_occurred'), 400);
         }
-        return $this->apiResponse(null, 'You are not allowed to do this', 400);
+        return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
     }
 
     public function delete($id) {
@@ -139,11 +138,11 @@ class ApplyController extends Controller
         if ($apply->user_id === $user->id || $apply->company_id === $user->company->id) {
             if ($apply->status === 'waiting' || ($user->company ? $apply->company_id === $user->company->id : false)) {
                 $apply->delete();
-                return $this->apiResponse(null, 'deleted successfully', 200);
+                return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }
-            return $this->apiResponse(null, "You cannot delete it, because it is not in a waiting state", 400);
+            return $this->apiResponse(null,  __('strings.cannot_delete_not_waiting'), 400);
         }
-        return $this->apiResponse(null, "You are not allowed to do this", 400);
+        return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
     } catch (\Exception $th) {
             return $this->apiResponse(null, $th->getMessage(), 500);
         }
@@ -183,10 +182,11 @@ class ApplyController extends Controller
             Notification::send($user,new SendNotification($data));
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
 
+
             $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
-            return $this->apiResponse($data, 'Updated successfully', 200);
+            return $this->apiResponse($data,  __('strings.updated_successfully'), 200);
         }
-        return $this->apiResponse(null, 'You are not allowed to do this', 400);
+        return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
     }
 
     public function getApplies() {
@@ -202,6 +202,6 @@ class ApplyController extends Controller
             'with_cv' => $with_cv,
             'without_cv' => $without_cv
         ];
-        return $this->apiResponse($data, 'These are all applies', 200);
+        return $this->apiResponse($data,  __('strings.all_applies'), 200);
     }
 }

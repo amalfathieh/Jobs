@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\SaveController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyController;
@@ -13,9 +14,10 @@ use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SaveController;
 use App\Http\Controllers\SeekerController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('search/{search}', 'search');
 
         Route::post('device_token', 'storeToken');
+        Route::get('user/{id}','getUser');
 
     });
 
@@ -92,7 +95,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(NotificationController::class)->prefix('notification')->group(function () {
             Route::get('display','displayNotification');
             Route::post('getContent','getNotificationContent');
-            Route::get('delete','delete');
+            Route::delete('delete','delete');
             Route::get('makeRead','makeAsRead');
             Route::post('testStore', 'testStore');
         });
@@ -159,7 +162,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin Routes // Don't forget: api/admin/{}
     Route::prefix('admin')->group(function ()  {
         Route::controller(AdminController::class)->group(function (){
-            Route::delete('removeUser/{id}', 'removeUser')->middleware('can:user delete');
+            Route::delete('removeUser', 'removeUser')->middleware('can:user delete');
 
             Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
             Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');

@@ -17,7 +17,7 @@ use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable implements BannableInterface
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Bannable;
 
     protected $fillable = [
         'user_name',
@@ -84,10 +84,6 @@ class User extends Authenticatable implements BannableInterface
 
     public function applies() {
         return $this->hasMany(Apply::class);
-    }
-
-    public function reports() {
-        return $this->hasMany(Report::class);
     }
 
     public function deviceTokens(){

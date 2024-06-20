@@ -20,12 +20,14 @@ class AdminController extends Controller
 {
     use responseTrait;
     public function removeUser($id) {
-        $user = User::where('id', $id)->first();
-        if ($user) {
-            $user->delete();
-            return $this->apiResponse(null, 'User removed successfully', 200);
-        }
-        return $this->apiResponse(null, 'User not found', 404);
+
+            $user = User::where('id', $id)->first();
+            if ($user) {
+                $user->delete();
+                return $this->apiResponse(null, 'User removed successfully', 200);
+            }
+            return $this->apiResponse(null, 'User not found', 404);
+
     }
 
     public function getUsers($type) {
@@ -35,7 +37,7 @@ class AdminController extends Controller
             $users = $users->reject(function(User $user) {
                 $roles = $user->roles_name;
                 foreach ($roles as $value) {
-                    return $value === 'owner' || $value === 'employee';
+                    return $value === 'owner';
                 }
             });
             $result = UserResource::collection($users);
@@ -43,7 +45,6 @@ class AdminController extends Controller
 
         else if($type == 'JobSeekers' ) {
             $seekers = User::role('job_seeker')->latest()->get();
-
             $result = UserResource::collection($seekers);
         }
 
@@ -169,7 +170,6 @@ class AdminController extends Controller
     }
 
     public function logs() {
-        // $logs
         $logs = Activity::all();
         return $logs;
     }

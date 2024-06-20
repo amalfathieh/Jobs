@@ -44,7 +44,7 @@ class OpportunityService
             'salary' => $salary,
             'vacant' => $vacant
         ]);
-        return $opportunity;
+        return $opportunity ;
     }
 
     public function update($request, $opportunity_id){

@@ -34,6 +34,7 @@ class UserController extends Controller
     //REGISTER METHOD -POST
     public function register(RegisterRequest $request)
     {
+
         // Delete all old code that user send before.
         VerificationCode::where('email', $request->email)->delete();
         //Generate new code
@@ -48,7 +49,7 @@ class UserController extends Controller
         ]);
         $user->syncRoles($user->roles_name);
         MailJob::dispatch($request->email, $data['code']);
-        return $this->apiResponse([], 'Verification Code sent to your email', 200);
+        return $this->apiResponse([], __('strings.verification_code_sent') , 200);
     }
 
     public function verifyAccount(Request $request)
@@ -61,7 +62,7 @@ class UserController extends Controller
         // check if it does not expired: the time is one hour
         if ($ver_code->created_at->addHour() < now()) {
             VerificationCode::where('code', $ver_code->code)->delete();
-            return $this->apiResponse([], 'verification.code_is_expire', 422);
+            return $this->apiResponse([], __('expire') , 422);
         }
         // find user's email
         $user = User::firstWhere('email', $ver_code->email);
@@ -72,7 +73,7 @@ class UserController extends Controller
         $user->update(['is_verified' => true]);
         // $user->is_verified = true;
         VerificationCode::where('code', $ver_code->code)->delete();
-        return $this->apiResponse($data, 'user create successfully', 200);
+        return $this->apiResponse($data, __('strings.success') , 200);
     }
 
     public function login(LoginRequest $request)
@@ -83,8 +84,8 @@ class UserController extends Controller
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
         if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
-            $message = 'Email & password does not match with our record.';
-            return $this->apiResponse([], $message, 401);
+
+            return $this->apiResponse([], __('strings.email_password_mismatch') , 401);
         }
 
         $user = User::where($fieldType, $login)->first();
@@ -114,22 +115,22 @@ class UserController extends Controller
 //                $this->sendPushNotification($data['title'],$data['body'],$tokens);
             }
 
-            return $this->apiResponse($data, 'user logged in successfully', 200);
+            return $this->apiResponse($data, __('strings.user_logged_in_successfully') , 200);
         } else
-            return $this->apiResponse(null, 'Your account is not verified. Please verify your account first. then login', 401);
+            return $this->apiResponse(null, __('strings.account_not_verified') , 401);
     }
 
     public function logout()
     {
         request()->user()->currentAccessToken()->delete();
-        return $this->apiResponse([], 'user logged out successfully', 200);
+        return $this->apiResponse([], __('strings.user_logged_out_successfully') , 200);
     }
 
     public function sendCodeVerification(Request $request)
     {
         try {
             $validate = Validator::make($request->all(), [
-                'email' => ['required', 'email']
+                'email' => ['required', 'email:rfc,dns']
             ]);
 
             if ($validate->fails()) {
@@ -142,7 +143,7 @@ class UserController extends Controller
             $data['code'] = mt_rand(100000, 999999);
             $codeData = VerificationCode::create($data);
             MailJob::dispatch($request->email, $data['code']);
-            return $this->apiResponse([], 'Verification Code sent to your email', 200);
+            return $this->apiResponse([], __('strings.code_sent_email') , 200);
         } catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
@@ -151,9 +152,9 @@ class UserController extends Controller
     public function checkPassword(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();
         return password_verify($request->password, $user->password)?
-            $this->apiResponse(null, 'Password is correct', 200):
+            $this->apiResponse(null, __('strings.password_correct'), 200):
 
-            $this->apiResponse(null, 'Password is incorrect', 401);
+            $this->apiResponse(null, __('strings.password_incorrect'), 401);
     }
 
     public function resetPassword(ResetPasswordRequest $request) {
@@ -167,7 +168,7 @@ class UserController extends Controller
         }
         $user->save();
 
-        return $this->apiResponse([], 'password has been successfully reset', 200);
+        return $this->apiResponse([], __('strings.password_reset_success'), 200);
     }
 
 
@@ -186,7 +187,7 @@ class UserController extends Controller
 
             $user = User::where('email', $request->email)->first();
             if (!$user->is_verified) {
-                return $this->apiResponse(null, 'Your account is not verified', 400);
+                return $this->apiResponse(null, __('strings.account_not_verified_simple'), 400);
             }
 
             VerificationCode::where('email', $request->email)->delete();
@@ -198,7 +199,7 @@ class UserController extends Controller
 
             ForgotPasswordJob::dispatch($data['email'], $data['code']);
 
-            return $this->apiResponse([], 'We sent code to your email. Check your email please', 200);
+            return $this->apiResponse([], __('strings.code_sent_email'), 200);
         } catch (\Exception $ex) {
             return $this->apiResponse([], $ex->getMessage(), 500);
         }
@@ -216,9 +217,9 @@ class UserController extends Controller
         // check if it does not expired: the time is one hour
         if ($ver_code->created_at->addHour() < now()) {
             VerificationCode::where('code', $ver_code->code)->delete();
-            return $this->apiResponse(null, 'code has expired', 422);
+            return $this->apiResponse(null, __('strings.code_has_expired'), 422);
         }
-        return $this->apiResponse(null, 'code is correct', 200);
+        return $this->apiResponse(null, __('strings.code_is_correct'), 200);
     }
 
     public function rePassword(RePasswordRequest $request)
@@ -227,7 +228,7 @@ class UserController extends Controller
 
         if ($passwordReset->created_at->addHour() < now()) {
             $passwordReset->delete();
-            return $this->apiResponse([], 'code has expired', 422);
+            return $this->apiResponse([], __('strings.code_has_expired'), 422);
         }
 
         $user = User::firstWhere('email', $passwordReset->email);
@@ -238,7 +239,7 @@ class UserController extends Controller
         ]);
         $passwordReset->delete();
 
-        return $this->apiResponse([], 'password has been successfully reset', 200);
+        return $this->apiResponse([], __('strings.password_reset_success_again'), 200);
     }
 
     public function update(Request $request) {
@@ -250,9 +251,9 @@ class UserController extends Controller
         //     ChangeEmailJob::dispatch($data);
         // }
         if ($user->update($request->all())){
-            return $this->apiResponse($user, 'Updated successfully', 200);
+            return $this->apiResponse($user, __('strings.updated_successfully'), 200);
         }
-        return $this->apiResponse(null, 'Something went wrong', 500);
+        return $this->apiResponse(null, __('strings.something_went_wrong'), 500);
     }
 
     // Delete Account
@@ -261,9 +262,9 @@ class UserController extends Controller
 
         if ($user->delete()) {
             $user->tokens()->delete();
-            return $this->apiResponse(null, 'Account Deleted Successfully!', 200);
+            return $this->apiResponse(null, __('strings.account_deleted_successfully'), 200);
         }
-        return $this->apiResponse(null, "Something went wrong", 500);
+        return $this->apiResponse(null, __('strings.something_went_wrong'), 500);
     }
 
 
@@ -283,6 +284,7 @@ class UserController extends Controller
     }
 
     public function search($search){
+        $userId = auth()->id();
         $users = User::where(function ($query) use ($search){
             $query->where('user_name', 'LIKE', '%' . $search . '%');
 
@@ -293,7 +295,9 @@ class UserController extends Controller
         })->orWhereHas('company', function ($query) use ($search) {
             $query->where('company_name', 'LIKE', '%' . $search . '%');
         })->get();
-
+        $users = $users->reject(function(User $user) use ($userId) {
+            return $user->id == $userId;
+        });
         $users = $users->reject(function(User $user) {
             $roles = $user->roles_name;
             foreach ($roles as $value) {
@@ -302,12 +306,12 @@ class UserController extends Controller
         });
 
         if($users->isEmpty()){
-            return $this->apiResponse(null,'Not Found',404);
+            return $this->apiResponse(null,__('strings.not_found'),404);
 
         } else{
             $result = UserResource::collection($users);
         }
-        return $this->apiResponse($result,'Found it',200);
+        return $this->apiResponse($result,__('strings.success'),200);
     }
 
     public function testStore(){
@@ -324,5 +328,10 @@ class UserController extends Controller
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
         return $this->apiResponse($data, "sent successfully", 200);
+    }
+    public function getUser($user_id){
+        $user =User::find($user_id);
+        $user = new UserResource($user);
+        return $user;
     }
 }

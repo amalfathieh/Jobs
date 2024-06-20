@@ -27,7 +27,7 @@ class EmployeeController extends Controller
     //ADD EMPLOYEE BY ADMIN FROM DASHBOURD
     public function add(EmployeeRequest $request) {
         $data = $request->all();
-        $roles = ['user', 'employee'];
+        $roles = ['employee'];
 
         foreach ($data['roles_name'] as $role){
             $roles[] = $role;
@@ -54,7 +54,7 @@ class EmployeeController extends Controller
     public function edit(EditEmployeeRequest $request , FileService $fileService){
         $employee_image = null;
         $user = Auth::user()->id;
-        $user = User::where('id', $user->id)->first();
+        $user = User::where('id', $user)->first();
         if($user->hasRole('employee')){
             $user = $this->userService->updateUser($request , $user);
 
@@ -76,6 +76,7 @@ class EmployeeController extends Controller
             403
         );
     }
+
 
     public function getEmployee(){
         $employees = User::role('employee')->latest()->get();
