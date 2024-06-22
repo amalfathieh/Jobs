@@ -47,14 +47,14 @@ class NotificationController extends Controller
 
     public function getNotificationContent(Request $request){
         $request->validate([
-            'id'=>'required|integer',
+            'obj_id'=>'required|integer',
             'title'=>'required',
             ]);
         if($request['title'] == 'New Post'){
-            $post = Post::find($request->id);
+            $post = Post::find($request->obj_id);
 
             if($post){
-                $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->id)->pluck('id');
+                $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
                 return $this->apiResponse(new PostResource($post) , 'success' ,200);
             }
@@ -62,37 +62,37 @@ class NotificationController extends Controller
         }
         //فوصة عمل
         else if($request['title'] == 'Job Opportunity'){
-            $opportunity = Opportunity::find($request->id);
+            $opportunity = Opportunity::find($request->obj_id);
 
             if($opportunity) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
+                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 return $this->apiResponse(new OpportunityResource($opportunity) , 'success' ,200);
             }
         }
         //طلب توظيف
         else if($request['title'] == 'Job Application'){
-            $job_application = Apply::find($request->id);
+            $job_application = Apply::find($request->obj_id);
             if($job_application) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
+                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 return $this->apiResponse($job_application , 'success' ,200);
             }
         }
         //تنبيه الدخول الى الداشبورد
         else if($request['title'] == 'Login Alert'){
-            $user = User::find($request->id);
+            $user = User::find($request->obj_id);
             if($user) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
+                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 return $this->apiResponse(new UserResource($user) , 'success' ,200);
             }
         }
 
         if($request['title'] == 'Report'){
-            $report = Report::find($request->id);
+            $report = Report::find($request->obj_id);
             if($report) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
+                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 return $this->apiResponse($report , 'success' ,200);
             }

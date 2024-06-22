@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('search/{search}', 'search');
 
         Route::post('device_token', 'storeToken');
-        Route::get('user/{id}','getUser');
+        Route::get('user/{id}','getUserProfile');
 
     });
 

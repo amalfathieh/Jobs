@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplyRequest;
 use App\Http\Resources\ApplyResource;
 use App\Models\Apply;
 use App\Models\Company;
