@@ -68,7 +68,7 @@ class UserController extends Controller
         // check if it does not expired: the time is one hour
         if ($ver_code->created_at->addHour() < now()) {
             VerificationCode::where('code', $ver_code->code)->delete();
-            return $this->apiResponse([], __('expire') , 422);
+            return $this->apiResponse([], __('code_has_expired') , 422);
         }
         // find user's email
         $user = User::firstWhere('email', $ver_code->email);

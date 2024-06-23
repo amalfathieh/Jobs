@@ -30,7 +30,7 @@ class CompanyController extends Controller
                 'contact_info' => $request->contact_info
             ]);
             Company::where('user_id', $user->id)->update(['logo' => $logo]);
-            return $this->apiResponse(null, 'success',  201);
+            return $this->apiResponse(null,  __('strings.success'),  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
@@ -56,7 +56,7 @@ class CompanyController extends Controller
                 'about' => $request->about ?? $company['about'],
                 'contact_info' => $request->contact_info ?? $company['contact_info']
             ]);
-            return $this->apiResponse(null, 'success',  201);
+            return $this->apiResponse(null, __('strings.success'),  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
@@ -68,7 +68,7 @@ class CompanyController extends Controller
         $user = User::where('id', Auth::user()->id)->first();
         $myCompany = Company::where('id', $user->company->id)->first();
         if ($myCompany->delete()) {
-            return $this->apiResponse(null, 'Deleted successfully', 200);
+            return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
         }
     }
 }

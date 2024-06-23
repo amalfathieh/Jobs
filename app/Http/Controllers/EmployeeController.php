@@ -47,7 +47,7 @@ class EmployeeController extends Controller
         $user->assignRole($roles);
 //        return $password;
         InviteEmployeeJob::dispatch($request->email, $password ,$link);
-        return $this->apiResponse($user,'Employee has been invite successfully',201);
+        return $this->apiResponse($user,__('strings.employee_invite_success'),201);
     }
 
     //EDIT EMPLOYEE
@@ -72,7 +72,7 @@ class EmployeeController extends Controller
             return $this->apiResponse($user , 'success' , 201);
         }
         return $this->apiResponse(null,
-            'You do not have the required authorization.',
+            __('strings.authorization_required'),
             403
         );
     }

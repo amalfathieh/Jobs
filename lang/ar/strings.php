@@ -3,7 +3,6 @@
     return [
         'not found notification' => "عذراً، المحتوى المرتبط بهذا الاشعار لم يعد موجود",
         'verification_code_sent' => 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
-        'expire' => 'لقد انتهت صلاحية رمز التحقق',
         'success' => 'تم بنجاح',
         'email_password_mismatch' => 'البريد الإلكتروني وكلمة المرور لا يتطابقان مع سجلاتنا',
         'user_logged_in_successfully' => 'تم تسجيل دخول المستخدم بنجاح',
@@ -33,5 +32,12 @@
         'request_updated_successfully' => 'تم تحديث الطلب بنجاح',
         'not_allowed_action' => 'غير مسموح لك بالقيام بهذا',
         'cannot_delete_not_waiting' => 'لا يمكنك الحذف لأن الحالة ليست بانتظار',
+//employeeController
+        "employee_invite_success"=> "تم دعوة الموظف بنجاح",
+        "authorization_required"=> "لا تمتلك الصلاحيات المطلوبة",
+//followController
+        "cannot_follow_self"=> "لا يمكنك متابعة نفسك",
+        "follow_success"=> "تمت المتابعة بنجاح",
+        "unfollow_success"=> "تم إلغاء المتابعة بنجاح",
 
     ];
