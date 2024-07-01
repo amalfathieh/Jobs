@@ -29,7 +29,8 @@ class PostRequest extends FormRequest
     {
         return [
             'body'=>'required',
-            'file'=>'file'
+            'file' => 'file',
+            'type' => 'required_if:file,!=,null'
         ];
     }
 

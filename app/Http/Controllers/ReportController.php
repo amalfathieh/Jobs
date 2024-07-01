@@ -79,7 +79,7 @@ class ReportController extends Controller
 
         $post = Post::where('id', $id)->first();
         if (!$post) {
-            return $this->apiResponse(null, 'Post not found', 404);
+            return $this->apiResponse(null, __('strings.not_found'), 404);
         }
         $user = User::find($post->seeker->user_id);
         if ($user->id == $created_by->id) {
@@ -123,7 +123,7 @@ class ReportController extends Controller
 
         $opp = Opportunity::where('id', $id)->first();
         if (!$opp) {
-            return $this->apiResponse(null, 'Opportunity not found', 404);
+            return $this->apiResponse(null, __('strings.not_found'), 404);
         }
         $user = User::find($opp->company->user_id);
         if ($user->id == $created_by->id) {

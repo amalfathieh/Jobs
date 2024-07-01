@@ -30,6 +30,7 @@ class SeekerService
         $image,
         $skills,
         $certificates,
+        $specialization,
         $about) {
         $seeker_image = $this->fileService->store($image,'images/job_seeker/profilePhoto');
         $skills = json_decode($skills);
@@ -44,6 +45,7 @@ class SeekerService
             'image' => $seeker_image,
             'skills' => $skills,
             'certificates' => $certificates,
+            'specialization' => $specialization,
             'about' => $about
         ]);
     }
@@ -63,6 +65,7 @@ class SeekerService
             'image' =>$seeker_image ?? $seeker['image'],
             'skills' =>$request['skills'] ?? $seeker['skills'],
             'certificates'=>$request['certificates'] ?? $seeker['certificates'],
+            'specialization'=>$request['specialization'] ?? $seeker['specialization'],
             'about' =>$request['about'] ?? $seeker['about'],
             'gender' =>$request['gender'] ?? $seeker['gender']
         ]);

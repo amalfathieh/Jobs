@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApplyRequest;
 use App\Http\Resources\ApplyResource;
+use App\Http\Resources\GetAppliesForCompanyResource;
 use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
@@ -194,14 +196,7 @@ class ApplyController extends Controller
         $company = Company::where('id', $user->company->id)->first();
         $applies = Apply::where('company_id', $company->id)->get();
 
-        $with_cv = Apply::where('company_id', $company->id)->where('cv', '!=', null)->get();
-        $without_cv = Apply::where('company_id', $company->id)->where('cv', null)->get();
-
-        $with_cv = collect($with_cv)->select(['id', 'opportunity_id', 'user_id', 'company_id', 'cv']);
-        $data = [
-            'with_cv' => $with_cv,
-            'without_cv' => $without_cv
-        ];
-        return $this->apiResponse($data,  __('strings.all_applies'), 200);
+        return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }
+
 }

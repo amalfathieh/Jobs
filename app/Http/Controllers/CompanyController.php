@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
+use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use App\Models\User;
 use App\services\FileService;
@@ -25,6 +26,7 @@ class CompanyController extends Controller
             Company::create([
                 'user_id' => $user->id,
                 'company_name' => $request->company_name,
+                'domain' => $request->domain,
                 'location' => $request->location,
                 'about' => $request->about,
                 'contact_info' => $request->contact_info
@@ -51,6 +53,7 @@ class CompanyController extends Controller
             }
             $company->update([
                 'company_name' => $request->company_name ?? $company['company_name'],
+                'domain' => $request->domain ?? $company['domain'],
                 'logo' => $logo ?? $company['logo'],
                 'location' => $request->location ?? $company['location'],
                 'about' => $request->about ?? $company['about'],
@@ -70,5 +73,12 @@ class CompanyController extends Controller
         if ($myCompany->delete()) {
             return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
         }
+    }
+//الشركات المقترحة
+    public function proposed_Companies(){
+        $seeker = User::find(Auth::user()->id)->seeker;
+
+         $com = Company::where('domain' , $seeker->specialization )->get();
+        return $this->apiResponse(CompanyResource::collection($com),  'proposed Companies', 200);
     }
 }

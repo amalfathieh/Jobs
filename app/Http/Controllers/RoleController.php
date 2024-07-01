@@ -109,7 +109,7 @@ class RoleController extends Controller
     public function editUserRoles(Request $request){
         $validate = Validator::make($request->all(), [
             'id' => 'required|integer',
-            'roles_name' => 'array'
+            'roles_name' => 'required|array'
         ]);
 
         if ($validate->fails()) {

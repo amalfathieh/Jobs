@@ -32,7 +32,8 @@ class CompanyRequest extends FormRequest
             'logo' => 'image',
             'location' => 'required',
             'about' => 'required',
-            'contact_info' => 'required'
+            'contact_info' => 'required',
+            'domain' => 'required',
         ];
     }
 

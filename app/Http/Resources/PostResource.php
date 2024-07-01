@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             'profile_img' => $this->seeker->image,
             'body' => $this->body,
             'file' => $this->file,
+            'type' => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

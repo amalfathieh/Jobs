@@ -76,6 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(OpportunityController::class)->group(function () {
         Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
+        Route::get('proposed_Jobs' , 'proposed_Jobs');
     });
         // Chat
         Route::controller(ChatController::class)->group(function () {
@@ -103,6 +104,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Routes common are over //
 
     // Company routes //
+    //جلب الشركات المقترحة
+    Route::get('proposed_Companies' , [CompanyController::class,'proposed_Companies']);
+
     Route::middleware('can:company create')->prefix('company')->group(function () {
         Route::controller(CompanyController::class)->group(function () {
             Route::post('create', 'createCompany');
@@ -251,3 +255,7 @@ Route::get('test', function() {
     $user = Auth::user();
     return $user->roles;
 })->middleware('auth:sanctum');
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});

@@ -34,7 +34,7 @@ class PostController extends Controller
         $seeker = $user->seeker;
 
         $post = $this->postService->store(
-            $seeker->id, $request->body, $request->file('file')
+            $seeker->id, $request->body, $request->file('file'),$request->type
         );
 
         $followers = $user->followers;
@@ -62,11 +62,11 @@ class PostController extends Controller
             if( $post['seeker_id'] == $user->seeker->id ) {
                 $post = $this->postService->edit($request, $post);
 
-                return $this->apiResponse($post,'post edit successfully',200);
+                return $this->apiResponse($post,__('strings.updated_successfully'),200);
             }
-            return $this->apiResponse(null,'You can not edit this post.',403);
+            return $this->apiResponse(null,__('strings.authorization_required'),403);
         }
-        return $this->apiResponse(null, 'Post not excite.', 404);
+        return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 
     public function delete($id){
@@ -75,11 +75,11 @@ class PostController extends Controller
         if (!is_null($post)) {
             if (($user->hasRole('job_seeker') && $post['seeker_id'] == $user->seeker->id) || ($user->hasRole('employee') && $user->can('post delete'))) {
                 $post->delete();
-                return $this->apiResponse(null, 'Post deleted successfully', 200);
+                return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }
-            return $this->apiResponse(null,'You do not have permission',403);
+            return $this->apiResponse(null,__('strings.authorization_required'),403);
         }
-        return $this->apiResponse(null, 'Post not found.', 404);
+        return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 
     public function allPosts(){

@@ -17,6 +17,7 @@ return new class extends Migration
                 ->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('body')->nullable();
             $table->string('file')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

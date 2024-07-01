@@ -46,55 +46,66 @@ class NotificationController extends Controller
     }
 
     public function getNotificationContent(Request $request){
+        $data = [];
         $request->validate([
             'obj_id'=>'required|integer',
             'title'=>'required',
             ]);
         if($request['title'] == 'New Post'){
+            $data['type']='post';
             $post = Post::find($request->obj_id);
 
             if($post){
                 $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
-                return $this->apiResponse(new PostResource($post) , 'success' ,200);
+                $data['content'] = new PostResource($post);
+                return $this->apiResponse($data , 'success' ,200);
             }
 
         }
         //فوصة عمل
         else if($request['title'] == 'Job Opportunity'){
+            $data['type']='opportunity';
             $opportunity = Opportunity::find($request->obj_id);
 
             if($opportunity) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse(new OpportunityResource($opportunity) , 'success' ,200);
+                $data['content'] = new OpportunityResource($opportunity);
+                return $this->apiResponse($data , 'success' ,200);
             }
         }
         //طلب توظيف
         else if($request['title'] == 'Job Application'){
+            $data['type']='application';
             $job_application = Apply::find($request->obj_id);
             if($job_application) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse($job_application , 'success' ,200);
+                $data['content'] = $job_application;
+                return $this->apiResponse($data , 'success' ,200);
             }
         }
         //تنبيه الدخول الى الداشبورد
         else if($request['title'] == 'Login Alert'){
+            $data['type']='login';
             $user = User::find($request->obj_id);
             if($user) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse(new UserResource($user) , 'success' ,200);
+                $data['content'] = new UserResource($user);
+                return $this->apiResponse( $data, 'success' ,200);
             }
         }
 
         if($request['title'] == 'Report'){
+            $data['type']='report';
             $report = Report::find($request->obj_id);
             if($report) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse($report , 'success' ,200);
+                $data['content'] = $report;
+                return $this->apiResponse($data , 'success' ,200);
             }
         }
 
@@ -110,7 +121,7 @@ class NotificationController extends Controller
         foreach($user->notifications as $notification){
             $notification->delete();
         }
-        return $this->apiResponse(null,'success',200);
+        return $this->apiResponse(null,__('strings.deleted_successfully'),200);
     }
 
     public function makeAsRead(){
@@ -118,7 +129,7 @@ class NotificationController extends Controller
         foreach($userid->unreadNotifications as $notification) {
             $notification->markAsRead();
         }
-        return $this->apiResponse(null,'success',200);
+        return $this->apiResponse(null,__('strings.success'),200);
     }
 
     public function testStore(){

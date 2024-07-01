@@ -31,6 +31,7 @@ class SeekerController extends Controller
                 $image,
                 $request->skills,
                 $request->certificates,
+                $request->specialization,
                 $request->about
             );
             return $this->apiResponse(null, 'job_seeker created successfully', 201);

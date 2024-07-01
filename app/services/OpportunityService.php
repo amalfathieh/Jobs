@@ -70,9 +70,9 @@ class OpportunityService
                 'salary' => $request['salary'] ?? $opportunity['salary'],
                 'vacant' =>$request['vacant'] ?? $opportunity['vacant']
             ]);
-            return $this->apiResponse($opportunity, 'Opportunity updated successfully', 201);
+            return $this->apiResponse($opportunity, __('strings.updated_successfully'), 201);
         }
-        return $this->apiResponse(null , 'opportunity not found' ,404);
+        return $this->apiResponse(null , __('strings.not_found') ,404);
     }
 
 }
