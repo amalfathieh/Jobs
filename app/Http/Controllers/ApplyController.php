@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplyRequest;
 use App\Http\Resources\ApplyResource;
+use App\Http\Resources\GetAppliesForCompanyResource;
 use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
@@ -134,7 +135,7 @@ class ApplyController extends Controller
 
     public function delete($id) {
         try {
-            $user = User::where('id', Auth::user()->id)->first();
+        $user = User::where('id', Auth::user()->id)->first();
         $apply = Apply::where('id', $id)->first();
         if ($apply->user_id === $user->id || $apply->company_id === $user->company->id) {
             if ($apply->status === 'waiting' || ($user->company ? $apply->company_id === $user->company->id : false)) {
@@ -184,7 +185,7 @@ class ApplyController extends Controller
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
 
 
-            $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
+            $data = $apply->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
             return $this->apiResponse($data,  __('strings.updated_successfully'), 200);
         }
         return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
@@ -193,16 +194,8 @@ class ApplyController extends Controller
     public function getApplies() {
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
-        $applies = Apply::where('company_id', $company->id)->get();
+        $applies = Apply::where('company_id', $company->id)->orderBy('status')->get();
 
-        $with_cv = Apply::where('company_id', $company->id)->where('cv', '!=', null)->get();
-        $without_cv = Apply::where('company_id', $company->id)->where('cv', null)->get();
-
-        $with_cv = collect($with_cv)->select(['id', 'opportunity_id', 'user_id', 'company_id', 'cv']);
-        $data = [
-            'with_cv' => $with_cv,
-            'without_cv' => $without_cv
-        ];
-        return $this->apiResponse($data,  __('strings.all_applies'), 200);
+        return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }
 }

@@ -16,25 +16,30 @@ class RoleController extends Controller
 
     public function addRole(Request $request) {
 
-        $validate = Validator::make($request->all(), [
-            'title' => 'required|string',
-            'permissions' => 'required|array'
+        $validator = Validator::make($request->all(), [
+            'new_name' => 'required|string|unique:roles,name',
+            'permissions' => 'required|array',
+            'file' => 'sometimes',
+            'type' => function ($attribute, $value, $fail) use ($request) {
+                if ($request->file('file') && !$request->input('type')) {
+                    $fail('The type field is required when a file is uploaded.');
+                }
+            },
         ]);
 
-        if ($validate->fails()){
-            return $this->apiResponse(null, $validate->errors(), 400);
+        if ($validator->fails()){
+            return $this->apiResponse(null, $validator->errors(), 400);
         }
 
         $permissions = $request->permissions;
-        $role = Role::create(['name' => $request->title, 'guard_name' => 'web'])->givePermissionTo($permissions);
+        $role = Role::create(['name' => $request->new_name, 'guard_name' => 'web'])->givePermissionTo($permissions);
 
         return $this->apiResponse($role, 'Role created successfully', 200);
     }
 
-    public function editRole(Request $request) {
+    public function editRole(Request $request, $id) {
         try {
             $validate = Validator::make($request->all(), [
-                'role' => 'required',
                 'new_name' => 'string',
                 'permissions' => 'array'
             ]);
@@ -42,44 +47,25 @@ class RoleController extends Controller
             if ($validate->fails()) {
                 return $this->apiResponse(null, $validate->errors(), 400);
             }
-            if (is_numeric($request->role)) {
-                $role = Role::findById($request->role, 'web');
+                $role = Role::findById($id, 'web');
                 $role->name = $request->new_name;
                 if ($request->permissions) {
                     $role->syncPermissions($request->permissions);
                 }
                 $role->save();
                 return $this->apiResponse($role, 'Edited successfully', 200);
-            }
-            $role = Role::findByName($request->role, 'web');
-            $role->name = $request->new_name;
-            if ($request->permissions) {
-                $role->syncPermissions($request->permissions);
-            }
-            $role->save();
-            return $this->apiResponse($role, 'Edited successfully', 200);
         } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 404);
         }
     }
 
-    public function deleteRole(Request $request) {
+    public function deleteRole($id) {
         try {
-            $validate = Validator::make($request->all(), [
-                'role' => 'required'
-            ]);
-
-            if ($validate->fails()) {
-                return $this->apiResponse(null, $validate->errors(), 400);
+            if ($id <= 5) {
+                return $this->apiResponse(null, 'You can\'t delete this role, it\'s a static role', 403);
             }
 
-            if (is_numeric($request->role)) {
-                $role = Role::findById($request->role, 'web');
-                $role->delete();
-                return $this->apiResponse(null, 'Deleted successfully', 200);
-            }
-
-            $role = Role::findByName($request->role, 'web');
+            $role = Role::findById($id, 'web');
             $role->delete();
             return $this->apiResponse(null, 'Deleted successfully', 200);
 
@@ -99,25 +85,35 @@ class RoleController extends Controller
 
     public function getRoles() {
         $roles = Role::all();
+        $roles = $roles->reject(function(Role $role) {
+            return ($role->name === 'owner' || $role->name === 'employee' || $role->name === 'company' || $role->name === 'job_seeker' || $role->name === 'user');
+        });
         $data = [];
         foreach ($roles as $role) {
             $data[$role->name] = $role->permissions->pluck('name');
         }
-        return $data;
+        return RolesAndPermissionsResource::collection($roles);
     }
 
-    public function editUserRoles(Request $request){
+    public function editUserRoles($id, Request $request){
         $validate = Validator::make($request->all(), [
-            'id' => 'required|integer',
-            'roles_name' => 'array'
+            'roles_name' => 'required|array'
         ]);
 
         if ($validate->fails()) {
             return $this->apiResponse(null, $validate->errors(), 400);
         }
 
-        $user = User::where('id', $request->id)->first();
+        $user = User::where('id', $id)->first();
         if ($user) {
+            // if ($user->hasRole('employee')) {
+            //     $roles = $request->roles_name;
+            //     array_push($roles, 'employee');
+            //     $user->syncRoles($roles);
+            //     $user->roles_name = $roles;
+            // }
+            // else {
+            // }
             $user->syncRoles($request->roles_name);
             $user->roles_name = $request->roles_name;
             $user->save();

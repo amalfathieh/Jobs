@@ -19,7 +19,7 @@ class AdminSeeder extends Seeder
             'email'=> 'admin@gmail.com',
             'password'=>'Admin@123',
             'roles_name'=> ['owner'],
-            'is_verified'=>1,
+            'is_verified'=> 1,
         ]);
         $admin->assignRole('owner');
     }

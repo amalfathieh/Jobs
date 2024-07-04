@@ -26,6 +26,9 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
+// use Barryvdh\DomPDF\Facade\Pdf;
+use PDF;
+
 
 class UserController extends Controller
 {
@@ -65,7 +68,7 @@ class UserController extends Controller
             return $this->apiResponse([], __('expire') , 422);
         }
         // find user's email
-        $user = User::firstWhere('email', $ver_code->email);
+        $user = User::where('email', $ver_code->email)->first();
         $token = $user->createToken("API TOKEN")->plainTextToken;
         $data = [];
         $data['user'] = $user;
@@ -82,9 +85,7 @@ class UserController extends Controller
         $password =  $request->input('password');
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
-
         if (!Auth::attempt([$fieldType => $login, 'password' => $password])) {
-
             return $this->apiResponse([], __('strings.email_password_mismatch') , 401);
         }
 
@@ -333,5 +334,18 @@ class UserController extends Controller
         $user =User::find($user_id);
         $user = new UserResource($user);
         return $user;
+    }
+
+    public function createCV(Request $request) {
+        $user = Auth::user();
+        $data = $request->all();
+        $file_name = $request->full_name . '_CV.pdf';
+        $html = view()->make('pdf.pdf', compact('data'))->render();
+        // return view('pdf.pdf', compact('data'));
+        PDF::SetTitle('My CV');
+        PDF::AddPage();
+        PDF::WriteHTML($html, true, false, true, false, "");
+        PDF::output(public_path($file_name), 'F');
+        return response()->download(public_path($file_name));
     }
 }

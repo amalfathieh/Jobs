@@ -27,6 +27,10 @@ return new class extends Migration
             ->constrained('reasons')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
+
+            $table->string('another_reason')->nullable();
+            $table->string('notes')->nullable();
+            $table->boolean('is_viewed')->default(0);
             $table->timestamps();
         });
     }

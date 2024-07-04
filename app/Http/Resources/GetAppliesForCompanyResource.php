@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ApplyResource extends JsonResource
+class GetAppliesForCompanyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,11 +17,12 @@ class ApplyResource extends JsonResource
         return [
             'id' => $this->id,
             'opportunity_name' => $this->opportunity->title,
-            'company_name' => $this->opportunity->company->company_name,
-            'company_logo' => $this->opportunity->company->logo,
+            'seeker_id' => $this->user->id,
+            'seeker_name' => $this->user->seeker->first_name . ' ' . $this->user->seeker->last_name,
+            'seeker_email' => $this->user->email,
             'status' => $this->status,
-            'cv_path' => $this->cv,
-            'created_at' => $this->created_at->format('M-d-Y h:m A')
+            'created_at' => $this->created_at->format('M-d-Y h:m A'),
+            'updated_at' => $this->updated_at->format('M-d-Y h:m A'),
         ];
     }
 }

@@ -12,8 +12,10 @@ use App\Models\Opportunity;
 use App\Models\Post;
 use App\Models\Seeker;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Activitylog\Models\Activity;
 
 class AdminController extends Controller
@@ -27,7 +29,6 @@ class AdminController extends Controller
                 return $this->apiResponse(null, 'User removed successfully', 200);
             }
             return $this->apiResponse(null, 'User not found', 404);
-
     }
 
     public function getUsers($type) {
@@ -48,16 +49,14 @@ class AdminController extends Controller
             $result = UserResource::collection($seekers);
         }
 
-        else if($type == 'Companies' ) {
-            $seekers = User::role('company')->latest()->get();
-            $result = UserResource::collection($seekers);
+        else if($type == 'Companies') {
+            $companies = User::role('company')->latest()->get();
+            $result = UserResource::collection($companies);
         }
-
         else {
             return $this->apiResponse(null, 'Error User Type ', 403);
         }
         return $this->apiResponse($result , 'success' , 200);
-
     }
 
     public function search($search){
@@ -90,16 +89,32 @@ class AdminController extends Controller
     }
 
     public function banUser(Request $request, $id){
+        $vaildate = Validator::make($request->all(), [
+            'reason' => 'required',
+            'type' => 'required'
+        ]);
+        if ($vaildate->fails()) {
+            return $this->apiResponse(null, $vaildate->errors(), 400);
+        }
         $user = User::find($id);
         if ($user->isNotBanned()) {
+            $comment = $request->comment;
+            $type = $request->type;
+            $expired_at = $request->expired_at;
+            if ($type === 'forever') {
+                $expired_at = null;
+            } else if (!$expired_at) {
+                return $this->apiResponse(null, 'Date is required', 400);
+            }
+
             $user->roles()->detach();
             $ban = $user->ban([
-                'comment' => $request->comment,
-                'expired_at' => $request->expired_at
+                'comment' => $comment,
+                'expired_at' => $expired_at
             ]);
             return $this->apiResponse($ban, "Banned successfully", 200);
         } else {
-            return $this->apiResponse(null, "User is already banned", 403);
+            return $this->apiResponse(null, "User is already banned", 400);
         }
     }
 
@@ -108,10 +123,9 @@ class AdminController extends Controller
         if ($user->isBanned()) {
             $user->syncRoles($user->roles_name);
             $user->unBan();
-
             return $this->apiResponse(null, "Unbanned successfully", 200);
         } else {
-            return $this->apiResponse(null, "User is already not banned", 403);
+            return $this->apiResponse(null, "User is already not banned", 400);
         }
     }
 
@@ -122,26 +136,20 @@ class AdminController extends Controller
 
     public function getBans() {
         $users = User::onlyBanned()->get();
-        $users = $users->reject(function(User $user) {
-            $roles = $user->roles_name;
-            foreach ($roles as $value) {
-                return $value === 'owner';
-            }
-        });
-        return $this->apiResponse($users, "These are all users banned", 200);
+        return $this->apiResponse(UserResource::collection($users), "These are all users banned", 200);
     }
 
-    public function deleteExpiredBanned() {
-        $users = User::onlyBanned()->get();
-        $users = $users->reject(function(User $user) {
-            $roles = $user->roles_name;
-            foreach ($roles as $value) {
-                return $value === 'owner';
-            }
-        });
-
-        return $this->apiResponse($users, "These are all users banned", 200);
-    }
+    // public function deleteExpiredBanned() {
+    //     $users = User::onlyBanned()->get();
+    //     $user = User::find(6);
+    //     return $user->bans;
+    //     foreach ($users as $user) {
+    //         if ($user->bans[0]->expired_at < Carbon::now()) {
+    //             $user->syncRoles($user->roles_name);
+    //             $user->unBan();
+    //         }
+    //     }
+    // }
 
     public function countPOA() {
         $posts = Post::count();
@@ -175,13 +183,33 @@ class AdminController extends Controller
     }
 
     public function lineChart() {
-        $logs = Activity::all();
-        $data = [];
-        $count = 0;
-        foreach ($logs as $value) {
+        $minDate = Activity::min('created_at');
+        $maxDate = Activity::max('created_at');
 
-            $data[$value->created_at->format('M')] = $value->created_at->format('D-M-Y');
+        if (!$minDate || !$maxDate) {
+            return response()->json(['message' => 'No data available'], 404);
         }
-        return $data;
+
+        $startDate = Carbon::parse($minDate)->startOfDay();
+        $endDate = Carbon::parse($maxDate)->endOfDay();
+
+        $dailyData = [];
+
+        while ($startDate->lte($endDate)) {
+            $dayStart = $startDate->copy()->startOfDay()->toDateTimeString();
+            $dayEnd = $startDate->copy()->endOfDay()->toDateTimeString();
+
+            $count = Activity::whereBetween('created_at', [$dayStart, $dayEnd])->count();
+            $dayFormat = $startDate->copy()->startOfDay()->format('M-d');
+            $dailyData[] = [
+                'day' => $dayFormat,
+                'count' => $count,
+                'amt' => 2000
+            ];
+
+            $startDate->addDay();
+        }
+
+        return response()->json($dailyData);
     }
 }

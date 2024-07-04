@@ -21,7 +21,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $permissions = [
             //Admin employee
             'role control',
-            'admin report create', 'admin report view', 'admin report edit', 'admin report delete',
+            'admin report control',
 
             'logs view',
             'employee control', 'employee view',
@@ -37,7 +37,7 @@ class RolesAndPermissionsSeeder extends Seeder
             //profile company
             'company create',
            //
-            'user report create', 'user report view', 'user report delete',
+            'user report create', 'user report view', 'user report delete', 'response for report',
 
             'opportunity create', 'opportunities view', 'opportunity delete',
 
@@ -80,5 +80,3 @@ class RolesAndPermissionsSeeder extends Seeder
     }
 }
 
-
-//' create', ' view', ' edit', ' delete',

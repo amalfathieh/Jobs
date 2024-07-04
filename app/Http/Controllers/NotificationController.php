@@ -67,7 +67,7 @@ class NotificationController extends Controller
             if($opportunity) {
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                return $this->apiResponse(new OpportunityResource($opportunity) , 'success' ,200);
+                return $this->apiResponse(new OpportnityResource($opportunity) , 'success' ,200);
             }
         }
         //طلب توظيف

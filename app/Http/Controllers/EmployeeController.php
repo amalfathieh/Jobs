@@ -26,25 +26,19 @@ class EmployeeController extends Controller
 
     //ADD EMPLOYEE BY ADMIN FROM DASHBOURD
     public function add(EmployeeRequest $request) {
-        $data = $request->all();
-        $roles = ['employee'];
-
-        foreach ($data['roles_name'] as $role){
-            $roles[] = $role;
-        }
 
         $password = Str::random(8);
         $user = User::query()->create([
             'user_name' => $request['first_name'] . '_' . Str::random(3),
             'email' => $request['email'],
             'password' => $password,
-            'roles_name' => $roles,
+            'roles_name' => $request['roles_name'],
             'is_verified'=>true,
         ]);
-        $employee = $this->userService->storeEmployee($request, $user->id );
+        $employee = $this->userService->storeEmployee($request, $user->id);
 
         $link='';
-        $user->assignRole($roles);
+        $user->assignRole($request['roles_name']);
 //        return $password;
         InviteEmployeeJob::dispatch($request->email, $password ,$link);
         return $this->apiResponse($user,'Employee has been invite successfully',201);

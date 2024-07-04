@@ -21,11 +21,10 @@ class UserFactory extends Factory
         return [
             'user_name' => fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'roles_name' => ['user', Arr::random(['company', 'job_seeker'])],
+            // 'email_verified_at' => now(),
+            'roles_name' => ['user', 'company'],
             'is_verified' => 1,
             'password' => 'Admin@123', // password
-            'remember_token' => Str::random(10),
         ];
     }
 

@@ -74,10 +74,18 @@ article address.norm h4 {
   color: red;
   display: contents;
 }
+address.norm ul {
+    list-style: lower-greek;
+    /* display: flex; */
+}
 
 article {
-  display: grid;
+  /* display: grid; */
 }
+.fi {
+
+}
+
 
 article address.norm {
   float: left;
@@ -145,67 +153,68 @@ article address {
             <h1>CV</h1>
             <hr width="100%" color="red" size="5" />
             <address>
-                <h2>{{$data['full_name']}}</h2>
-                <h2>{{$data['birth_day']}}</h2>
-                <h2>{{$data['location']}}</h2>
-                <p>{{$data['about']}}</p>
+                <h2>Ali Mohammad</h2>
+                <p>alexandercross202@gmail.com</p>
+                <p>45189, Research Place, Suite 150A</p>
             </address>
-            <img style="align-items: flex-end" alt="it" src="{{asset('/images/job_seeker/profilePhoto/Picture16.jpg')}}" width="120" />
+            <img style="align-self: flex-end" alt="it" src="{{asset('/images/job_seeker/profilePhoto/Picture16.jpg')}}" width="120" />
             <hr width="100%" color="red" size="5" />
       </header>
       <article>
         <div class="alaa">
           <address class="norm">
             <h4>Skills</h4>
-            <ul>
-                @foreach ($data['skills'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
-            </ul>
+            <div class="fi">
+                <ul>
+                    <li>BLA BLA</li>
+                    <li>BLA BLA</li>
+                    <li>BLA BLA</li>
+                  </ul>
+            </div>
           </address>
           <hr width="100%" color="red" size="5" />
           <address class="norm">
             <h4>Certificates</h4>
             <ul>
-                @foreach ($data['certificates'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
+              <li>IT</li>
+              <li>BLA BLA</li>
+              <li>BLA BLA BLA</li>
             </ul>
           </address>
           <hr width="100%" color="red" size="5" />
           <address class="norm">
             <h4>Languages</h4>
             <ul>
-                @foreach ($data['languages'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
+              <li>IT</li>
+              <li>BLA BLA</li>
+              <li>BLA BLA BLA</li>
             </ul>
           </address>
           <hr width="100%" color="red" size="5" />
           <address class="norm">
             <h4>Projects</h4>
             <ul>
-                @foreach ($data['projects'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
+              <li>IT</li>
+              <li>BLA BLA</li>
+              <li>BLA BLA BLA</li>
             </ul>
           </address>
           <hr width="100%" color="red" size="5" />
           <address class="norm">
             <h4>Experience</h4>
             <ul>
-                @foreach ($data['experiences'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
+              <li>IT</li>
+              <li>BLA BLA</li>
+              <li>BLA BLA BLA</li>
             </ul>
           </address>
           <hr width="100%" color="red" size="5" />
           <address class="norm">
             <h4>Contacts</h4>
             <ul>
-                @foreach ($data['contacts'] as $item)
-                <li>{{$item}}</li>
-                @endforeach
+              <li>Email:test@example.com</li>
+              <li>Telegram:</li>
+              <li>Whatsapp:</li>
             </ul>
           </address>
         </div>
@@ -217,5 +226,7 @@ article address {
         </div>
       </aside>
     </div>
-  </body>
+
+
+    </body>
 </html>

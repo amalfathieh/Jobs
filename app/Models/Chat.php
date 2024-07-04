@@ -4,15 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Chat extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     protected $fillable=[
         'id',
         'user1_id',
         'user2_id'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*']);
+    }
     public function user(){
         return $this->belongsToMany(User::class,'chat_user_pivot','chat_id','user_id');
     }

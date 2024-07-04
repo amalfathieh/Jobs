@@ -7,14 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Chat_user_pivot extends Model
+class Reason extends Model
 {
     use HasFactory, LogsActivity;
-    protected $table = 'chat_user_pivot';
-    protected $fillable=[
-        'id',
-        'chat_id',
-        'user_id'
+
+    protected $fillable = [
+        'title'
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -22,4 +20,9 @@ class Chat_user_pivot extends Model
         return LogOptions::defaults()
             ->logOnly(['*']);
     }
+
+    public function reports() {
+        return $this->hasMany(Report::class, 'id', 'reason_id');
+    }
+
 }
