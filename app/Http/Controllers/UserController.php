@@ -6,10 +6,14 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Resources\OpportunityResource;
+use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Jobs\ChangeEmailJob;
 use App\Jobs\ForgotPasswordJob;
 use App\Jobs\MailJob;
+use App\Models\Opportunity;
+use App\Models\Post;
 use App\Models\ResetCodePassword;
 use App\Models\Seeker;
 use App\Models\User;
@@ -20,16 +24,15 @@ use App\Traits\NotificationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
-// use Barryvdh\DomPDF\Facade\Pdf;
-use PDF;
 
-
+use function Symfony\Component\HttpKernel\Log\format;
 class UserController extends Controller
 {
     use responseTrait,NotificationTrait;
@@ -65,7 +68,7 @@ class UserController extends Controller
         // check if it does not expired: the time is one hour
         if ($ver_code->created_at->addHour() < now()) {
             VerificationCode::where('code', $ver_code->code)->delete();
-            return $this->apiResponse([], __('expire') , 422);
+            return $this->apiResponse([], __('code_has_expired') , 422);
         }
         // find user's email
         $user = User::where('email', $ver_code->email)->first();
@@ -330,22 +333,19 @@ class UserController extends Controller
         }
         return $this->apiResponse($data, "sent successfully", 200);
     }
-    public function getUser($user_id){
-        $user =User::find($user_id);
-        $user = new UserResource($user);
-        return $user;
-    }
 
-    public function createCV(Request $request) {
-        $user = Auth::user();
-        $data = $request->all();
-        $file_name = $request->full_name . '_CV.pdf';
-        $html = view()->make('pdf.pdf', compact('data'))->render();
-        // return view('pdf.pdf', compact('data'));
-        PDF::SetTitle('My CV');
-        PDF::AddPage();
-        PDF::WriteHTML($html, true, false, true, false, "");
-        PDF::output(public_path($file_name), 'F');
-        return response()->download(public_path($file_name));
+    public function getUserProfile($user_id){
+        $user =User::find($user_id);
+        $data['profile'] = new UserResource($user);
+        if ($user->hasRole('company')) {
+            $opportunity = Opportunity::where('company_id', $user->company->id)->get();
+            $data['opportunity']= OpportunityResource::collection($opportunity);
+        }
+        if ($user->hasRole('job_seeker')) {
+            $posts = Post::where('seeker_id', $user->seeker->id)->get();
+            $data['post']= PostResource::collection($posts);
+        }
+
+        return $this->apiResponse($data, __('strings.success'), 200);;
     }
 }

@@ -36,6 +36,7 @@ class SeekerRequest extends FormRequest
             'image'=>'image',
             'skills'=>'required',
             'certificates'=>'required',
+            'specialization' =>'required',
             'about'=>'required'
         ];
     }

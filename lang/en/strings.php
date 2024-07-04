@@ -31,4 +31,9 @@ return[
     'not_allowed_action' => 'You are not allowed to do this',
     'cannot_delete_not_waiting' => 'You cannot delete it, because it is not in a waiting state',
 
+    "employee_invite_success"=> "Employee has been invited successfully",
+    "authorization_required"=> "You do not have the required authorization.",
+
+
+
 ];

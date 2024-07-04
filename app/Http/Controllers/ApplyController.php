@@ -198,4 +198,5 @@ class ApplyController extends Controller
 
         return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }
+
 }

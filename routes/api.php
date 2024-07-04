@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('search/{search}', 'search');
 
         Route::post('device_token', 'storeToken');
-        Route::get('user/{id}','getUser');
+        Route::get('user/{id}','getUserProfile');
 
         Route::get('firebase', 'FirebaseController@index');
     });
@@ -77,6 +77,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('allPosts', 'allPosts')->middleware('can:posts view');
     });
 
+    Route::controller(OpportunityController::class)->group(function () {
+        Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
+        Route::get('proposed_Jobs' , 'proposed_Jobs');
+    });
         // Chat
         Route::controller(ChatController::class)->group(function () {
             Route::post('create', 'sendMessage');
@@ -103,6 +107,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Routes common are over //
 
     // Company routes //
+    //جلب الشركات المقترحة
+    Route::get('proposed_Companies' , [CompanyController::class,'proposed_Companies']);
+
     Route::middleware('can:company create')->prefix('company')->group(function () {
         Route::controller(CompanyController::class)->group(function () {
             Route::post('create', 'createCompany');

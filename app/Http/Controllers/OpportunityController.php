@@ -73,11 +73,11 @@ class OpportunityController extends Controller
         if ($opportunity) {
             if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || (($user->hasRole('employee') || $user->hasRole('owner')) && $user->can('opportunity delete'))) {
                 $opportunity->delete();
-                return $this->apiResponse(null, 'Opportunity deleted successfully', 200);
+                return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }
-            return $this->apiResponse(null,'You do not have permission',403);
+            return $this->apiResponse(null,__('strings.authorization_required'),403);
         }
-        return $this->apiResponse(null, 'Opportunity not found.', 404);
+        return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 
     public function getMyOpportunities() {
@@ -85,12 +85,6 @@ class OpportunityController extends Controller
         $company = Company::where('id', $user->company->id)->first();
         $opportunities = OpportunityResource::collection(OpportunityResource::collection($company->opportunities));
         return $this->apiResponse($opportunities, 'These are all my opportunites', 200);
-    }
-
-    public function getCompanyOpportunities($id) {
-        $user = User::find($id);
-        $opportunities = OpportunityResource::collection(Opportunity::where('company_id', $user->company->id)->get());
-        return $this->apiResponse($opportunities, 'These are all opportunites for this company', 200);
     }
 
     public function allOpportunities() {
@@ -102,5 +96,19 @@ class OpportunityController extends Controller
 
         $opportunities = OpportunityResource:: collection($opportunities);
         return $this->apiResponse($opportunities, 'successfully', 200);
+    }
+    //الفرص المقترحة
+    public function proposed_Jobs(){
+        $seeker = User::find(Auth::user()->id)->seeker;
+        $companies = Company::where('domain', $seeker->specialization)->get();
+
+        $opportunities = [];
+        foreach($companies as $company){
+            $companyOpportunities = $company->opportunities;
+            foreach($companyOpportunities as $opportunity){
+                $opportunities[] = new OpportunityResource($opportunity);
+            }
+        }
+        return $this->apiResponse($opportunities , 'proposed Jobs' ,200);
     }
 }

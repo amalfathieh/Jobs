@@ -18,13 +18,13 @@ class PostService
     }
 
 
-    public function store($seeker_id, $body ,$file){
+    public function store($seeker_id, $body ,$file ,$type ){
         $file = $this->fileService->store($file,'images/job_seeker/posts');
         return Post::create([
             'seeker_id' => $seeker_id,
-//            'title' => $title,
             'body' => $body,
-            'file' => $file
+            'file' => $file,
+            'type' => $type
         ]);
     }
 
@@ -39,7 +39,8 @@ class PostService
         return $post->update([
             'title' => $request['title'] ?? $post['title'],
             'body' => $request['body'] ?? $post['body'],
-            'file' => $file ?? $post['file']
+            'file' => $file,
+            'type' => $request['type'] ?? $post['type']
         ]);
     }
 }

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->text('skills');
             $table->text('certificates');
+            $table->string('specialization');
             $table->text('about');
             $table->timestamps();
         });
