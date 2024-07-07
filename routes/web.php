@@ -25,7 +25,7 @@ Route::get('/', function () {
 });
 Route::get('testNotification',[UserController::class,'noti']);
 
-Route::get('createCV', 'SeekerController@createCV');
+Route::get('createCV', 'UserController@createCV');
 
 Route::middleware('web')->group(function () {
 });
@@ -34,8 +34,11 @@ Route::get('auth/google/callback', [SocialAuthController::class, 'handleCallback
 
 
 Route::get('test', function() {
-    Pdf::loadView('user/print');
-    return view('user/print');
+    // Pdf::loadView('user/print');
+    return view('pdf.test');
 });
+
+Route::post('firebase', 'FirebaseController@index');
+
 
 Route::get('/lang/{lang}',[\App\Http\Controllers\LangController::class,'setLang']);

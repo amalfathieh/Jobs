@@ -22,9 +22,16 @@ class PostResource extends JsonResource
             'profile_img' => $this->seeker->image,
             'body' => $this->body,
             'file' => $this->file,
+<<<<<<< HEAD
+            'created_at' => $this->created_at->format('d-M-Y'),
+            'updated_at' => $this->updated_at->format('d-M-Y'),
+            'created_at_with_time' => $this->created_at->format('M-d-Y h:m A'),
+            'updated_at_with_time' => $this->updated_at->format('d-M-Y')
+=======
             'type' => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+>>>>>>> 42cf080c5755eb3df5b0b135efbb4f7ecbc008c1
         ];
     }
 }

@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SeekerRequest;
 use App\Models\Opportunity;
 use App\Models\Seeker;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
 use App\services\SeekerService;
 use App\Traits\responseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
-
+use PDF;
 class SeekerController extends Controller
 {
     use responseTrait;
@@ -48,13 +47,15 @@ class SeekerController extends Controller
     }
 
     public function createCV(Request $request) {
-        $user = User::where('id', Auth::user()->id)->first();
-        $info = Seeker::where('user_id', $user->id)->first();
+        $user = Auth::user();
         $data = $request->all();
-        // $pdf = Pdf::loadView('pdf.pdf', compact('data'));
-        // // return $pdf->download("cv.pdf");
-        // return $pdf->stream('gg.pdf');
-        return view('pdf.pdf', compact('data'));
+        $file_name = $request->full_name . '_CV.pdf';
+        $html = view()->make('pdf.pdf', compact('data'))->render();
+        PDF::SetTitle($request->full_name . '_CV.pdf');
+        PDF::AddPage();
+        PDF::WriteHTML($html, true, false, true, false, "");
+        PDF::output(public_path($file_name), 'F');
+        return response()->download(public_path($file_name));
     }
 
 }

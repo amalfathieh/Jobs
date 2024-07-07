@@ -135,7 +135,7 @@ class ApplyController extends Controller
 
     public function delete($id) {
         try {
-            $user = User::where('id', Auth::user()->id)->first();
+        $user = User::where('id', Auth::user()->id)->first();
         $apply = Apply::where('id', $id)->first();
         if ($apply->user_id === $user->id || $apply->company_id === $user->company->id) {
             if ($apply->status === 'waiting' || ($user->company ? $apply->company_id === $user->company->id : false)) {
@@ -185,7 +185,7 @@ class ApplyController extends Controller
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
 
 
-            $data = Apply::where('id', $id)->first()->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
+            $data = $apply->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
             return $this->apiResponse($data,  __('strings.updated_successfully'), 200);
         }
         return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
@@ -194,7 +194,7 @@ class ApplyController extends Controller
     public function getApplies() {
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
-        $applies = Apply::where('company_id', $company->id)->get();
+        $applies = Apply::where('company_id', $company->id)->orderBy('status')->get();
 
         return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }

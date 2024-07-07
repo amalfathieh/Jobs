@@ -55,7 +55,7 @@ class OpportunityController extends Controller
             }
             return $this->apiResponse($opportunity, __('strings.opportunity_added_successfully'), 201);
         }catch (\Exception $ex) {
-            return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
+            return $this->apiResponse(null, $ex->getMessage(), 500);
         }
     }
 
@@ -70,8 +70,8 @@ class OpportunityController extends Controller
     public function delete($id){
         $opportunity = Opportunity::find($id);
         $user = User::where('id', Auth::user()->id)->first();
-        if (!is_null($opportunity)) {
-            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || ($user->hasRole('employee') && $user->can('opportunity delete'))) {
+        if ($opportunity) {
+            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || (($user->hasRole('employee') || $user->hasRole('owner')) && $user->can('opportunity delete'))) {
                 $opportunity->delete();
                 return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }

@@ -24,7 +24,7 @@ class PostController extends Controller
 {
     use responseTrait,NotificationTrait;
     protected $postService;
-    public function __construct(PostService $postService)
+public function __construct(PostService $postService)
     {
         $this->postService = $postService;
     }
@@ -72,8 +72,8 @@ class PostController extends Controller
     public function delete($id){
         $post = Post::find($id);
         $user = User::where('id', Auth::user()->id)->first();
-        if (!is_null($post)) {
-            if (($user->hasRole('job_seeker') && $post['seeker_id'] == $user->seeker->id) || ($user->hasRole('employee') && $user->can('post delete'))) {
+        if ($post) {
+            if (($user->hasRole('job_seeker') && $post['seeker_id'] == $user->seeker->id) || (($user->hasRole('employee') || $user->hasRole('owner')) && $user->can('post delete'))) {
                 $post->delete();
                 return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }

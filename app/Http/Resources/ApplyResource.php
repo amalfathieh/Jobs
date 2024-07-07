@@ -18,8 +18,10 @@ class ApplyResource extends JsonResource
             'id' => $this->id,
             'opportunity_name' => $this->opportunity->title,
             'company_name' => $this->opportunity->company->company_name,
+            'company_logo' => $this->opportunity->company->logo,
             'status' => $this->status,
-            'created_at' => $this->created_at
+            'cv_path' => $this->cv,
+            'created_at' => $this->created_at->format('M-d-Y h:m A')
         ];
     }
 }

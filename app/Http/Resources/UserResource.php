@@ -29,8 +29,9 @@ class UserResource extends JsonResource
                 'email' => $this->email,
                 'is_verified' => $this->is_verified === 1,
                 'created_at'=>$this->created_at->toDateTimeString(),
-                'role' => $this->roles_name,
+                'roles_name' => $this->roles_name,
                 'type'=>null,
+                'is_banned' => $this->banned_at ? true : false
             ];
 
 
@@ -51,7 +52,6 @@ class UserResource extends JsonResource
                 $data['type']='company';
                 $data['more_info'] = new CompanyResource($company);
             }
-
 
         return $data;
     }

@@ -159,6 +159,7 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+        Elibyy\TCPDF\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
@@ -211,7 +212,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'PDF' => Elibyy\TCPDF\Facades\TCPDF::class
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
-
 ];

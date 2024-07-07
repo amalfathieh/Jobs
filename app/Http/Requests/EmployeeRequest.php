@@ -29,7 +29,7 @@ class EmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'=>'required|email',
+            'email'=>'required|email|unique:users,email',
             'first_name'=>'required|min:3',
             'middle_name'=>'required|min:3',
             'last_name'=> 'required|min:3',

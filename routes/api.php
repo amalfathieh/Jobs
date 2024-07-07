@@ -60,6 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('device_token', 'storeToken');
         Route::get('user/{id}','getUserProfile');
 
+        Route::get('firebase', 'FirebaseController@index');
     });
 
     Route::controller(ReportController::class)->prefix('report')->group(function () {
@@ -67,7 +68,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('reportPost/{id}', 'reportPost')->middleware('can:user report create');
         Route::post('reportOpportunity/{id}', 'reportOpportunity')->middleware('can:user report create');
 
-        Route::post('getReports', 'getReports')->middleware('can:user report view');
+        Route::get('getReports/{type}', 'getReports')->middleware('can:user report view');
+        Route::post('response/{id}', 'response')->middleware('can:user report view');
+        Route::delete('delete/{id}', 'delete')->middleware('can:user report delete');
     });
 
     Route::controller(PostController::class)->group(function () {
@@ -121,7 +124,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::post('addOpportunity', 'addOpportunity');
                 Route::put('updateOpportunity/{id}', 'updateOpportunity');
             });
-            Route::get('getOpportunity', 'allOpportunities')->middleware('can:opportunities view');
+
+            Route::get('getMyOpportunities', 'getMyOpportunities')->middleware('can:opportunities view');
+            Route::get('getCompanyOpportunities', 'getCompanyOpportunities')->middleware('can:opportunities view');
+            Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
         });
     });
     // Company routes are over //
@@ -148,8 +154,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Post
     Route::controller(PostController::class)->prefix('post')->group(function () {
-        Route::post('create', 'create');
         Route::middleware('can:post create')->group(function () {
+            Route::post('create', 'create');
             Route::put('edit/{post_id}' , 'edit');
         });
         Route::get('viewUserPosts/{id}','userPosts')->middleware('can:posts view');
@@ -162,11 +168,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     // Seeker routes are over //
 
-
     // Admin Routes // Don't forget: api/admin/{}
     Route::prefix('admin')->group(function ()  {
         Route::controller(AdminController::class)->group(function (){
-            Route::delete('removeUser', 'removeUser')->middleware('can:user delete');
+            Route::delete('removeUser/{id}', 'removeUser')->middleware('can:user delete');
 
             Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
             Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');
@@ -201,7 +206,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             });
         });
 
-        // api/admin/employee/{}
+        // api`/admin/employee/{}
         Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
             Route::middleware('can:employee control')->group(function () {
                 Route::post('addEmployee','add');
@@ -217,7 +222,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('getRoles', 'getRoles');
 
             Route::post('addRole', 'addRole');
-            Route::put('editRole', 'editRole');
+            Route::put('editRole/{id}', 'editRole');
             Route::delete('deleteRole/{id}', 'deleteRole');
 
             Route::put('editUserRoles/{id}', 'editUserRoles');
@@ -227,7 +232,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin routes are over //
 });
 // Routes need auth are over //
-
 
 // Routes don't need auth //
 Route::controller(UserController::class)->group(function () {
@@ -251,13 +255,3 @@ Route::controller(UserController::class)->group(function () {
     Route::post('rePassword', 'rePassword');
 });
 // Routes don't need auth are over //
-
-
-Route::get('test', function() {
-    $user = Auth::user();
-    return $user->roles;
-})->middleware('auth:sanctum');
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});

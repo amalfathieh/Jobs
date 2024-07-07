@@ -31,7 +31,8 @@ class OpportunityResource extends JsonResource
             'skills_req' => $this->skills_req,
             'salary' => $this->salary,
             'vacant' => $this->vacant,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at->format('M-d-Y'),
+            'created_at_with_time' => $this->created_at->format('M-d-Y h:m A')
         ];
     }
 }
