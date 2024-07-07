@@ -20,6 +20,7 @@ class GetAppliesForCompanyResource extends JsonResource
             'seeker_id' => $this->user->id,
             'seeker_name' => $this->user->seeker->first_name . ' ' . $this->user->seeker->last_name,
             'seeker_email' => $this->user->email,
+            'cv' => $this->cv,
             'status' => $this->status,
             'created_at' => $this->created_at->format('M-d-Y h:m A'),
             'updated_at' => $this->updated_at->format('M-d-Y h:m A'),

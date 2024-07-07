@@ -49,7 +49,7 @@ class RoleController extends Controller
                     $role->syncPermissions($request->permissions);
                 }
                 $role->save();
-                return $this->apiResponse($role, 'Edited successfully', 200);
+                return $this->apiResponse($role, __('strings.edited_successfully'), 200);
             }
             $role = Role::findByName($request->role, 'web');
             $role->name = $request->new_name;
@@ -57,7 +57,7 @@ class RoleController extends Controller
                 $role->syncPermissions($request->permissions);
             }
             $role->save();
-            return $this->apiResponse($role, 'Edited successfully', 200);
+            return $this->apiResponse($role, __('strings.edited_successfully'), 200);
         } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 404);
         }
@@ -76,12 +76,12 @@ class RoleController extends Controller
             if (is_numeric($request->role)) {
                 $role = Role::findById($request->role, 'web');
                 $role->delete();
-                return $this->apiResponse(null, 'Deleted successfully', 200);
+                return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }
 
             $role = Role::findByName($request->role, 'web');
             $role->delete();
-            return $this->apiResponse(null, 'Deleted successfully', 200);
+            return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
 
         } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 404);
@@ -123,6 +123,6 @@ class RoleController extends Controller
             $user->save();
             return $this->apiResponse(null, 'Roles updated successfully', 200);
         }
-        return $this->apiResponse(null, 'User not found', 404);
+        return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 }

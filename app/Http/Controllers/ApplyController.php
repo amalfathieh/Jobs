@@ -27,7 +27,7 @@ class ApplyController extends Controller
             $company_id= $opportunity->company_id;
             $app = Apply::where('opportunity_id', $id)->where('user_id', Auth::user()->id)->where('company_id', $company_id)->first();
             if ($app) {
-                return $this->apiResponse(null, 'You have applied for this opportunity', 400);
+                return $this->apiResponse(null, __('strings.applied_for_opportunity'), 400);
             }
             else {
                 if (!$request->file('cv')) {
@@ -70,7 +70,7 @@ class ApplyController extends Controller
                     ];
                     Notification::send($user,new SendNotification($data));
             //      $this->sendPushNotification($data['title'],$data['body'],$tokens);
-                    return $this->apiResponse($apply, 'The request has been sent successfully', 201);
+                    return $this->apiResponse($apply, __('strings.request_sent_successfully'), 201);
                 }
             }
             return $this->apiResponse(null, __('strings.error_occurred'), 400);

@@ -59,7 +59,7 @@ class NotificationController extends Controller
                 $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
                 $data['content'] = new PostResource($post);
-                return $this->apiResponse($data , 'success' ,200);
+                return $this->apiResponse($data , __('strings.success') ,200);
             }
 
         }
@@ -72,7 +72,7 @@ class NotificationController extends Controller
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 $data['content'] = new OpportunityResource($opportunity);
-                return $this->apiResponse($data , 'success' ,200);
+                return $this->apiResponse($data , __('strings.success') ,200);
             }
         }
         //طلب توظيف
@@ -83,7 +83,7 @@ class NotificationController extends Controller
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 $data['content'] = $job_application;
-                return $this->apiResponse($data , 'success' ,200);
+                return $this->apiResponse($data , __('strings.success') ,200);
             }
         }
         //تنبيه الدخول الى الداشبورد
@@ -94,7 +94,7 @@ class NotificationController extends Controller
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 $data['content'] = new UserResource($user);
-                return $this->apiResponse( $data, 'success' ,200);
+                return $this->apiResponse( $data, __('strings.success') ,200);
             }
         }
 
@@ -105,7 +105,7 @@ class NotificationController extends Controller
                 $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
                 DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
                 $data['content'] = $report;
-                return $this->apiResponse($data , 'success' ,200);
+                return $this->apiResponse($data , __('strings.success') ,200);
             }
         }
 

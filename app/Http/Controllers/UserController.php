@@ -283,6 +283,7 @@ class UserController extends Controller
             ]);
             return $this->apiResponse(null, 'success', 200);
         }
+        return $this->apiResponse(null, 'success', 200);
     }
 
     public function noti(){
@@ -349,6 +350,38 @@ class UserController extends Controller
         }
 
         return $this->apiResponse($data, __('strings.success'), 200);;
+    }
+
+    public function ee($date){
+        $cacheKey = 'ee_' . $date;
+        $cacheTime = now()->addHour();
+
+        return cache()->remember($cacheKey, $cacheTime, function () use ($date) {
+            if($date == 'day'){
+                return $dailyUsers = User::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as users'))
+                    ->groupBy('date')
+                    ->orderBy('date', 'ASC')
+                    ->get();
+            }
+
+            if($date == 'week'){
+                return $weeklyUsers = User::select([
+                    DB::raw('YEAR(created_at) as year'),
+                    DB::raw('WEEK(created_at) as week'),
+                    DB::raw('count(*) as users')])
+                    ->groupBy('year', 'week')
+                    ->orderBy('year', 'asc')
+                    ->orderBy('week', 'asc')
+                    ->get();
+            }
+
+            if($date == 'month'){
+                return $monthlyUsers = User::select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('count(*) as users'))
+                    ->groupBy('month')
+                    ->orderBy('month', 'ASC')
+                    ->get();
+            }
+        });
     }
 
 }

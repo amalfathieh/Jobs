@@ -24,9 +24,9 @@ class AdminController extends Controller
             $user = User::where('id', $id)->first();
             if ($user) {
                 $user->delete();
-                return $this->apiResponse(null, 'User removed successfully', 200);
+                return $this->apiResponse(null, __('strings.user_removed_successfully'), 200);
             }
-            return $this->apiResponse(null, 'User not found', 404);
+            return $this->apiResponse(null, __('strings.not_found'), 404);
 
     }
 
@@ -54,9 +54,9 @@ class AdminController extends Controller
         }
 
         else {
-            return $this->apiResponse(null, 'Error User Type ', 403);
+            return $this->apiResponse(null, __('strings.error_user_type'), 403);
         }
-        return $this->apiResponse($result , 'success' , 200);
+        return $this->apiResponse($result , __('strings.success') , 200);
 
     }
 
@@ -81,7 +81,7 @@ class AdminController extends Controller
         });
 
         if($users->isEmpty()){
-            return $this->apiResponse(null,'Not Found',404);
+            return $this->apiResponse(null,__('strings.not_found'),404);
 
         } else{
             $result = UserResource::collection($users);
@@ -97,9 +97,9 @@ class AdminController extends Controller
                 'comment' => $request->comment,
                 'expired_at' => $request->expired_at
             ]);
-            return $this->apiResponse($ban, "Banned successfully", 200);
+            return $this->apiResponse($ban, __('strings.banned_successfully'), 200);
         } else {
-            return $this->apiResponse(null, "User is already banned", 403);
+            return $this->apiResponse(null, __('strings.user_already_banned'), 403);
         }
     }
 
@@ -109,9 +109,9 @@ class AdminController extends Controller
             $user->syncRoles($user->roles_name);
             $user->unBan();
 
-            return $this->apiResponse(null, "Unbanned successfully", 200);
+            return $this->apiResponse(null, __('strings.unbanned_successfully'), 200);
         } else {
-            return $this->apiResponse(null, "User is already not banned", 403);
+            return $this->apiResponse(null, __('strings.user_already_not_banned'), 403);
         }
     }
 
@@ -128,7 +128,7 @@ class AdminController extends Controller
                 return $value === 'owner';
             }
         });
-        return $this->apiResponse($users, "These are all users banned", 200);
+        return $this->apiResponse($users, __('strings.all_users_banned'), 200);
     }
 
     public function deleteExpiredBanned() {
@@ -140,7 +140,7 @@ class AdminController extends Controller
             }
         });
 
-        return $this->apiResponse($users, "These are all users banned", 200);
+        return $this->apiResponse($users, __('strings.all_users_banned'), 200);
     }
 
     public function countPOA() {
@@ -152,7 +152,7 @@ class AdminController extends Controller
             'opportunites' => $opportunites,
             'applies' => $applies
         ];
-        return $this->apiResponse($counts, 'These are count for posts and opportunites and applies', 200);
+        return $this->apiResponse($counts, __('strings.count_posts_opportunities_applies'), 200);
     }
 
     public function countUsers() {
@@ -166,7 +166,7 @@ class AdminController extends Controller
             'companies' => $companies,
             'employees' => $employees,
         ];
-        return $this->apiResponse($counts, 'These are count of users', 200);
+        return $this->apiResponse($counts, __('strings.count_users'), 200);
     }
 
     public function logs() {

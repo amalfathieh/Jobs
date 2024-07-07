@@ -44,7 +44,7 @@ class SeekerController extends Controller
 
     public function update(Request $request, SeekerService $seekerService){
         $seekerService->update($request);
-        return $this->apiResponse(null, 'profile updated successfully', 201);
+        return $this->apiResponse(null, __('strings.updated_successfully'), 201);
     }
 
     public function createCV(Request $request) {

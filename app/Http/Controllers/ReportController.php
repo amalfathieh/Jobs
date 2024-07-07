@@ -29,21 +29,21 @@ class ReportController extends Controller
         $created_by = User::where('id', Auth::user()->id)->first();
         $reason_id = $request->reason_id;
         if ($reason_id == 2 && !$request->who) {
-            return $this->apiResponse(null, 'You should tell as who? ', 400);
+            return $this->apiResponse(null, __('strings.tell_us_who'), 400);
         }
         if ($reason_id == 6 && !$request->another_reason) {
-            return $this->apiResponse(null, 'Hey, What is the reason? ', 400);
+            return $this->apiResponse(null, __('strings.hey_reason'), 400);
         }
         if ($id == $created_by->id) {
-            return $this->apiResponse(null, 'Hey, You can\'t report yourself', 400);
+            return $this->apiResponse(null, __('strings.cant_report_yourself'), 400);
         }
         if ($id == 1) {
-            return $this->apiResponse(null, 'Hey, Are you crazy? this is the admin', 400);
+            return $this->apiResponse(null, __('strings.hey_crazy_admin'), 400);
         }
 
         $re = Report::where('created_by', $created_by->id)->where('user_id', $id)->where('reason_id', $reason_id)->first();
         if ($re) {
-            return $this->apiResponse(null, 'You already reported this user', 400);
+            return $this->apiResponse(null, __('strings.already_reported_user'), 400);
         }
 
         $report = Report::create([
@@ -55,9 +55,9 @@ class ReportController extends Controller
         ]);
 
         if ($report) {
-            return $this->apiResponse($report, 'Created successfully', 201);
+            return $this->apiResponse($report, __('strings.created_successfully'), 201);
         }
-        return $this->apiResponse(null, 'There is an error, please talk to the developer', 500);
+        return $this->apiResponse(null, __('strings.error_occurred_talk_developer'), 500);
     }
 
     public function reportPost($id, Request $request) {
@@ -74,7 +74,7 @@ class ReportController extends Controller
             return $this->apiResponse(null, 'To report user call api/report/reportUser', 404);
         }
         if ($reason_id == 6 && !$request->another_reason) {
-            return $this->apiResponse(null, 'Hey, What is the reason? ', 400);
+            return $this->apiResponse(null, __('strings.hey_reason'), 400);
         }
 
         $post = Post::where('id', $id)->first();
@@ -83,12 +83,12 @@ class ReportController extends Controller
         }
         $user = User::find($post->seeker->user_id);
         if ($user->id == $created_by->id) {
-            return $this->apiResponse(null, 'Hey, You can\'t report yourself', 400);
+            return $this->apiResponse(null, __('strings.cant_report_yourself'), 400);
         }
 
         $re = Report::where('created_by', $created_by->id)->where('user_id', $user->id)->where('reason_id', $reason_id)->first();
         if ($re) {
-            return $this->apiResponse(null, 'You already reported this post', 400);
+            return $this->apiResponse(null, __('strings.already_reported_post'), 400);
         }
 
         $report = Report::create([
@@ -99,9 +99,9 @@ class ReportController extends Controller
             'notes' => 'Post\'s id is ' . $id
         ]);
         if ($report) {
-            return $this->apiResponse($report, 'Created successfully', 201);
+            return $this->apiResponse($report, __('strings.created_successfully'), 201);
         }
-        return $this->apiResponse(null, 'There is an error, please talk to the developer', 500);
+        return $this->apiResponse(null, __('strings.error_occurred_talk_developer'), 500);
     }
 
     public function reportOpportunity($id, Request $request) {
@@ -118,7 +118,7 @@ class ReportController extends Controller
             return $this->apiResponse(null, 'To report user call api/report/reportUser', 404);
         }
         if ($reason_id == 6 && !$request->another_reason) {
-            return $this->apiResponse(null, 'Hey, What is the reason? ', 400);
+            return $this->apiResponse(null, __('strings.hey_reason'), 400);
         }
 
         $opp = Opportunity::where('id', $id)->first();
@@ -127,12 +127,12 @@ class ReportController extends Controller
         }
         $user = User::find($opp->company->user_id);
         if ($user->id == $created_by->id) {
-            return $this->apiResponse(null, 'Hey, You can\'t report yourself', 400);
+            return $this->apiResponse(null, __('strings.cant_report_yourself'), 400);
         }
 
         $re = Report::where('created_by', $created_by->id)->where('user_id', $user->id)->where('reason_id', $reason_id)->first();
         if ($re) {
-            return $this->apiResponse(null, 'You already reported this opportunity', 400);
+            return $this->apiResponse(null, __('strings.already_reported_opportunity'), 400);
         }
 
         $report = Report::create([
@@ -143,14 +143,14 @@ class ReportController extends Controller
             'notes' => 'Opportunity\'s id is ' . $id
         ]);
         if ($report) {
-            return $this->apiResponse($report, 'Created successfully', 201);
+            return $this->apiResponse($report, __('strings.created_successfully'), 201);
         }
-        return $this->apiResponse(null, 'There is an error, please talk to the developer', 500);
+        return $this->apiResponse(null, __('strings.error_occurred_talk_developer'), 500);
 
     }
 
     public function getReports() {
         $reports = ReportResource::collection(Report::all());
-        return $this->apiResponse($reports, 'These are all reports', 200);
+        return $this->apiResponse($reports, __('strings.all_reports'), 200);
     }
 }

@@ -69,7 +69,7 @@ class EmployeeController extends Controller
                 'image' =>$request['image'] ?? $employee_image,
             ]);
             $user = new UserResource($user);
-            return $this->apiResponse($user , 'success' , 201);
+            return $this->apiResponse($user , __('strings.success') , 201);
         }
         return $this->apiResponse(null,
             __('strings.authorization_required'),
