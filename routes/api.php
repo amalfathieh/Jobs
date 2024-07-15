@@ -239,6 +239,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::controller(UserController::class)->group(function () {
     Route::post('register', 'register');
 
+    Route::get('ee/{date}', 'ee');
+
     // If code is expired, class this route
     Route::post('sendCode', 'sendCodeVerification');
 

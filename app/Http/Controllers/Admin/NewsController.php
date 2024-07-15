@@ -26,7 +26,7 @@ class NewsController extends Controller
                 'file' => $file_path,
                 'created_by' => $user->user_name
             ]);
-            return $this->apiResponse($news, "Added successfully", 201);
+            return $this->apiResponse($news, __('strings.added_successfully'), 201);
         } catch (\Exception $th) {
             return $this->apiResponse(null, $th->getMessage(), 500);
         }
@@ -48,24 +48,24 @@ class NewsController extends Controller
         ]);
 
         if ($news) {
-            return $this->apiResponse($news, "Updated successfully", 201);
+            return $this->apiResponse($news, __('strings.updated_successfully'), 201);
         }
-        return $this->apiResponse(null, "There is an error, please talk to the develpoer", 500);
+        return $this->apiResponse(null, __('strings.error_occurred_talk_developer'), 500);
     }
 
     public function delete($id) {
         $news = News::where('id', $id)->first();
         if ($news->delete()){
-            return $this->apiResponse(null, 'Deleted successfully', 200);
+            return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
         }
-        return $this->apiResponse(null, 'There is an error',  500);
+        return $this->apiResponse(null, __('strings.error_occurred'),  500);
     }
 
     public function getNews() {
         $news = News::all();
         if($news) {
-            return $this->apiResponse($news, 'These are all news', 200);
+            return $this->apiResponse($news, __('strings.all_news'), 200);
         }
-        return $this->apiResponse(null, 'There is an error', 500);
+        return $this->apiResponse(null, __('strings.error_occurred'), 500);
     }
 }

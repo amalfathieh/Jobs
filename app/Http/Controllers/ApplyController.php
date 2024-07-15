@@ -27,7 +27,7 @@ class ApplyController extends Controller
             $company_id= $opportunity->company_id;
             $app = Apply::where('opportunity_id', $id)->where('user_id', Auth::user()->id)->where('company_id', $company_id)->first();
             if ($app) {
-                return $this->apiResponse(null, 'You have applied for this opportunity', 400);
+                return $this->apiResponse(null, __('strings.applied_for_opportunity'), 400);
             }
             $cv = $request->file('cv');
             $cv_path = $fileService->store($cv, 'job_seeker/applies');

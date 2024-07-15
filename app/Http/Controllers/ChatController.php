@@ -36,7 +36,7 @@ class ChatController extends Controller
         $data['sender_id'] = Auth::user()->id;
         $data['message'] =$request->message;
         Message::create($data);
-        return $this->apiResponse(null,'success',201);
+        return $this->apiResponse(null,__('strings.success'),201);
     }
 
 

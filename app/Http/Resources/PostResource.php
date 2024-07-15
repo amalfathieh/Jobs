@@ -25,7 +25,7 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at->format('d-M-Y'),
             'updated_at' => $this->updated_at->format('d-M-Y'),
             'created_at_with_time' => $this->created_at->format('M-d-Y h:i A'),
-            'updated_at_with_time' => $this->updated_at->format('d-M-Y')
+            'updated_at_with_time' => $this->updated_at->format('d-M-Y h:i A')
         ];
     }
 }

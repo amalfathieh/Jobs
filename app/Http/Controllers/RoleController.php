@@ -73,7 +73,7 @@ class RoleController extends Controller
 
             $role = Role::findById($id, 'web');
             $role->delete();
-            return $this->apiResponse(null, 'Deleted successfully', 200);
+            return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
 
         } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 404);
@@ -152,6 +152,6 @@ class RoleController extends Controller
             $user->save();
             return $this->apiResponse(null, 'Roles updated successfully', 200);
         }
-        return $this->apiResponse(null, 'User not found', 404);
+        return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 }

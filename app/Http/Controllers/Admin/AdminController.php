@@ -28,9 +28,9 @@ class AdminController extends Controller
             $user = User::where('id', $id)->first();
             if ($user) {
                 $user->delete();
-                return $this->apiResponse(null, 'User removed successfully', 200);
+                return $this->apiResponse(null, __('strings.user_removed_successfully'), 200);
             }
-            return $this->apiResponse(null, 'User not found', 404);
+            return $this->apiResponse(null, __('strings.not_found'), 404);
     }
 
     public function getUsers($type) {
@@ -89,7 +89,7 @@ class AdminController extends Controller
         });
 
         if($users->isEmpty()){
-            return $this->apiResponse(null,'Not Found',404);
+            return $this->apiResponse(null,__('strings.not_found'),404);
 
         } else{
             $result = UserResource::collection($users);
@@ -121,9 +121,9 @@ class AdminController extends Controller
                 'comment' => $comment,
                 'expired_at' => $expired_at
             ]);
-            return $this->apiResponse($ban, "Banned successfully", 200);
+            return $this->apiResponse($ban, __('strings.banned_successfully'), 200);
         } else {
-            return $this->apiResponse(null, "User is already banned", 400);
+            return $this->apiResponse(null, __('strings.user_already_banned'), 403);
         }
     }
 
@@ -132,9 +132,9 @@ class AdminController extends Controller
         if ($user->isBanned()) {
             $user->syncRoles($user->roles_name);
             $user->unBan();
-            return $this->apiResponse(null, "Unbanned successfully", 200);
+            return $this->apiResponse(null, __('strings.unbanned_successfully'), 200);
         } else {
-            return $this->apiResponse(null, "User is already not banned", 400);
+            return $this->apiResponse(null, __('strings.user_already_not_banned'), 403);
         }
     }
 
@@ -145,20 +145,15 @@ class AdminController extends Controller
 
     public function getBans() {
         $users = User::onlyBanned()->get();
-        return $this->apiResponse(UserResource::collection($users), "These are all users banned", 200);
+        $users = $users->reject(function(User $user) {
+            $roles = $user->roles_name;
+            foreach ($roles as $value) {
+                return $value === 'owner';
+            }
+        });
+        return $this->apiResponse($users, __('strings.all_users_banned'), 200);
+        return $this->apiResponse(UserResource::collection($users), __('strings.all_users_banned'), 200);
     }
-
-    // public function deleteExpiredBanned() {
-    //     $users = User::onlyBanned()->get();
-    //     $user = User::find(6);
-    //     return $user->bans;
-    //     foreach ($users as $user) {
-    //         if ($user->bans[0]->expired_at < Carbon::now()) {
-    //             $user->syncRoles($user->roles_name);
-    //             $user->unBan();
-    //         }
-    //     }
-    // }
 
     public function countPOA() {
         $posts = Post::count();
@@ -169,7 +164,7 @@ class AdminController extends Controller
             'opportunites' => $opportunites,
             'applies' => $applies
         ];
-        return $this->apiResponse($counts, 'These are count for posts and opportunites and applies', 200);
+        return $this->apiResponse($counts, __('strings.count_posts_opportunities_applies'), 200);
     }
 
     public function countUsers() {
@@ -183,7 +178,7 @@ class AdminController extends Controller
             'companies' => $companies,
             'employees' => $employees,
         ];
-        return $this->apiResponse($counts, 'These are count of users', 200);
+        return $this->apiResponse($counts, __('strings.count_users'), 200);
     }
 
     public function logs() {

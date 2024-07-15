@@ -52,7 +52,7 @@ public function __construct(PostService $postService)
             Notification::send($followers,new SendNotification($data));
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
         }
-        return $this->apiResponse(null, 'post create successfully', 201);
+        return $this->apiResponse(null, 'post added successfully', 201);
     }
 
     public function edit(Request $request, $post_id){

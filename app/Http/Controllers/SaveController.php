@@ -28,7 +28,7 @@ class SaveController extends Controller
             }
             return $this->apiResponse(null,$message,200);
         }
-            return $this->apiResponse(null,'Opportunity not found.',404);
+            return $this->apiResponse(null,__('strings.not_found'),404);
     }
     public function getSavedItems(){
         $user = Auth::user();

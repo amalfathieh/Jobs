@@ -40,4 +40,33 @@
         "follow_success"=> "تمت المتابعة بنجاح",
         "unfollow_success"=> "تم إلغاء المتابعة بنجاح",
 
+        "user_removed_successfully" => " تمت إزالة المستخدم بنجاح",
+        "error_user_type"=> "خطأ في نوع المستخدم",
+        "banned_successfully" => " تم حظر المستخدم بنجاح",
+        "user_already_banned" => "المستخدم محظور بالفعل",
+        "unbanned_successfully" => "تم إلغاء حظر المستخدم بنجاح",
+        "user_already_not_banned" => " المستخدم غير محظور بالفعل",
+        "all_users_banned" => "هؤلاء هم جميع المستخدمين المحظورين",
+        "count_posts_opportunities_applies" => " هذه هي عدد المنشورات والفرص والتطبيقات",
+        "count_users" => "هذا هو عدد المستخدمين",
+        "added_successfully" => " تمت الإضافة بنجاح",
+        "error_occurred_talk_developer" => "حدث خطأ، يرجى التحدث إلى المطور",
+        "all_news" => "هذه هي جميع الأخبار",
+        "applied_for_opportunity" => "لقد قمت بالتقديم لهذه الفرصة",
+
+        "opportunity_added_successfully" => "تمت إضافة الفرصة بنجاح",
+        "all_my_opportunities" => "هذه هي جميع فرصي",
+        "tell_us_who" => "يجب أن تخبرنا من أنت؟",
+        "hey_reason" => "مرحبًا، ما هو السبب؟",
+        "cant_report_yourself" => "مرحبًا، لا يمكنك الإبلاغ عن نفسك",
+        "hey_crazy_admin" => "مرحبًا، هل أنت مجنون؟ هذا هو المسؤول",
+        "already_reported_user" => "لقد قمت بالفعل بالإبلاغ عن هذا المستخدم",
+        "created_successfully" => "تم الإنشاء بنجاح",
+
+
+        "already_reported_post" => "لقد قمت بالفعل بالإبلاغ عن هذا المنشور",
+        "already_reported_opportunity" => "لقد قمت بالفعل بالإبلاغ عن هذه الفرصة",
+        "all_reports" => "هذه هي جميع التقارير",
+        "edited_successfully" => "تم التعديل بنجاح",
+
     ];

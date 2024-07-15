@@ -56,7 +56,7 @@ class FollowController extends Controller
         $followers = $user->followers;
         $data['count']=$followers->count();
         $data['followers'] =FollowerResource::collection($followers);
-        return $this->apiResponse($data,'success',200);
+        return $this->apiResponse($data,__('strings.success'),200);
     }
 
     public function showFollowings($userId)
@@ -71,7 +71,7 @@ class FollowController extends Controller
         $followings  = $user->followings;
         $data['count']=$followings->count();
         $data['followings'] =FollowerResource::collection($followings);
-        return $this->apiResponse($data,'success',200);
+        return $this->apiResponse($data,__('strings.success'),200);
     }
 
 }

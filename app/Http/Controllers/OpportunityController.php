@@ -53,7 +53,7 @@ class OpportunityController extends Controller
                 Notification::send($followers,new SendNotification($data));
 //                $this->sendPushNotification($data['title'],$data['body'],$tokens);
             }
-            return $this->apiResponse($opportunity, 'Opportunity added successfully', 201);
+            return $this->apiResponse($opportunity, __('strings.opportunity_added_successfully'), 201);
         }catch (\Exception $ex) {
             return $this->apiResponse(null, $ex->getMessage(), 500);
         }
@@ -84,7 +84,7 @@ class OpportunityController extends Controller
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
         $opportunities = OpportunityResource::collection(OpportunityResource::collection($company->opportunities));
-        return $this->apiResponse($opportunities, 'These are all my opportunites', 200);
+        return $this->apiResponse($opportunities, __('strings.all_my_opportunities'), 200);
     }
 
     public function allOpportunities() {
