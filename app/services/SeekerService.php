@@ -66,14 +66,9 @@ class SeekerService
             'birth_day' =>$request['birth_day'] ?? $seeker['birth_day'],
             'location' =>$request['location'] ?? $seeker['location'],
             'image' =>$seeker_image ?? $seeker['image'],
-<<<<<<< HEAD
             'skills' =>$skills ?? $seeker['skills'],
-            'certificates'=>$certificates ?? $seeker['certificates'],
-=======
-            'skills' =>$request['skills'] ?? $seeker['skills'],
-            'certificates'=>$request['certificates'] ?? $seeker['certificates'],
             'specialization'=>$request['specialization'] ?? $seeker['specialization'],
->>>>>>> 42cf080c5755eb3df5b0b135efbb4f7ecbc008c1
+            'certificates'=>$certificates ?? $seeker['certificates'],
             'about' =>$request['about'] ?? $seeker['about'],
             'gender' =>$request['gender'] ?? $seeker['gender']
         ]);

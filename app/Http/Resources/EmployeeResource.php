@@ -22,7 +22,8 @@ class EmployeeResource extends JsonResource
         'phone' => $this->phone,
         'image' => $this->image,
         'is_change_password' => $this->is_change_password,
-        'starting_date' => $this->starting_date,
+        'created_at' => $this->created_at->format('M-d-Y H:i A'),
+        'updated_at' => $this->updated_at->format('M-d-Y H:i A'),
     ];
     }
 }

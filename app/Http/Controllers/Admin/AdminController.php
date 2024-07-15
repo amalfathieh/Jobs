@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Activitylog\Models\Activity;
 
+use function Clue\StreamFilter\fun;
+
 class AdminController extends Controller
 {
     use responseTrait;
@@ -38,25 +40,32 @@ class AdminController extends Controller
             $users = $users->reject(function(User $user) {
                 $roles = $user->roles_name;
                 foreach ($roles as $value) {
-                    return $value === 'owner';
+                    if ($value === 'owner' || $value === 'employee') {
+                        return true;
+                    }
                 }
             });
             $result = UserResource::collection($users);
         }
 
-        else if($type == 'JobSeekers' ) {
-            $seekers = User::role('job_seeker')->latest()->get();
+        else if($type == 'JobSeekers') {
+            $seekers = User::all();
+            $seekers = $seekers->reject(function (User $user){
+                return !array_search('job_seeker', $user->roles_name);
+            });
             $result = UserResource::collection($seekers);
         }
-
         else if($type == 'Companies') {
-            $companies = User::role('company')->latest()->get();
+            $companies = User::all();
+            $companies = $companies->reject(function (User $user){
+                return !array_search('company', $user->roles_name);
+            });
             $result = UserResource::collection($companies);
         }
         else {
-            return $this->apiResponse(null, 'Error User Type ', 403);
+            return $this->apiResponse(null, 'Error user type', 400);
         }
-        return $this->apiResponse($result , 'success' , 200);
+        return $this->apiResponse($result , 'Success' , 200);
     }
 
     public function search($search){

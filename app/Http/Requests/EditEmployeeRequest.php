@@ -29,7 +29,6 @@ class EditEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_name' => 'unique:users,user_name',
             'email' => ['email', 'unique:users,email'],
             'password' => [
                 Password::min(8)
@@ -37,9 +36,8 @@ class EditEmployeeRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
             ],
-            'phone'=>'min:4',
+            'phone'=>'min:4|max:15',
             'image'=>'image',
-
         ];
     }
     public function failedValidation(Validator $validator)

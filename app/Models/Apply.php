@@ -15,26 +15,7 @@ class Apply extends Model
         'opportunity_id',
         'company_id',
         'cv',
-        'full_name',
-        'birth_day',
-        'location',
-        'about',
-        'skills',
-        'certificates',
-        'languages',
-        'projects',
-        'experiences',
-        'contacts',
         'status'
-    ];
-
-    protected $casts = [
-        'skills' => 'array',
-        'certificates' => 'array',
-        'languages' => 'array',
-        'projects' => 'array',
-        'experiences' => 'array',
-        'contacts' => 'array',
     ];
 
     public function getActivitylogOptions(): LogOptions

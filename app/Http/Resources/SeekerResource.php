@@ -24,6 +24,7 @@ class SeekerResource extends JsonResource
             'skills' => $this->skills,
             'certificates' => $this->certificates,
             'about' => $this->about,
+            'specialization' => $this->specialization,
         ];
     }
 }

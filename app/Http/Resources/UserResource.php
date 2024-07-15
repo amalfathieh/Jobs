@@ -22,7 +22,6 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = User::where('id' , $this->id)->first();
-
             $data=[
                 'id' => $this->id,
                 'user_name' => $this->user_name,
@@ -34,23 +33,26 @@ class UserResource extends JsonResource
                 'is_banned' => $this->banned_at ? true : false
             ];
 
-
-             if($user->hasRole('employee')){
-                $employee=$user->employee;
-                 $data['type']='employee';
+            if($user->hasRole('employee')){
+                $employee = $user->employee;
+                $data['type']= 'employee';
                 $data['more_info'] = new EmployeeResource($employee);
             }
 
-            else if ( $user->hasRole('job_seeker') ) {
+            else if ($user->hasRole('job_seeker')) {
                 $seeker = $user->seeker;
-                $data['type']='job_seeker';
+                $data['type']= 'job_seeker';
                 $data['more_info'] = new SeekerResource($seeker);
             }
 
             else if($user->hasRole('company')) {
                 $company = $user->company;
-                $data['type']='company';
+                $data['type']= 'company';
                 $data['more_info'] = new CompanyResource($company);
+            }
+
+            else if($user->hasRole('owner')) {
+                $data['type']= 'owner';
             }
 
         return $data;

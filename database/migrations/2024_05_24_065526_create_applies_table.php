@@ -16,17 +16,7 @@ return new class extends Migration
             $table->foreignId('opportunity_id')->constrained('opportunities')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string ('cv')->nullable();
-            $table->string('full_name')->nullable();
-            $table->string('birth_day')->nullable();
-            $table->string('location')->nullable();
-            $table->string('about')->nullable();
-            $table->text('skills')->nullable();
-            $table->text('certificates')->nullable();
-            $table->text('languages')->nullable();
-            $table->text('projects')->nullable();
-            $table->text('experiences')->nullable();
-            $table->text('contacts')->nullable();
+            $table->string ('cv');
             $table->enum('status', ['accepted', 'waiting', 'rejected'])->default('waiting');
             $table->timestamps();
         });

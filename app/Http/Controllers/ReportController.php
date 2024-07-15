@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ResponseToUser;
 use App\Http\Resources\ReportResource;
 use App\Jobs\ResponseToUserJob;
 use App\Models\Opportunity;
 use App\Models\Post;
-use App\Models\Reason;
 use App\Models\Report;
 use App\Models\User;
 use App\Traits\responseTrait;
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isEmpty;
@@ -38,13 +34,14 @@ class ReportController extends Controller
             return $this->apiResponse(null, 'Hey, What is the reason? ', 400);
         }
 
-        if ($reason_id >= 4) {
+        if ($reason_id == 4 && $reason_id == 5) {
             return $this->apiResponse(null, 'To report post or opportunity call api/report/reportPost or reportOpportunity', 400);
         }
 
         if ($id == $created_by->id) {
             return $this->apiResponse(null, 'Hey, You can\'t report yourself', 403);
         }
+
         $user = User::where('id', $id)->first();
         if ($user->hasRole('owner')) {
             return $this->apiResponse(null, 'Hey, Are you crazy? this is the admin', 403);
@@ -168,7 +165,8 @@ class ReportController extends Controller
         } else {
             return $this->apiResponse(null, 'Invalid type', 400);
         }
-        return $this->apiResponse($reports, 'These are all reports', 200);
+
+        return $this->apiResponse(ReportResource::collection($reports), 'These are all reports', 200);
     }
 
     public function response(Request $request, $id) {

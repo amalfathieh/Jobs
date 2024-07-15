@@ -93,6 +93,7 @@ class UserController extends Controller
         }
 
         $user = User::where($fieldType, $login)->first();
+
         $user = new UserResource($user);
         if ($user->is_verified) {
             $token = $user->createToken("API TOKEN")->plainTextToken;
@@ -105,19 +106,6 @@ class UserController extends Controller
             }
 
             $data['user']->roles_name = $role;
-
-            //send notification to admin when employee login to dashboard
-            if($user->hasRole('employee')){
-                $admin = User::role('owner')->first();
-                $tokens = $admin->routeNotificationForFcm();
-                $data =[
-                    'obj_id'=>$user->id,
-                    'title'=>'Login Alert',
-                    'body'=>'New login to the dashboard has been detected. User: '.$user->employee->first_name.' '.$user->employee->last_name,
-                ];
-                Notification::send($admin,new SendNotification($data));
-//                $this->sendPushNotification($data['title'],$data['body'],$tokens);
-            }
 
             return $this->apiResponse($data, __('strings.user_logged_in_successfully') , 200);
         } else
@@ -155,6 +143,7 @@ class UserController extends Controller
 
     public function checkPassword(Request $request) {
         $user = User::where('id', Auth::user()->id)->first();
+        // return $request->password;
         return password_verify($request->password, $user->password)?
             $this->apiResponse(null, __('strings.password_correct'), 200):
 
@@ -242,8 +231,9 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
         $passwordReset->delete();
+        $token['token'] = $user->createToken("API TOKEN")->plainTextToken;
 
-        return $this->apiResponse([], __('strings.password_reset_success_again'), 200);
+        return $this->apiResponse($token, __('strings.password_reset_success_again'), 200);
     }
 
     public function update(Request $request) {

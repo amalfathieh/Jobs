@@ -45,25 +45,25 @@ class OpportunityService
         $id = Auth::user()->company->id;
         $opportunity = Opportunity::where('company_id', $id)->where('id', $opportunity_id)->first();
         if($opportunity){
-        $old_file = $opportunity['file'];
-        if ($request->hasFile('file') && $request->file != '') {
-                $opportunity_file = $this->fileService->update($request->file, $old_file ,'opportunity');
-        }
-        $qualifications = json_decode($request->qualifications);
-        $skills_req = json_decode($request->skills_req);
-            $opportunity->update([
-                'title' => $request->title ?? $opportunity['title'],
-                'body' => $request['body'] ?? $opportunity['body'],
-                'file' => $opportunity_file,
-                'location' => $request['location'] ?? $opportunity['location'],
-                'job_type' => $request['job_type'] ?? $opportunity['job_type'],
-                'work_place_type' => $request['work_place_type'] ?? $opportunity['work_place_type'],
-                'job_hours' => $request['job_hours'] ?? $opportunity['job_hours'],
-                'qualifications' => $qualifications ?? $opportunity['qualifications'],
-                'skills_req' => $skills_req ?? $opportunity['skills_req'],
-                'salary' => $request['salary'] ?? $opportunity['salary'],
-                'vacant' =>$request['vacant'] ?? $opportunity['vacant']
-            ]);
+            $old_file = $opportunity['file'];
+            if ($request->hasFile('file') && $request->file != '') {
+                    $opportunity_file = $this->fileService->update($request->file, $old_file ,'opportunity');
+            }
+            $qualifications = json_decode($request->qualifications);
+            $skills_req = json_decode($request->skills_req);
+                $opportunity->update([
+                    'title' => $request->title ?? $opportunity['title'],
+                    'body' => $request['body'] ?? $opportunity['body'],
+                    'file' => $opportunity_file,
+                    'location' => $request['location'] ?? $opportunity['location'],
+                    'job_type' => $request['job_type'] ?? $opportunity['job_type'],
+                    'work_place_type' => $request['work_place_type'] ?? $opportunity['work_place_type'],
+                    'job_hours' => $request['job_hours'] ?? $opportunity['job_hours'],
+                    'qualifications' => $qualifications ?? $opportunity['qualifications'],
+                    'skills_req' => $skills_req ?? $opportunity['skills_req'],
+                    'salary' => $request['salary'] ?? $opportunity['salary'],
+                    'vacant' =>$request['vacant'] ?? $opportunity['vacant']
+                ]);
             return $this->apiResponse($opportunity, __('strings.updated_successfully'), 201);
         }
         return $this->apiResponse(null , __('strings.not_found') ,404);

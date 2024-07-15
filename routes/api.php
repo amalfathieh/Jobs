@@ -51,7 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('resetPassword', 'resetPassword');
 
-        Route::delete('delete', 'delete')->middleware('user delete');
+        Route::delete('delete', 'delete');
 
 //        Route::get('test/{token}', 'noti');
 
@@ -79,6 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(OpportunityController::class)->group(function () {
         Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
+        Route::get('getOpp', 'getAllOpp')->middleware('can:opportunities view');
         Route::get('proposed_Jobs' , 'proposed_Jobs');
     });
         // Chat
@@ -206,12 +207,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             });
         });
 
-        // api`/admin/employee/{}
+        // api/admin/employee/{}
         Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
             Route::middleware('can:employee control')->group(function () {
                 Route::post('addEmployee','add');
-                Route::post('editEmployee/{id}','edit');
             });
+            Route::post('editEmployee/{id}','edit');
             Route::get('employees','getEmployee')->middleware('can:employee view');
         });
 
@@ -220,6 +221,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware('can:role control')->controller(RoleController::class)->prefix('role')->group(function () {
             Route::get('allRoles', 'allRoles');
             Route::get('getRoles', 'getRoles');
+            Route::get('getRolesForUserUpgrade', 'rolesForUserUpgrade');
 
             Route::post('addRole', 'addRole');
             Route::put('editRole/{id}', 'editRole');

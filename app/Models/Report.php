@@ -34,12 +34,12 @@ class Report extends Model
 
     public function user1()
     {
-        return $this->belongsTo(User::class, null, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function user2()
     {
-        return $this->belongsTo(User::class, null, 'user2_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // public function getCreatedAtAttribute($date)

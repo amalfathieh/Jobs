@@ -32,6 +32,7 @@ class NotificationController extends Controller
             foreach ($notifications as $notification) {
                 $notificationData = json_decode($notification->data);
                 $data [] = [
+                    'id'=>$notification->id,
                     'obj_id' => $notificationData->obj_id,
                     'title' => $notificationData->title,
                     'body' => $notificationData->body,
@@ -46,73 +47,72 @@ class NotificationController extends Controller
     }
 
     public function getNotificationContent(Request $request){
-        $data = [];
         $request->validate([
-            'obj_id'=>'required|integer',
-            'title'=>'required',
-            ]);
-        if($request['title'] == 'New Post'){
-            $data['type']='post';
-            $post = Post::find($request->obj_id);
+            'id'=>'required',
+        ]);
+         $notification = DB::table('notifications')->where('id',$request->id)->first();
 
-            if($post){
-                $notifications_id=DB::table('notifications')->where('notifiable_id',Auth::user()->id)->where('data->obj_id',$request->obj_id)->pluck('id');
-                DB::table('notifications')->where('id',$notifications_id)->update(["read_at"=>now()]);
-                $data['content'] = new PostResource($post);
-                return $this->apiResponse($data , 'success' ,200);
-            }
+         if ($notification){
+             $data = [
+                 'type'=>null,
+                 'content'=>null,
+             ];
 
-        }
-        //فوصة عمل
-        else if($request['title'] == 'Job Opportunity'){
-            $data['type']='opportunity';
-            $opportunity = Opportunity::find($request->obj_id);
+             $notificationData = json_decode($notification->data);
+             $title = $notificationData->title;
 
-            if($opportunity) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
-                DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                $data['content'] = new OpportunityResource($opportunity);
-                return $this->apiResponse($data , 'success' ,200);
-            }
-        }
-        //طلب توظيف
-        else if($request['title'] == 'Job Application'){
-            $data['type']='application';
-            $job_application = Apply::find($request->obj_id);
-            if($job_application) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
-                DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                $data['content'] = $job_application;
-                return $this->apiResponse($data , 'success' ,200);
-            }
-        }
-        //تنبيه الدخول الى الداشبورد
-        else if($request['title'] == 'Login Alert'){
-            $data['type']='login';
-            $user = User::find($request->obj_id);
-            if($user) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
-                DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                $data['content'] = new UserResource($user);
-                return $this->apiResponse( $data, 'success' ,200);
-            }
-        }
+             DB::table('notifications')->where('id',$request->id)->update(["read_at"=>now()]);
 
-        if($request['title'] == 'Report'){
-            $data['type']='report';
-            $report = Report::find($request->obj_id);
-            if($report) {
-                $getId = DB::table('notifications')->where('notifiable_id', Auth::user()->id)->where('data->obj_id', $request->obj_id)->pluck('id');
-                DB::table('notifications')->where('id', $getId)->update(['read_at' => now()]);
-                $data['content'] = $report;
-                return $this->apiResponse($data , 'success' ,200);
-            }
-        }
+             if($title == 'New Post'){
+                 $data['type']='post';
+                 $post = Post::find($notificationData->obj_id);
+                 if($post){
+                     $data['content'] = new PostResource($post);
+                 }
+             }
+             //فوصة عمل
+             else if($title == 'Job Opportunity'){
+                 $data['type']='opportunity';
+                 $opportunity = Opportunity::find($notificationData->obj_id);
 
-        return $this->apiResponse(null , __('strings.not found notification') ,404);
+                 if($opportunity) {
+                     $data['content'] = new OpportunityResource($opportunity);
+                 }
+             }
+             //طلب توظيف
+             else if($title == 'Job Application'){
+                 $data['type']='application';
+                 $job_application = Apply::find($notificationData->obj_id);
+                 if($job_application) {
+                     $data['content'] = $job_application;
+                 }
+             }
+             //تنبيه الدخول الى الداشبورد
+             else if($title == 'Login Alert'){
+                 $data['type']='login';
+                 $user = User::find($notificationData->obj_id);
+                 if($user) {
+                     $data['content'] = new UserResource($user);
+                 }
+             }
+
+            else if($title == 'Report'){
+                 $data['type']='report';
+                 $report = Report::find($notificationData->obj_id);
+                 if($report) {
+                     $data['content'] = $report;
+                 }
+             }
+
+             if($data['content'] !=null){
+                 return $this->apiResponse($data , __('strings.success') ,200);
+             }
+             return $this->apiResponse(null , __('strings.not found notification') ,404);
+
+         }
+        return $this->apiResponse(null , __('strings.not_found'),400);
 
     }
-
     //delete all notification
     public function delete(){
         $user = User::find(Auth::user()->id);

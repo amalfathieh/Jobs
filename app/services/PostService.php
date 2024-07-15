@@ -33,11 +33,10 @@ class PostService
         $file = null;
         $old_file = $post['file'];
         if ($request->hasFile('file') && $request->file != '') {
-            $file = $this->fileService->update($request->file, $old_file, 'post');
+            $file = $this->fileService->update($request->file, $old_file, 'images/job_seeker/posts');
         }
 
         return $post->update([
-            'title' => $request['title'] ?? $post['title'],
             'body' => $request['body'] ?? $post['body'],
             'file' => $file,
             'type' => $request['type'] ?? $post['type']

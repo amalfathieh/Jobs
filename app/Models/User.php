@@ -94,4 +94,14 @@ class User extends Authenticatable implements BannableInterface
     {
         return $this->deviceTokens->pluck('token')->toArray();
     }
+
+    public function reportsCreatedByUser()
+    {
+        return $this->hasMany(Report::class, 'created_by');
+    }
+
+    public function reportsToUser()
+    {
+        return $this->hasMany(Report::class, 'user_id');
+    }
 }

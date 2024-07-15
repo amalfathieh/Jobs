@@ -32,7 +32,7 @@ class OpportunityResource extends JsonResource
             'salary' => $this->salary,
             'vacant' => $this->vacant,
             'created_at' => $this->created_at->format('M-d-Y'),
-            'created_at_with_time' => $this->created_at->format('M-d-Y h:m A')
+            'created_at_with_time' => $this->created_at->format('M-d-Y h:i A')
         ];
     }
 }

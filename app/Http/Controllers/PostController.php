@@ -91,5 +91,4 @@ public function __construct(PostService $postService)
 
         return $this->apiResponse(PostResource::collection($posts),'all posts',200);
     }
-
 }

@@ -20,8 +20,6 @@ class Employee extends Model
         'is_change_password',
     ];
 
-    public $timestamps = false;
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

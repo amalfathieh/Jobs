@@ -29,51 +29,28 @@ class ApplyController extends Controller
             if ($app) {
                 return $this->apiResponse(null, 'You have applied for this opportunity', 400);
             }
-            else {
-                if (!$request->file('cv')) {
-                    $apply = Apply::create([
-                        'opportunity_id' => $id,
-                        'user_id' => Auth::user()->id,
-                        'company_id' => $company_id,
-                        'full_name' => $request->full_name,
-                        'birth_day' => $request->birth_day,
-                        'location' => $request->location,
-                        'about' => $request->about,
-                        'skills' => $request->skills,
-                        'certificates' => $request->certificates,
-                        'languages' => $request->languages,
-                        'projects' => $request->projects,
-                        'experiences' => $request->experiences,
-                        'contacts' => $request->contacts,
-                    ]);
-                }
-                else {
-                    $cv = $request->file('cv');
-                    $cv_path = $fileService->store($cv, 'job_seeker/applies');
-                    $apply = Apply::create([
-                        'opportunity_id' => $id,
-                        'user_id' => Auth::user()->id,
-                        'company_id' => $company_id,
-                        'cv' => $cv_path
-                    ]);
-                }
-
-                if ($apply) {
-                    $user = Company::where('id',$company_id)->first()->user;
-                    $tokens = $user->routeNotificationForFcm();
-                    //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
-                    $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
-                    $data =[
-                        'obj_id'=>$apply->id,
-                        'title'=>'Job Application',
-                        'body'=> $body,
-                    ];
-                    Notification::send($user,new SendNotification($data));
-            //      $this->sendPushNotification($data['title'],$data['body'],$tokens);
-                    return $this->apiResponse($apply, 'The request has been sent successfully', 201);
-                }
+            $cv = $request->file('cv');
+            $cv_path = $fileService->store($cv, 'job_seeker/applies');
+            $apply = Apply::create([
+                'opportunity_id' => $id,
+                'user_id' => Auth::user()->id,
+                'company_id' => $company_id,
+                'cv' => $cv_path
+            ]);
+            if ($apply) {
+                $user = Company::where('id',$company_id)->first()->user;
+                $tokens = $user->routeNotificationForFcm();
+                //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
+                $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
+                $data =[
+                    'obj_id'=>$apply->id,
+                    'title'=>'Job Application',
+                    'body'=> $body,
+                ];
+                Notification::send($user,new SendNotification($data));
+        //      $this->sendPushNotification($data['title'],$data['body'],$tokens);
+                return $this->apiResponse($apply, 'The request has been sent successfully', 201);
             }
-            return $this->apiResponse(null, __('strings.error_occurred'), 400);
         } catch (\Exception $th) {
             return $this->apiResponse(null, $th->getMessage(), 500);
         }
@@ -194,9 +171,8 @@ class ApplyController extends Controller
     public function getApplies() {
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
-        $applies = Apply::where('company_id', $company->id)->orderBy('status')->get();
+        $applies = Apply::where('company_id', $company->id)->orderByRaw("FIELD(status, 'waiting', 'accepted', 'rejected')")->get();
 
         return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }
-
 }

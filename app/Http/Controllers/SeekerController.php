@@ -54,8 +54,8 @@ class SeekerController extends Controller
         PDF::SetTitle($request->full_name . '_CV.pdf');
         PDF::AddPage();
         PDF::WriteHTML($html, true, false, true, false, "");
-        PDF::output(public_path($file_name), 'F');
-        return response()->download(public_path($file_name));
+        PDF::output(public_path('CVs/' . $file_name), 'F');
+        return response()->download(public_path('CVs/' . $file_name));
     }
 
 }

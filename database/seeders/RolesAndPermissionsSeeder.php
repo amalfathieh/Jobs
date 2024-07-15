@@ -68,7 +68,7 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $employeeRole = Role::create(['name' => 'employee'])->givePermissionTo([
-            'user report create', 'news view', 'posts view', 'opportunities view', 'user view', 'user delete',
+            'user report create', 'news view', 'posts view', 'opportunities view', 'user view', 'user delete', 'user edit',
         ]);
 
         $techSupportTeam = Role::create(['name' => 'tech_support_team'])->givePermissionTo([

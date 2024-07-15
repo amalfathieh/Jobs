@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('first_name');
-            $table->string('middle_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->enum('gender', ['male', 'female'])->default(null);
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
             $table->boolean('is_change_password')->default(false);
-            $table->timestamp('starting_date');
+            $table->timestamps();
         });
     }
 

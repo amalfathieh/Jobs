@@ -94,8 +94,24 @@ class OpportunityController extends Controller
             ->latest()
             ->get();
 
-        $opportunities = OpportunityResource:: collection($opportunities);
+        $opportunities = OpportunityResource::collection($opportunities);
         return $this->apiResponse($opportunities, 'successfully', 200);
+    }
+
+    public function getAllOpp() {
+        $opportunities = Opportunity::all();
+        $groupedOpportunities = [];
+        $chunkSize = 3;
+
+        foreach ($opportunities as $index => $opportunity) {
+            $groupIndex = (int) ($index / $chunkSize);
+            $groupedOpportunities[$groupIndex][] = $opportunity;
+        }
+        $data = [];
+        foreach ($groupedOpportunities as $group) {
+            $data[] = OpportunityResource::collection($group);
+        }
+        return $data;
     }
     //الفرص المقترحة
     public function proposed_Jobs(){
