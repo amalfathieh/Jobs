@@ -135,6 +135,7 @@ class RoleController extends Controller
                         'first_name' => $seeker->first_name,
                         'last_name' => $seeker->last_name,
                         'gender' => $seeker->gender,
+                        'birth_day' => $seeker->birth_day,
                         'is_change_password' => 1,
                     ]);
                     $seeker->delete();
@@ -147,9 +148,11 @@ class RoleController extends Controller
                     $roles[] = $role;
                 }
             }
+            $user->roles()->detach();
             $user->syncRoles($roles);
-            $user->roles_name = $roles;
-            $user->save();
+            $user->update([
+                'roles_name' => $roles
+            ]);
             return $this->apiResponse(null, 'Roles updated successfully', 200);
         }
         return $this->apiResponse(null, __('strings.not_found'), 404);

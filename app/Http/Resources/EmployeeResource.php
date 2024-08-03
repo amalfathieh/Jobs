@@ -21,6 +21,7 @@ class EmployeeResource extends JsonResource
         'gender' => $this->gender,
         'phone' => $this->phone,
         'image' => $this->image,
+        'birth_day' => $this->birth_day,
         'is_change_password' => $this->is_change_password,
         'created_at' => $this->created_at->format('M-d-Y H:i A'),
         'updated_at' => $this->updated_at->format('M-d-Y H:i A'),

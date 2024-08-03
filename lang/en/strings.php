@@ -24,29 +24,25 @@ return[
     'test_notification' => 'test notification',
     'new_notification' => 'this is a new notification',
     'not_found'=>'not found.',
-//ApplyController
+
+    //ApplyController
     'request_sent_successfully' => 'The request has been sent successfully',
     'error_occurred' => 'There is an error',
     'all_applies' => 'These are all applies',
-<<<<<<< HEAD
-    'request_updated_successfully' => 'تم تحديث الطلب بنجاح',
-=======
     'request_updated_successfully' => 'request updated successfully',
->>>>>>> bcd680a2ec0a72893087a4ccb0e8c90213c3f29a
     'not_allowed_action' => 'You are not allowed to do this',
     'cannot_delete_not_waiting' => 'You cannot delete it, because it is not in a waiting state',
-//employeeController
+
+    //employeeController
     "employee_invite_success"=> "Employee has been invited successfully",
     "authorization_required"=> "You do not have the required authorization.",
-//followController
+
+    //followController
     "cannot_follow_self"=> "you can not follow your self",
     "follow_success" => "Followed successfully",
-<<<<<<< HEAD
-    "unfollow_success" => "Unfollowed successfully"
-=======
     "unfollow_success" => "Unfollowed successfully",
 //////////////////////
-     "user_removed_successfully" => "User removed successfully",
+    "user_removed_successfully" => "User removed successfully",
     "error_user_type"=> "Error User Type",
     "banned_successfully" => "Banned successfully",
     "user_already_banned" => "User is already banned",
@@ -61,6 +57,7 @@ return[
     "applied_for_opportunity" => "You have applied for this opportunity",
 
     "opportunity_added_successfully" => " Opportunity added successfully",
+    "opportunity_not_vacant" => "The opportunity is not available",
     "all_my_opportunities" => "These are all my opportunities",
     "tell_us_who" => "You should tell as who?",
     "hey_reason" => "Hey, What is the reason?",
@@ -69,11 +66,34 @@ return[
     "already_reported_user" => "You already reported this user",
     "created_successfully" => "Created successfully",
 
-
     "already_reported_post" => "You already reported this post",
     "already_reported_opportunity" => "You already reported this opportunity",
     "all_reports" => "These are all reports",
     "edited_successfully" => "Edited successfully",
 
->>>>>>> bcd680a2ec0a72893087a4ccb0e8c90213c3f29a
+//Save
+    'opportunity_added' => 'Opportunity added to saved items',
+    'opportunity_deleted' => 'Opportunity deleted from saved items',
+
+//Post
+    'post_added' => 'Post added successfully',
+
+// Apply
+    'apply_successfully' => 'The request has been sent successfully',
+    'get_my_applies' => 'These are all the requests you have sent',
+
+    'sample' => 'Hello :name',
+
+// Notifcation
+    'post_body' => 'New post has been published by: :first_name',
+    'post_title' => 'New Post',
+
+    'opp_body' => 'New opportunity has been published by: :company_name',
+    'opp_title' => 'New Opportunity',
+
+    'new_request'=> 'There is a new request from :first_name :last_name for your opportunity :title',
+    'title_new_request' => 'New Job request',
+
+    'request_accepted' => 'Congratulations, Your request has benn accepted at :company_name company',
+    'request_rejected' => 'Unfortunately, Your request has been rejected at :company_name company'
 ];

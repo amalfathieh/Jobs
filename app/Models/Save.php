@@ -17,7 +17,8 @@ class Save extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Save');
     }
 
     public function oppourtunities() {

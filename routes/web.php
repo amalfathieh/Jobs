@@ -34,8 +34,7 @@ Route::get('auth/google/callback', [SocialAuthController::class, 'handleCallback
 
 
 Route::get('test', function() {
-    // Pdf::loadView('user/print');
-    return view('pdf.test');
+    return "Test";
 });
 
 Route::post('firebase', 'FirebaseController@index');

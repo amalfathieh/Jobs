@@ -50,14 +50,19 @@ class ReportsSeeder extends Seeder
         foreach ($companies as $company) {
             $someOne = Company::inRandomOrder()->take(1)->first();
             $opps = $someOne->opportunities;
+            while(sizeof($opps) < 1) {
+                $someOne = Company::inRandomOrder()->take(1)->first();
+                $opps = $someOne->opportunities;
+            }
             if ($company->id != $someOne->id) {
                 $reason_id = fake()->randomElement([4, 5, 6]);
+
                 Report::create([
                     'created_by' => $company->user->id,
                     'user_id' => $someOne->user->id,
                     'reason_id' => $reason_id,
                     'another_reason' => $reason_id == 6 ?  fake()->sentence(4) : null,
-                    'notes' => 'Opportunity\'s id is ' . $opps[fake()->randomElement([0, 1, 2, 3, 4, 5, 6, 7, 8])]->id,
+                    'notes' => 'Opportunity\'s id is ' . $opps[fake()->randomElement(range(0, sizeof($opps) > 0 ? sizeof($opps) - 1 : sizeof($opps)))]->id,
                     'is_viewed' => fake()->randomElement([0, 1]),
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -71,6 +76,10 @@ class ReportsSeeder extends Seeder
         foreach ($seekers as $seeker) {
             $someOne = Seeker::inRandomOrder()->take(1)->first();
             $posts = $someOne->posts;
+            while(sizeof($posts) < 1) {
+                $someOne = Seeker::inRandomOrder()->take(1)->first();
+                $posts = $someOne->posts;
+            }
             if ($seeker->id != $someOne->id) {
                 $reason_id = fake()->randomElement([4, 5, 6]);
                 Report::create([
@@ -78,7 +87,7 @@ class ReportsSeeder extends Seeder
                     'user_id' => $someOne->user->id,
                     'reason_id' => $reason_id,
                     'another_reason' => $reason_id == 6 ?  fake()->sentence(4) : null,
-                    'notes' => 'Post\'s id is ' . $posts[fake()->randomElement([0, 1, 2, 3, 4, 5, 6, 7, 8])]->id,
+                    'notes' => 'Post\'s id is ' . $posts[fake()->randomElement(range(0, sizeof($posts) > 0 ? sizeof($posts) - 1 : sizeof($posts)))]->id,
                     'is_viewed' => fake()->randomElement([0, 1]),
                     'created_at' => now(),
                     'updated_at' => now(),

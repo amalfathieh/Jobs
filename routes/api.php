@@ -43,6 +43,8 @@ Route::middleware('web')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     // Routes common with all //
     Route::controller(UserController::class)->group(function () {
+        Route::get('getMyInfo', 'getMyInfo');
+
         Route::put('update', 'update')->middleware('can:edit user');
 
         Route::get('logout', 'logout');
@@ -69,6 +71,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('reportOpportunity/{id}', 'reportOpportunity')->middleware('can:user report create');
 
         Route::get('getReports/{type}', 'getReports')->middleware('can:user report view');
+        Route::get('getInfo/{type}', 'getInfo')->middleware('can:user report view');
         Route::post('response/{id}', 'response')->middleware('can:user report view');
         Route::delete('delete/{id}', 'delete')->middleware('can:user report delete');
     });
@@ -79,7 +82,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(OpportunityController::class)->group(function () {
         Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
+        Route::delete('opportunity/delete/{id}', 'delete')->middleware('can:opportunity delete');
         Route::get('getOpp', 'getAllOpp')->middleware('can:opportunities view');
+        Route::get('someInfo', 'someInfo')->middleware('can:opportunities view');
         Route::get('proposed_Jobs' , 'proposed_Jobs');
     });
         // Chat
@@ -127,7 +132,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             });
 
             Route::get('getMyOpportunities', 'getMyOpportunities')->middleware('can:opportunities view');
-            Route::get('getCompanyOpportunities', 'getCompanyOpportunities')->middleware('can:opportunities view');
+            Route::get('getCompanyOpportunities/{id}', 'getCompanyOpportunities')->middleware('can:opportunities view');
+            Route::get('getOpportunityInfo/{id}', 'getOpportunityInfo')->middleware('can:opportunities view');
             Route::get('allOpportunities', 'allOpportunities')->middleware('can:opportunities view');
         });
     });
@@ -137,7 +143,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(SeekerController::class)->prefix('seeker')->group(function () {
         Route::middleware('can:seeker create')->group(function () {
             Route::post('create', 'create');
-            Route::post('update', 'update');
+            Route::put('update', 'update');
         });
         Route::post('createCV', 'createCV');
     });
@@ -153,13 +159,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('delete/{id}', 'delete')->middleware('can:request delete');
     });
 
-    // Post
+    // Post        To call this: api/post/
     Route::controller(PostController::class)->prefix('post')->group(function () {
         Route::middleware('can:post create')->group(function () {
             Route::post('create', 'create');
             Route::put('edit/{post_id}' , 'edit');
         });
         Route::get('viewUserPosts/{id}','userPosts')->middleware('can:posts view');
+        Route::get('getPostInfo/{id}','postInfo')->middleware('can:posts view');
         Route::delete('delete/{id}','delete')->middleware('can:post delete');
     });
 
@@ -176,22 +183,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::post('banUser/{id}', 'banUser')->middleware('can:block user');
             Route::post('unBanUser/{id}', 'unBanUser')->middleware('can:block user');
-            Route::get('getBans', 'getBans')->middleware('can:block user');
+            Route::get('getBans/{type}', 'getBans')->middleware('can:block user');
             Route::get('deleteExpiredBanned', 'deleteExpiredBanned')->middleware('can:block user');
 
             Route::middleware('can:user view')->group(function () {
 
                 Route::get('getUsers/{type}', 'getUsers');
 
-                Route::get('search/{user}','searchByUsernameOrEmail');
+                Route::get('search/{user}','search');
             });
 
             Route::middleware('can:logs view')->group(function () {
                 Route::get('logs', 'logs');
+                Route::get('getLogsEmployees', 'getLogsEmployees');
 
                 Route::get('countUsers', 'countUsers');
                 Route::get('countPOA', 'countPOA');
-                Route::get('lineChart', 'lineChart');
+
+                Route::get('lineChartByDay', 'lineChartByDay');
+                Route::get('lineChartByWeek', 'lineChartByWeek');
+                Route::get('lineChartByMonth', 'lineChartByMonth');
             });
 
             // api/admin/news/
@@ -212,7 +223,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::middleware('can:employee control')->group(function () {
                 Route::post('addEmployee','add');
             });
-            Route::post('editEmployee/{id}','edit');
+            Route::post('editInfo','edit');
             Route::get('employees','getEmployee')->middleware('can:employee view');
         });
 

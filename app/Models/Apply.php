@@ -21,7 +21,8 @@ class Apply extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Apply');
     }
 
     public function user(){

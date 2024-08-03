@@ -34,7 +34,8 @@ class Company extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Company');
     }
 
     public function user()

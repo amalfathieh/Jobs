@@ -36,26 +36,28 @@ class EmployeeController extends Controller
             'roles_name' => $request->roles_name,
             'is_verified'=>true,
         ]);
+
         $employee = $this->userService->storeEmployee($request, $user->id);
 
         $link='';
         $user->assignRole($request->roles_name);
-//        return $password;
         InviteEmployeeJob::dispatch($request->email, $password ,$link);
-        return $this->apiResponse($user,__('strings.employee_invite_success'),201);
+        return $this->apiResponse(new UserResource($user),__('strings.employee_invite_success'),201);
     }
 
     //EDIT EMPLOYEE
-    public function edit(EditEmployeeRequest $request , FileService $fileService, $id){
+    public function edit(EditEmployeeRequest $request , FileService $fileService){
         $employee_image = null;
-        // $id = Auth::user()->id;
+        $id = Auth::user()->id;
         $user = User::where('id', $id)->first();
         if($user->hasRole('employee')){
             $employee = Employee::where('user_id', $id)->first();
-
             $old_file = $employee->image;
-            if ($request->hasFile('image') && $request->image != '') {
+
+            if ($request->hasFile('image')) {
                 $employee_image = $fileService->update($request->image, $old_file ,'employees');
+            } else {
+                $employee_image = $old_file;
             }
 
             $employee->update([
@@ -63,13 +65,17 @@ class EmployeeController extends Controller
                 'middle_name' => $request['middle_name'] ?? $employee['middle_name'],
                 'last_name' => $request['last_name'] ?? $employee['last_name'],
                 'phone' =>$request['phone'] ?? $employee['phone'],
-                'image' => $employee_image,
+                'birth_day' =>$request['birth_day'] ?? $employee['birth_day'],
+                'image' => $employee_image
             ]);
+            $employee->save();
+
             $user->update([
                 'email' => $request['email'] ?? $user->email
             ]);
-
-            return $this->apiResponse(null , 'Updated successfully' , 201);
+            $user->save();
+            $data = new UserResource($user);
+            return $this->apiResponse($data, 'Updated successfully' , 201);
         }
         return $this->apiResponse(null,
             __('strings.authorization_required'),

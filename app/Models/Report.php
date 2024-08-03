@@ -24,7 +24,8 @@ class Report extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['*']);
+            ->logOnly(['*'])
+            ->useLogName('Report');
     }
 
     public function reason()

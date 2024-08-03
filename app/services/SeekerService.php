@@ -5,6 +5,7 @@ namespace App\services;
 
 
 use App\Http\Controllers\UserController;
+use App\Http\Resources\UserResource;
 use App\Models\Seeker;
 use App\Models\User;
 use App\Traits\responseTrait;
@@ -51,12 +52,14 @@ class SeekerService
     }
     public function update($request){
         $seeker_image = null;
-        $id = Auth::user()->id;
-        $seeker = Seeker::where('user_id', $id)->first();
-        return $seeker;
+        $user = Auth::user();
+        $seeker = Seeker::where('user_id', $user->id)->first();
         $old_file = $seeker->image;
+
         if ($request->hasFile('image') && $request->image != '') {
             $seeker_image = $this->fileService->update($request->image, $old_file ,'images/job_seeker/profilePhoto');
+        } else {
+            $seeker_image = $old_file;
         }
         $skills = json_decode($request['skills']);
         $certificates = json_decode($request['certificates']);
@@ -65,12 +68,14 @@ class SeekerService
             'last_name' =>$request['last_name'] ?? $seeker['last_name'],
             'birth_day' =>$request['birth_day'] ?? $seeker['birth_day'],
             'location' =>$request['location'] ?? $seeker['location'],
-            'image' =>$seeker_image ?? $seeker['image'],
+            'image' => $seeker_image,
             'skills' =>$skills ?? $seeker['skills'],
             'specialization'=>$request['specialization'] ?? $seeker['specialization'],
             'certificates'=>$certificates ?? $seeker['certificates'],
             'about' =>$request['about'] ?? $seeker['about'],
             'gender' =>$request['gender'] ?? $seeker['gender']
         ]);
+
+        return new UserResource($user);
     }
 }

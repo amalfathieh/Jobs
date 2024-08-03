@@ -19,7 +19,8 @@ class Chat extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['*']);
+            ->logOnly(['*'])
+            ->useLogName('Chat');
     }
     public function user(){
         return $this->belongsToMany(User::class,'chat_user_pivot','chat_id','user_id');

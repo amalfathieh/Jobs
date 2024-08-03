@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsRequest;
+use App\Http\Resources\NewsResource;
 use App\Models\News;
 use App\Models\User;
 use App\services\FileService;
@@ -62,7 +63,7 @@ class NewsController extends Controller
     }
 
     public function getNews() {
-        $news = News::all();
+        $news = NewsResource::collection(News::all());
         if($news) {
             return $this->apiResponse($news, __('strings.all_news'), 200);
         }

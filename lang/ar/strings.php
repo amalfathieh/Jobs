@@ -55,6 +55,7 @@
         "applied_for_opportunity" => "لقد قمت بالتقديم لهذه الفرصة",
 
         "opportunity_added_successfully" => "تمت إضافة الفرصة بنجاح",
+        "opportunity_not_vacant" => "هذه الفرصة غير متاحة الآن",
         "all_my_opportunities" => "هذه هي جميع فرصي",
         "tell_us_who" => "يجب أن تخبرنا من أنت؟",
         "hey_reason" => "مرحبًا، ما هو السبب؟",
@@ -63,10 +64,33 @@
         "already_reported_user" => "لقد قمت بالفعل بالإبلاغ عن هذا المستخدم",
         "created_successfully" => "تم الإنشاء بنجاح",
 
-
         "already_reported_post" => "لقد قمت بالفعل بالإبلاغ عن هذا المنشور",
         "already_reported_opportunity" => "لقد قمت بالفعل بالإبلاغ عن هذه الفرصة",
         "all_reports" => "هذه هي جميع التقارير",
         "edited_successfully" => "تم التعديل بنجاح",
 
-    ];
+        //Save
+        'opportunity_added' => 'تمت إضافة الفرصة إلى العناصر المحفوظة',
+        'opportunity_deleted' => 'تم حذف الفرصة من العناصر المحفوظة',
+
+        //Post
+        'post_added' => 'تم النشر بنجاح',
+
+        //Apply
+        'apply_successfully' => 'تم إرسال الطلب بنجاح',
+        'get_my_applies' => 'هذه جميع الطلبات التي قمت بتقديمها',
+
+        // Notifcation
+        'post_body' => ':first_name منشور جديد من',
+        'post_title' => 'منشور جديد',
+
+        'opp_body' => ':company_name فرصة عمل في شركة',
+        'opp_title' => 'فرصة عمل',
+
+        // 'new_request'=> 'تم تقديم طلب من قبل :first_name على فرصة :title التي قدمتموها',
+        'new_request'=> 'التي قدمتموها :title على فرصة :first_name تم تقديم طلب من قبل',
+        'title_new_request'=> 'طلب توظيف جديد',
+
+        'request_accepted' => ':company_name تهانينا! لقد تم قبول طلبك للعمل في شركة',
+        'request_rejected' => ':company_name للأسف! لقد تم رفض طلبك للعمل في شركة'
+];

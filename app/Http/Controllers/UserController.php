@@ -61,9 +61,13 @@ class UserController extends Controller
 
     public function verifyAccount(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'code' => ['required', 'string', 'exists:verification_codes'],
         ]);
+
+        if ($validator->fails()) {
+            return $this->apiResponse([], $validator->errors()->first(), 422);
+        }
 
         $ver_code = VerificationCode::firstwhere('code', $request->code);
         // check if it does not expired: the time is one hour
@@ -80,7 +84,7 @@ class UserController extends Controller
         $user->update(['is_verified' => true]);
         // $user->is_verified = true;
         VerificationCode::where('code', $ver_code->code)->delete();
-        return $this->apiResponse($data, __('strings.success') , 200);
+        return $this->apiResponse($data, __('strings.created_successfully') , 200);
     }
 
     public function login(LoginRequest $request)
@@ -107,7 +111,6 @@ class UserController extends Controller
             }
 
             $data['user']->roles_name = $role;
-
             return $this->apiResponse($data, __('strings.user_logged_in_successfully') , 200);
         } else
             return $this->apiResponse(null, __('strings.account_not_verified') , 401);
@@ -157,12 +160,15 @@ class UserController extends Controller
         $user->password = $request->password;
         if($user->hasRole('employee')){
             $employee = $user->employee;
-            $employee->is_change_password = true;
-            $employee->save();
+            if (!$employee->is_change_password) {
+                $employee->is_change_password = true;
+                $employee->save();
+            }
         }
+        $token['token'] = $user->createToken("API TOKEN")->plainTextToken;
         $user->save();
 
-        return $this->apiResponse([], __('strings.password_reset_success'), 200);
+        return $this->apiResponse($token, __('strings.password_reset_success'), 200);
     }
 
 
@@ -262,6 +268,10 @@ class UserController extends Controller
         return $this->apiResponse(null, __('strings.something_went_wrong'), 500);
     }
 
+    public function getMyInfo() {
+        $user = Auth::user();
+        return $this->apiResponse(new UserResource($user), __('strings.get_my_info_successfully'), 200);
+    }
 
     public function storeToken(Request $request){
         $user = Auth::user();

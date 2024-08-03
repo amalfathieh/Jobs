@@ -34,7 +34,8 @@ class Opportunity extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Opportunity');
     }
 
     public function company() {

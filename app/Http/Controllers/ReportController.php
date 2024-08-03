@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ReportResource;
+use App\Http\Resources\UserResource;
 use App\Jobs\ResponseToUserJob;
 use App\Models\Opportunity;
 use App\Models\Post;
@@ -155,13 +156,40 @@ class ReportController extends Controller
 
     }
 
-    public function getReports($type) {
+    public function getReports($type, Request $request) {
         if ($type == 'viewed') {
-            $reports = Report::where('is_viewed', 1)->get();
-        } elseif ($type == 'notViewed') {
-            $reports = Report::where('is_viewed', 0)->get();
-        } elseif ($type == 'all') {
-            $reports = Report::all();
+            if ($request->startDate && $request->endDate) {
+                $reports = Report::whereBetween('created_at', [$request->startDate, $request->endDate])->where('is_viewed', 1)->get();
+            }
+            else if ($request->startDate && !$request->endDate) {
+                $dateMax = Report::max('created_at');
+                $reports = Report::whereBetween('created_at', [$request->startDate, $dateMax])->where('is_viewed', 1)->get();
+            }
+            else {
+                $reports = Report::where('is_viewed', 1)->get();
+            }
+        } else if ($type == 'notViewed') {
+            if ($request->startDate && $request->endDate) {
+                $reports = Report::whereBetween('created_at', [$request->startDate, $request->endDate])->where('is_viewed', 0)->get();
+            }
+            else if ($request->startDate && !$request->endDate) {
+                $dateMax = Report::max('created_at');
+                $reports = Report::whereBetween('created_at', [$request->startDate, $dateMax])->where('is_viewed', 0)->get();
+            }
+            else {
+                $reports = Report::where('is_viewed', 0)->get();
+            }
+        } else if ($type == 'all') {
+            if ($request->startDate && $request->endDate) {
+                $reports = Report::whereBetween('created_at', [$request->startDate, $request->endDate])->get();
+            }
+            else if ($request->startDate && !$request->endDate) {
+                $dateMax = Report::max('created_at');
+                $reports = Report::whereBetween('created_at', [$request->startDate, $dateMax])->get();
+            }
+            else {
+                $reports = Report::all();
+            }
         } else {
             return $this->apiResponse(null, 'Invalid type', 400);
         }
@@ -170,7 +198,14 @@ class ReportController extends Controller
     }
 
     public function response(Request $request, $id) {
+        $validate = Validator::make($request->all(), [
+            'message' => 'required'
+        ]);
+        if ($validate->fails()) {
+            return $this->apiResponse(null, $validate->errors(), 400);
+        }
         $report = Report::find($id);
+        $auth = User::find(Auth::user()->id);
         if (!$report) {
             return $this->apiResponse(null, 'Report not found', 404);
         }
@@ -180,7 +215,6 @@ class ReportController extends Controller
             $report->save();
 
             ResponseToUserJob::dispatch($user_info->email, $request->message);
-
             return $this->apiResponse(null, 'Successfully and sent to user\'s email', 200);
         }
         return $this->apiResponse(null, 'You already viewed this report', 400);
@@ -194,5 +228,16 @@ class ReportController extends Controller
 
         $report->delete();
         return $this->apiResponse(null, 'Report deleted successfully', 200);
+    }
+
+    public function getInfo($id) {
+        $report = Report::find($id);
+        if (!$report) {
+            return $this->apiResponse(null, 'Report not found', 404);
+        }
+        $data['report'] = new ReportResource($report);
+        $data['created_by'] = new UserResource(User::find($report->created_by));
+        $data['reported_user'] = new UserResource(User::find($report->user_id));
+        return $this->apiResponse($data, 'Report info', 200);
     }
 }

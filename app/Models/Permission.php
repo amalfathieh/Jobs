@@ -18,10 +18,7 @@ class Permission extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
-    }
-
-    public function job_titles() {
-        return $this->belongsToMany(JobTitle::class);
+        ->logOnly(['*'])
+        ->useLogName('Permissions');
     }
 }

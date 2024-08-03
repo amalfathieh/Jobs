@@ -19,7 +19,8 @@ class Post extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Post');
     }
 
     public function seeker(){

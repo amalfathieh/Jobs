@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\Post;
+use App\Models\Seeker;
 use App\Models\User;
 use App\Notifications\SendNotification;
 use App\services\FileService;
@@ -45,14 +47,14 @@ public function __construct(PostService $postService)
             }
             $data =[
                 'obj_id'=>$post->id,
-                'title'=>'New Post',
-                'body'=>'New post has been published by: '.$seeker->first_name.'.',
+                'title'=> __('strings.post_title'),
+                'body'=> __('strings.post_body', ['first_name' => $seeker->first_name]),
             ];
 
             Notification::send($followers,new SendNotification($data));
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
         }
-        return $this->apiResponse(null, 'post added successfully', 201);
+        return $this->apiResponse(null, __('strings.post_added'), 201);
     }
 
     public function edit(Request $request, $post_id){
@@ -90,5 +92,19 @@ public function __construct(PostService $postService)
             ->get();
 
         return $this->apiResponse(PostResource::collection($posts),'all posts',200);
+    }
+
+    public function userPosts($id) {
+        $seeker = Seeker::where('user_id', $id)->first();
+        $posts = Post::where('seeker_id', $seeker->id)->get();
+        $posts = PostResource::collection($posts);
+        return $this->apiResponse($posts, 'These are all posts for this user', 200);
+    }
+
+    public function postInfo($id) {
+        $post = Post::where('id', $id)->first();
+        $data['post'] = new PostResource($post);
+        $data['owner'] = new UserResource(User::where('id', Post::where('id', $id)->first()->seeker->user->id)->first());
+        return $this->apiResponse($data, 'These are all posts for this user', 200);
     }
 }

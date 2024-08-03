@@ -24,32 +24,46 @@ class ApplyController extends Controller
         try {
             $apply = null;
             $opportunity = Opportunity::where('id', $id)->first();
+            if (!$opportunity) {
+                return $this->apiResponse(null, __('strings.not_found'), 404);
+            }
             $company_id= $opportunity->company_id;
             $app = Apply::where('opportunity_id', $id)->where('user_id', Auth::user()->id)->where('company_id', $company_id)->first();
+
+            if (!$opportunity->vacant) {
+                return $this->apiResponse(null, __('strings.opportunity_not_vacant'), 400);
+            }
+
             if ($app) {
                 return $this->apiResponse(null, __('strings.applied_for_opportunity'), 400);
             }
+
             $cv = $request->file('cv');
             $cv_path = $fileService->store($cv, 'job_seeker/applies');
+            $seeker = Auth::user();
             $apply = Apply::create([
                 'opportunity_id' => $id,
-                'user_id' => Auth::user()->id,
+                'user_id' => $seeker->id,
                 'company_id' => $company_id,
                 'cv' => $cv_path
             ]);
+
             if ($apply) {
                 $user = Company::where('id',$company_id)->first()->user;
                 $tokens = $user->routeNotificationForFcm();
+                // $header = $request->headers->get('accept-language');
                 //$body = 'لديكم طلب توظيف جديد لفرصة العمل '.$opportunity->title.' يرجى مراجعة الطلب في أقرب وقت ممكن.';
-                $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
+
+                // $body = 'You have a new job application for the '.$opportunity->title.' position. Please review the application at your earliest convenience.';
+
                 $data =[
-                    'obj_id'=>$apply->id,
-                    'title'=>'Job Application',
-                    'body'=> $body,
+                    'obj_id'=> $apply->id,
+                    'title'=> __('strings.title_new_request'),
+                    'body'=> __('strings.new_request', ['first_name' => $seeker->seeker->first_name, 'last_name' => $seeker->seeker->last_name, 'title' => $opportunity->title]),
                 ];
                 Notification::send($user,new SendNotification($data));
         //      $this->sendPushNotification($data['title'],$data['body'],$tokens);
-                return $this->apiResponse($apply, 'The request has been sent successfully', 201);
+                return $this->apiResponse($data, __('strings.apply_successfully'), 201);
             }
         } catch (\Exception $th) {
             return $this->apiResponse(null, $th->getMessage(), 500);
@@ -58,50 +72,19 @@ class ApplyController extends Controller
 
     public function getMyApplies() {
         $applies = ApplyResource::collection(Apply::where('user_id', Auth::user()->id)->orderBy('status')->get());
-        return $this->apiResponse($applies, "These are all applies", 200);
+        return $this->apiResponse($applies, __('strings.get_my_applies'), 200);
     }
 
     public function update(Request $request, $id, FileService $fileService) {
         $apply = Apply::where('id', $id)->first();
-        $newData = null;
-        if ($apply->user_id === Auth::user()->id) {
-            if (!$request->file('cv') && $apply->cv) {
-                $fileService->delete($apply->cv);
-                $apply->update([
-                    'cv' => null,
-                    'full_name' => $request->full_name  ?? $apply['full_name'],
-                    'birth_day' => $request->birth_day ?? $apply['birth_day'],
-                    'location' => $request->location ?? $apply['location'],
-                    'about' => $request->about ?? $apply['about'],
-                    'skills' => $request->skills ?? $apply['skills'],
-                    'certificates' => $request->certificates ?? $apply['certificates'],
-                    'languages' => $request->languages ?? $apply['languages'],
-                    'projects' => $request->projects ?? $apply['projects'],
-                    'experiences' => $request->experiences ?? $apply['experiences'],
-                    'contacts' => $request->contacts ?? $apply['contacts'],
-                ]);
-                $newData = Apply::where('id', $id)->first();
-                $newData = collect($newData)->except('cv');
-            }
-            else
-                {
-                    $new_cv = $request->file('cv');
-                    $cv_path = $fileService->update($new_cv,$apply->cv, 'job_seeker/applies');
-                    $apply->update([
-                        'cv' => $cv_path,
-                        'full_name' => null,
-                        'birth_day' => null,
-                        'location' => null,
-                        'about' => null,
-                        'skills' => null,
-                        'certificates' => null,
-                        'languages' => null,
-                        'projects' => null,
-                        'experiences' => null,
-                        'contacts' => null,
-                    ]);
-                    $newData = Apply::where('id', $id)->select(['id', 'opportunity_id', 'user_id', 'company_id', 'cv'])->get();
-                }
+        $user_id = Auth::user()->id;
+        if ($apply->user_id === $user_id) {
+            $new_cv = $request->file('cv');
+            $cv_path = $fileService->update($new_cv,$apply->cv, 'job_seeker/applies');
+            $apply->update([
+                'cv' => $cv_path,
+            ]);
+            $newData = Apply::where('id', $id)->get();
             if ($apply) {
                 return $this->apiResponse($newData, __('strings.updated_successfully'), 201);
             }
@@ -145,25 +128,22 @@ class ApplyController extends Controller
                 'status' => $request->status
             ]);
             if($request->status == 'accepted'){
-                $body = 'Congratulations! Your application for '.$apply->opportunity->title.' at '.$user->company->company_name;
+                $body = __('strings.request_accepted', ['company_name' => $user->company->company_name]);
             }
             else if($request->status == 'rejected'){
-//                $body = 'نأسف لإبلاغكم بأن طلبكم لوظيفة '.$apply->opportunity->title.' قد تم رفضه. في '.$user->company->company_name;
-                $body = 'We regret to inform you that your application for the '.$apply->opportunity->title.' position has been rejected, at '.$user->company->company_name;
+                $body = __('strings.request_rejected', ['company_name' => $user->company->company_name]);
             }
             $user = User::find($apply->user_id);
             $tokens = $user->routeNotificationForFcm();
             $data =[
-                'obj_id'=>$apply->id,
-                'title'=>'Job Application',
+                'obj_id'=> $apply->id,
+                'title'=> __('strings.opp_title'),
                 'body'=> $body,
             ];
             Notification::send($user,new SendNotification($data));
 //            $this->sendPushNotification($data['title'],$data['body'],$tokens);
 
-
-            $data = $apply->select(['id', 'opportunity_id', 'user_id', 'company_id', 'status'])->first();
-            return $this->apiResponse($data,  __('strings.updated_successfully'), 200);
+            return $this->apiResponse(new ApplyResource($apply),  __('strings.updated_successfully'), 200);
         }
         return $this->apiResponse(null, __('strings.not_allowed_action'), 400);
     }
@@ -172,7 +152,6 @@ class ApplyController extends Controller
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
         $applies = Apply::where('company_id', $company->id)->orderByRaw("FIELD(status, 'waiting', 'accepted', 'rejected')")->get();
-
         return $this->apiResponse(GetAppliesForCompanyResource::collection($applies),  __('strings.all_applies'), 200);
     }
 }

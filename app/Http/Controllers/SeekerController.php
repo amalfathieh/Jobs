@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeekerRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Opportunity;
 use App\Models\Seeker;
 use App\Models\User;
@@ -33,7 +34,7 @@ class SeekerController extends Controller
                 $request->specialization,
                 $request->about
             );
-            return $this->apiResponse(null, 'job_seeker created successfully', 201);
+            return $this->apiResponse(null, __('strings.created_successfully'), 201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
@@ -42,14 +43,15 @@ class SeekerController extends Controller
     }
 
     public function update(Request $request, SeekerService $seekerService){
-        $seekerService->update($request);
-        return $this->apiResponse(null, __('strings.updated_successfully'), 201);
+        $seeker = $seekerService->update($request);
+        return $this->apiResponse($seeker, __('strings.updated_successfully'), 201);
     }
 
     public function createCV(Request $request) {
         $user = Auth::user();
         $data = $request->all();
-        $file_name = $request->full_name . '_CV.pdf';
+        $data['image'] = $user->seeker->image;
+        $file_name = $user->user_name . '_CV.pdf';
         $html = view()->make('pdf.pdf', compact('data'))->render();
         PDF::SetTitle($request->full_name . '_CV.pdf');
         PDF::AddPage();
@@ -57,5 +59,4 @@ class SeekerController extends Controller
         PDF::output(public_path('CVs/' . $file_name), 'F');
         return response()->download(public_path('CVs/' . $file_name));
     }
-
 }

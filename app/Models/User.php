@@ -43,7 +43,8 @@ class User extends Authenticatable implements BannableInterface
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('User');
     }
 
     public function seeker()
@@ -103,5 +104,9 @@ class User extends Authenticatable implements BannableInterface
     public function reportsToUser()
     {
         return $this->hasMany(Report::class, 'user_id');
+    }
+
+    public function news() {
+        return $this->hasMany(News::class, 'created_by', 'id');
     }
 }

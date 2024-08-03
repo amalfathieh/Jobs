@@ -31,7 +31,8 @@ class Seeker extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Seeker');
     }
 
     public function user(){

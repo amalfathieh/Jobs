@@ -17,13 +17,15 @@ class Employee extends Model
         'gender',
         'phone',
         'image',
+        'birth_day',
         'is_change_password',
     ];
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('Employee');
     }
     public function user(){
         return $this->belongsTo(User::class);

@@ -29,7 +29,7 @@ class EditEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['email', 'unique:users,email'],
+            'email' => ['email'],
             'password' => [
                 Password::min(8)
                     ->letters()
@@ -37,7 +37,7 @@ class EditEmployeeRequest extends FormRequest
                     ->numbers()
             ],
             'phone'=>'min:4|max:15',
-            'image'=>'image',
+            // 'image'=>'image',
         ];
     }
     public function failedValidation(Validator $validator)

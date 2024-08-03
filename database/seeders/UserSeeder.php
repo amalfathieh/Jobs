@@ -32,7 +32,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -64,7 +65,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -96,7 +98,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -128,7 +131,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -160,7 +164,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -192,7 +197,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -224,7 +230,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -256,7 +263,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -288,7 +296,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -320,7 +329,8 @@ class UserSeeder extends Seeder
             'location'=>fake()->country(),
             'about' => fake()->paragraph(),
             'domain' => fake()->word(),
-            'contact_info' => fake()->text(50)
+            'logo' => fake()->imageUrl(640, 480),
+            'contact_info' => fake()->realText(50)
         ]);
 
         for ($i=0; $i < 10; $i++) {
@@ -355,6 +365,8 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -363,7 +375,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -381,6 +393,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -389,7 +402,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -407,6 +420,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -415,7 +429,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -433,6 +447,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -441,7 +456,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -459,6 +474,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -467,7 +483,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -485,6 +501,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -493,7 +510,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText(300)
             ]);
         }
         $user = User::create([
@@ -511,6 +528,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -519,7 +537,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -537,6 +555,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -545,7 +564,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -563,6 +582,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -571,7 +591,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
         $user = User::create([
@@ -589,6 +609,7 @@ class UserSeeder extends Seeder
             'gender' => fake()->randomElement(['male', 'female']),
             'birth_day' => fake()->date(),
             'location' => fake()->country(),
+            'image' => 'images/job_seeker/profilePhoto/1721827935.jpg',
             'skills' => ['Python', 'Laravel', 'React JS', 'English'],
             'certificates' => [fake()->word(), fake()->word()],
             'about' => fake()->paragraph(),
@@ -597,7 +618,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             Post::create([
                 'seeker_id' => $seeker->id,
-                'body' => fake()->text()
+                'body' => fake()->realText()
             ]);
         }
     }

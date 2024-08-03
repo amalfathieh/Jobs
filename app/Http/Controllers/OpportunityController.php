@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityRequest;
 use App\Http\Resources\OpportunityResource;
+use App\Models\Apply;
 use App\Models\Company;
 use App\Models\Opportunity;
 use App\Models\User;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 use function PHPUnit\Framework\isEmpty;
+use function PHPUnit\Framework\isNull;
 
 class OpportunityController extends Controller
 {
@@ -45,9 +47,9 @@ class OpportunityController extends Controller
                     $tokens = array_merge($tokens , $follower->routeNotificationForFcm());
                 }
                 $data =[
-                    'obj_id'=>$opportunity->id,
-                    'title'=>'Job Opportunity',
-                    'body'=>$user->company->company_name.' has just posted a new job opportunity: '.$request->title.' Apply now!',
+                    'obj_id'=> $opportunity->id,
+                    'title'=> __('strings.opp_title'),
+                    'body'=> __('strings.opp_body', ['company_name' => $user->company->company_name]),
                 ];
 
                 Notification::send($followers,new SendNotification($data));
@@ -71,7 +73,7 @@ class OpportunityController extends Controller
         $opportunity = Opportunity::find($id);
         $user = User::where('id', Auth::user()->id)->first();
         if ($opportunity) {
-            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || (($user->hasRole('employee') || $user->hasRole('owner')) && $user->can('opportunity delete'))) {
+            if (($user->hasRole('company') && $opportunity['company_id'] == $user->company->id) || (($user->hasRole('employee') && $user->hasPermissionTo('opportunity delete')) || $user->hasRole('owner'))) {
                 $opportunity->delete();
                 return $this->apiResponse(null, __('strings.deleted_successfully'), 200);
             }
@@ -83,8 +85,7 @@ class OpportunityController extends Controller
     public function getMyOpportunities() {
         $user = User::where('id', Auth::user()->id)->first();
         $company = Company::where('id', $user->company->id)->first();
-        $opportunities = OpportunityResource::collection(OpportunityResource::collection($company->opportunities));
-        return $this->apiResponse($opportunities, __('strings.all_my_opportunities'), 200);
+        $opportunities = OpportunityResource::collection($company->opportunities);        return $this->apiResponse($opportunities, __('strings.all_my_opportunities'), 200);
     }
 
     public function allOpportunities() {
@@ -112,6 +113,37 @@ class OpportunityController extends Controller
             $data[] = OpportunityResource::collection($group);
         }
         return $data;
+    }
+
+    public function getCompanyOpportunities($id) {
+        $user = User::where('id', $id)->first();
+        if ($user) {
+            $company = Company::where('id', $user->company->id)->first();
+            if ($company) {
+                $opportunities = OpportunityResource::collection($company->opportunities);
+                return $this->apiResponse($opportunities, __('strings.all_my_opportunities'), 200);
+            }
+        }
+        return $this->apiResponse(null, __('strings.not_found'), 404);
+    }
+
+    public function getOpportunityInfo($id) {
+        $opportunity = Opportunity::where('id', $id)->get();
+        if (!isNull($opportunity)) {
+            $opportunity = OpportunityResource::collection($opportunity);
+            return $this->apiResponse($opportunity, 'These are all information about this opportunity', 200);
+        }
+        return $this->apiResponse(null, __('strings.not_found'), 404);
+    }
+
+    public function someInfo() {
+        $data['opportunitiesCount'] = Opportunity::count();
+        $data['opportunitiesVacantCount'] = Opportunity::where('vacant', 1)->count();
+        $data['appliesCount'] = Apply::count();
+        $data['appliesAccepted'] = Apply::where('status', 'accepted')->count();
+        $data['appliesRejected'] = Apply::where('status', 'rejected')->count();
+
+        return $this->apiResponse($data, 'Success', 200);
     }
     //الفرص المقترحة
     public function proposed_Jobs(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
 use App\Http\Resources\CompanyResource;
+use App\Http\Resources\UserResource;
 use App\Models\Company;
 use App\Models\User;
 use App\services\FileService;
@@ -59,11 +60,11 @@ class CompanyController extends Controller
                 'about' => $request->about ?? $company['about'],
                 'contact_info' => $request->contact_info ?? $company['contact_info']
             ]);
-            return $this->apiResponse(null, __('strings.success'),  201);
+            return $this->apiResponse(new UserResource($user), __('strings.success'),  201);
         } catch (AuthorizationException $authExp) {
             return $this->apiResponse(null, $authExp->getMessage(), 401);
         } catch (\Exception $ex) {
-            return $this->apiResponse(null, $ex->getMessage(), $ex->getCode());
+            return $this->apiResponse(null, $ex->getMessage(), 500);
         }
     }
 

@@ -20,6 +20,7 @@ class Chat_user_pivot extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['*']);
+            ->logOnly(['*'])
+            ->useLogName('Chat');
     }
 }

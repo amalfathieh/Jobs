@@ -34,6 +34,7 @@ class EmployeeRequest extends FormRequest
             'middle_name'=>'sometimes|min:3',
             'last_name'=> 'required|min:3',
             'gender'=> 'required|in:male,female',
+            'birth_day' => 'required|date',
             'roles_name' => 'required|array',
             'roles_name.*' => 'required|exists:roles,name'
         ];

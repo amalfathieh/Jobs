@@ -150,7 +150,7 @@ article address {
                 <h2>{{$data['location']}}</h2>
                 <p>{{$data['about']}}</p>
             </address>
-            <img style="align-items: flex-end" alt="it" src="{{asset('/images/job_seeker/profilePhoto/Picture16.jpg')}}" width="120" />
+            <img style="align-items: flex-end" alt="it" src=`{{'/' . $data['image']}}` width="120" />
             <hr width="100%" color="red" size="5" />
       </header>
       <article>

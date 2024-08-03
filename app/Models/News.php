@@ -20,6 +20,11 @@ class News extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*']);
+        ->logOnly(['*'])
+        ->useLogName('News');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }

@@ -20,11 +20,11 @@ class SaveController extends Controller
         if($opportunity) {
             if ($user->savedOpportunities()->where('opportunity_id', $opportunityId)->exists()) {
                 $user->savedOpportunities()->detach($opportunity);
-                $message = 'Opportunity delete from saved items.';
+                $message = __('strings.opportunity_deleted');
             }
             else {
                 $user->savedOpportunities()->attach($opportunity);
-                $message = 'Opportunity added to saved items';
+                $message = __('strings.opportunity_added');
             }
             return $this->apiResponse(null,$message,200);
         }

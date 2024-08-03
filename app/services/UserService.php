@@ -17,6 +17,7 @@ class UserService
             'middle_name'=> $request['middle_name'],
             'last_name'=> $request['last_name'],
             'gender'=> $request['gender'],
+            'birth_day'=> $request['birth_day'],
         ]);
     }
 
