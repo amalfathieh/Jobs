@@ -26,10 +26,6 @@ them.this project with different roles and permissions. Key features include.
 - **[ِ Amal](https://github.com/amalfathieh)**.
 - **[Ali](https://github.com/AliMohammad92)**.
 
-## **Introduction**
-
-Project Title is a project that does something useful. It was created to solve a particular problem, and it provides a solution that is better than the alternatives.
-
 ## **Prerequisites**
 You should have **`composer`** installed. If you don't install composer from here.
 
